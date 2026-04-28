@@ -215,6 +215,20 @@ export function Home() {
           ))}
         </div>
       </section>
+      {/* Footer with Business Info */}
+      <footer className="py-12 px-6 border-t border-white/5 bg-[#050505] mt-8">
+        <div className="max-w-md mx-auto space-y-4">
+          <h3 className="text-sm font-bold text-gray-400">GOURMATE</h3>
+          <div className="space-y-1 text-[11px] text-gray-500 font-medium leading-relaxed">
+            <p>상호명: 블루프라임</p>
+            <p>대표자: 김덕규</p>
+            <p>사업자등록번호: 153-87-03544</p>
+            <p className="mt-4 pt-4 border-t border-white/5 text-[10px] text-gray-600">
+              © 2026 GOURMATE. All rights reserved. 본 웹사이트는 맛집 정보 공유를 위한 플랫폼입니다.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
