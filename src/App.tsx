@@ -24,7 +24,7 @@ function App() {
           <Route path="/search" element={<SearchPlace />} />
           <Route path="/register-place" element={<RegisterPlace />} />
           <Route path="/map" element={<div className="p-8 pb-24 text-center text-white">지도 페이지 준비중</div>} />
-          <Route path="/write" element={<div className="p-8 pb-24 text-center text-white">포스팅 페이지 준비중</div>} />
+          <Route path="/write" element={<SearchPlace />} />
           <Route path="/my" element={<div className="p-8 pb-24 text-center text-white">마이 페이지 준비중</div>} />
         </Routes>
       </Layout>
