@@ -8,7 +8,7 @@ export function SearchPlace() {
   const [places, setPlaces] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchStatus, setSearchStatus] = useState<'IDLE' | 'OK' | 'ZERO_RESULT' | 'ERROR'>('IDLE');
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 카카오 장소 검색 API 호출
   const searchPlaces = (query: string) => {
