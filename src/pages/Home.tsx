@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, MapPin, BadgeCheck, Flame, UtensilsCrossed } from 'lucide-react';
 import { MOCK_POSTS, MOCK_COLLECTIONS } from '@/data/mock';
 
 export function Home() {
+  const navigate = useNavigate();
   const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝'];
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
@@ -26,15 +27,18 @@ export function Home() {
           </div>
         </div>
         
-        <div className="relative group">
+        <div 
+          onClick={() => navigate('/search')}
+          className="relative group cursor-pointer"
+        >
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Search className="h-4 w-4 text-gray-500 group-focus-within:text-primary-500 transition-colors" />
           </div>
-          <input
-            type="text"
-            className="block w-full pl-11 pr-4 py-3.5 bg-[#141414] border border-white/5 rounded-2xl leading-5 text-gray-100 placeholder-gray-500 focus:outline-none focus:bg-[#1a1a1a] focus:ring-1 focus:ring-primary-500/50 focus:border-primary-500/50 sm:text-sm transition-all duration-300 shadow-inner"
-            placeholder="어떤 맛집을 찾으시나요?"
-          />
+          <div
+            className="block w-full pl-11 pr-4 py-3.5 bg-[#141414] border border-white/5 rounded-2xl leading-5 text-gray-500 sm:text-sm shadow-inner select-none cursor-pointer hover:bg-[#1a1a1a] transition-all"
+          >
+            어떤 맛집을 찾으시나요?
+          </div>
         </div>
       </header>
 
