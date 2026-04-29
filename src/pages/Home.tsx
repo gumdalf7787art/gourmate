@@ -174,7 +174,7 @@ export function Home() {
         <div className="flex flex-col gap-3 px-5">
           {MOCK_POSTS.slice(0, 3).map((post) => (
             <div key={post.guide.id} className="flex items-center justify-between p-4 bg-[#0f0f0f] border border-white/30 rounded-2xl group hover:border-white/40 transition-all shadow-xl">
-              <div className="flex items-center gap-3">
+              <Link to={`/guide/${post.guide.id}`} className="flex items-center gap-3 flex-1">
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-primary-500 to-orange-300 shadow-lg group-hover:scale-105 transition-transform">
                     <img src={post.guide.profileImageUrl} alt="" className="w-full h-full rounded-full object-cover border-2 border-black" />
@@ -189,7 +189,7 @@ export function Home() {
                   <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors">{post.guide.nickname}</p>
                   <p className="text-[11px] text-gray-500 font-medium">신뢰지수 {post.guide.trustScore} • 포스트 24개</p>
                 </div>
-              </div>
+              </Link>
               <button className="px-4 py-2 bg-white/5 border border-white/30 text-white text-[11px] font-black rounded-xl hover:bg-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter shadow-inner">
                 팔로우
               </button>
@@ -212,7 +212,7 @@ export function Home() {
             <article key={post.id} className="flex flex-col relative group">
               {/* Guide Info */}
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
+                <Link to={`/guide/${post.guide.id}`} className="flex items-center gap-3">
                   <div className="relative">
                     <img src={post.guide.profileImageUrl} alt={post.guide.nickname} className="w-10 h-10 rounded-full object-cover border border-white/10" />
                     {post.guide.trustScore > 90 && (
@@ -225,7 +225,7 @@ export function Home() {
                     <span className="font-bold text-[14px] text-white leading-none mb-1.5">{post.guide.nickname}</span>
                     <span className="text-[11px] text-gray-500 leading-none font-medium">Top Guide • 신뢰지수 {post.guide.trustScore}</span>
                   </div>
-                </div>
+                </Link>
               </div>
               
               {/* Image Card (4:3 Aspect Ratio with Horizontal Slider) */}

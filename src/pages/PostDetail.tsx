@@ -147,7 +147,7 @@ export function PostDetail() {
         {/* Guide Review */}
         <div className="py-8 border-b border-white/5">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
+            <Link to={`/guide/${post.guide.id}`} className="flex items-center gap-3">
               <div className="relative">
                 <img 
                   src={post.guide.profileImageUrl} 
@@ -161,14 +161,14 @@ export function PostDetail() {
                 )}
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-white leading-none mb-1.5">{post.guide.nickname}</span>
+                <span className="font-bold text-white leading-none mb-1.5 group-hover:text-primary-500 transition-colors">{post.guide.nickname}</span>
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] text-gray-400 font-medium">신뢰지수 {post.guide.trustScore}</span>
                   <div className="w-[1px] h-2.5 bg-white/10"></div>
                   <span className="text-[11px] text-primary-500 font-bold uppercase tracking-tighter">Verified Guide</span>
                 </div>
               </div>
-            </div>
+            </Link>
             <button className="px-5 py-2 bg-white/5 border border-white/30 text-white text-[12px] font-bold rounded-xl active:scale-95 transition-transform">
               팔로우
             </button>

@@ -3,6 +3,10 @@ export type Guide = {
   nickname: string;
   profileImageUrl: string;
   trustScore: number;
+  bio?: string;
+  followers?: number;
+  following?: number;
+  totalPosts?: number;
 };
 
 export type Place = {
@@ -38,13 +42,14 @@ export type Post = {
   bookmarks: number;
   tags?: string[];
   rating: number;
+  isTop20?: boolean;
 };
 
 export const MOCK_GUIDES: Guide[] = [
-  { id: 'g1', nickname: '푸디트래블러', profileImageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200', trustScore: 98 },
-  { id: 'g2', nickname: '미식탐험가', profileImageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', trustScore: 92 },
-  { id: 'g3', nickname: '동네미식가', profileImageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200', trustScore: 88 },
-  { id: 'g4', nickname: '카페장인', profileImageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200', trustScore: 95 },
+  { id: 'g1', nickname: '푸디트래블러', profileImageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200', trustScore: 98, bio: '전 세계의 맛을 찾아 떠나는 미식 여행자입니다.', followers: 12400, following: 120, totalPosts: 45 },
+  { id: 'g2', nickname: '미식탐험가', profileImageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', trustScore: 92, bio: '숨겨진 보석 같은 로컬 맛집을 발굴합니다.', followers: 8900, following: 340, totalPosts: 112 },
+  { id: 'g3', nickname: '동네미식가', profileImageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200', trustScore: 88, bio: '일상 속에서 만나는 특별한 한 끼를 소개합니다.', followers: 3200, following: 50, totalPosts: 28 },
+  { id: 'g4', nickname: '카페장인', profileImageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200', trustScore: 95, bio: '분위기 좋은 카페와 디저트를 기록합니다.', followers: 21500, following: 80, totalPosts: 89 },
 ];
 
 export const MOCK_PLACES: Place[] = [
@@ -187,6 +192,7 @@ export const MOCK_POSTS: Post[] = [
     bookmarks: 450,
     tags: ['인생우대갈비', '웨이팅지옥', '용산핫플'],
     rating: 4.9,
+    isTop20: true,
   },
   {
     id: 'post4',
@@ -219,6 +225,7 @@ export const MOCK_POSTS: Post[] = [
     bookmarks: 220,
     tags: ['라멘성지', '해장완료', '합정맛집'],
     rating: 4.7,
+    isTop20: true,
   },
   {
     id: 'post5',
@@ -264,8 +271,9 @@ export const MOCK_POSTS: Post[] = [
     createdAt: '2026-04-24',
     likes: 3200,
     bookmarks: 1540,
-    tags: ['힙한카페', '디저트맛집', '압구정데이트'],
+    tags: ['힙한카페', '디저트맛집', '압구정데이트', '파인다이닝'],
     rating: 4.6,
+    isTop20: true,
   },
   {
     id: 'post7',
@@ -297,5 +305,6 @@ export const MOCK_POSTS: Post[] = [
     bookmarks: 180,
     tags: ['압구정불고기', '전통맛집', '효도코스'],
     rating: 4.9,
+    isTop20: true,
   }
 ];

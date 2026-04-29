@@ -4,6 +4,7 @@ import { PostDetail } from '@/pages/PostDetail';
 import { GeneralSearch } from '@/pages/GeneralSearch';
 import { SearchPlace } from '@/pages/SearchPlace';
 import { RegisterPlace } from '@/pages/RegisterPlace';
+import GuideProfile from '@/pages/GuideProfile';
 import { BottomNav } from '@/components/BottomNav';
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -22,6 +23,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/post/:id" element={<PostDetail />} />
+          <Route path="/guide/:id" element={<GuideProfile />} />
           <Route path="/search" element={<GeneralSearch />} />
           <Route path="/register-place" element={<RegisterPlace />} />
           <Route path="/map" element={<div className="p-8 pb-24 text-center text-white">지도 페이지 준비중</div>} />
