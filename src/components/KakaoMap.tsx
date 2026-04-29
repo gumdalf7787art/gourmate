@@ -38,7 +38,7 @@ export function KakaoMap({ center, places, level = 3, onSelect }: KakaoMapProps)
           >
             <div 
               className="p-3 bg-black/90 backdrop-blur-md rounded-xl border border-primary-500/30 text-white min-w-[120px] shadow-2xl cursor-pointer active:scale-95 transition-all"
-              onClick={(e) => {
+              onClick={() => {
                 // Ensure the event triggers properly on the card
                 if (place.postId) onSelect?.(place.postId);
               }}
