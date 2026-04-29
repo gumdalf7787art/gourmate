@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   ChevronLeft, 
   Share2, 
@@ -13,7 +13,9 @@ import {
   ExternalLink,
   Info,
   Star,
-  Flame
+  Flame,
+  User,
+  Utensils
 } from 'lucide-react';
 import { MOCK_POSTS } from '@/data/mock';
 import { useState, useEffect } from 'react';
