@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Plus, Heart, Info } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_POSTS, MOCK_COLLECTIONS } from '../data/mock';
-import type { Guide } from '../data/mock';
 import { TrustScoreModal } from '../components/TrustScoreModal';
 
 const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
