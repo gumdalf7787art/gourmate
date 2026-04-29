@@ -16,9 +16,10 @@ interface KakaoMapProps {
   places: PlaceMarker[];
   level?: number;
   onSelect?: (postId: string) => void;
+  onBoundsChange?: (map: kakao.maps.Map) => void;
 }
 
-export function KakaoMap({ center, places, level = 3, onSelect }: KakaoMapProps) {
+export function KakaoMap({ center, places, level = 3, onSelect, onBoundsChange }: KakaoMapProps) {
   const mapCenter = center || (places.length > 0 
     ? { lat: places[0].lat, lng: places[0].lng } 
     : { lat: 37.5665, lng: 126.9780 });
@@ -29,6 +30,7 @@ export function KakaoMap({ center, places, level = 3, onSelect }: KakaoMapProps)
         center={mapCenter}
         style={{ width: '100%', height: '100%' }}
         level={level}
+        onBoundsChanged={onBoundsChange}
       >
         {places.map((place) => (
           <MapMarker 
