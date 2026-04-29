@@ -76,6 +76,37 @@ export function GeneralSearch() {
                 ))}
               </div>
             </div>
+
+            {/* Recommended Themes */}
+            <div>
+              <div className="flex items-center justify-between mb-5 px-1">
+                <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest">추천 테마</h3>
+                <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</span>
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                {MOCK_COLLECTIONS.slice(0, 3).map((collection) => (
+                  <div key={collection.id} className="p-5 bg-[#0f0f0f] border border-white/15 rounded-2xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-xl">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-primary-500 opacity-40 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="flex flex-col gap-3">
+                      <h4 className="text-[15px] font-bold text-white group-hover:text-primary-400 transition-colors pr-6">
+                        {collection.title}
+                      </h4>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-gray-400">
+                            G
+                          </div>
+                          <span className="text-[11px] text-gray-500 font-medium">{collection.userId} 가이드</span>
+                        </div>
+                        <span className="text-[10px] px-2 py-0.5 bg-primary-500/10 rounded text-primary-500 font-black border border-primary-500/20 uppercase">
+                          {collection.places.length} SPOTS
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         ) : (
           <div className="space-y-10 pt-4">
