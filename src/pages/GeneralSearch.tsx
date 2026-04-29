@@ -8,13 +8,6 @@ type TabType = 'restaurant' | 'menu' | 'guide';
 export function GeneralSearch() {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState('');
-  const [activeTab, setActiveTab] = useState<TabType>('restaurant');
-
-  const TABS = [
-    { id: 'restaurant', label: '식당', icon: MapPin },
-    { id: 'menu', label: '메뉴', icon: Utensils },
-    { id: 'guide', label: '가이드', icon: User },
-  ];
 
   return (
     <div className="flex flex-col min-h-screen bg-black">
