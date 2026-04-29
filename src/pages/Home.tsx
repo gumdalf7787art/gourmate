@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, MapPin, BadgeCheck, Flame, UtensilsCrossed } from 'lucide-react';
+import { Search, MapPin, BadgeCheck, Flame, UtensilsCrossed, Heart } from 'lucide-react';
 import { MOCK_POSTS, MOCK_COLLECTIONS } from '@/data/mock';
 
 export function Home() {
@@ -127,33 +127,38 @@ export function Home() {
 
       <div className="w-full h-[1px] bg-white/5 px-5 mx-auto max-w-[calc(100%-40px)]"></div>
 
-      {/* 3. Popular User Lists (Themed Collections) */}
+      {/* 3. Recommended Themes */}
       <section className="py-8">
         <div className="px-5 mb-5 flex justify-between items-end">
           <div>
-            <h2 className="text-lg font-bold text-white tracking-tight">가이드 큐레이션</h2>
-            <p className="text-sm text-gray-500 mt-1">믿고 보는 미식가들의 테마 리스트</p>
+            <h2 className="text-lg font-bold text-white tracking-tight">추천 테마</h2>
+            <p className="text-[11px] text-gray-500 mt-0.5">믿고 보는 미식가들의 큐레이션</p>
           </div>
-          <span className="text-xs font-semibold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">See all</span>
+          <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</span>
         </div>
         
-        <div className="flex gap-4 overflow-x-auto px-5 no-scrollbar pb-4 snap-x">
-          {MOCK_COLLECTIONS.map((c) => (
-            <div key={c.id} className="snap-start flex-none w-[280px] bg-[#0c0c0c] border border-white/10 rounded-[20px] p-5 shadow-2xl relative overflow-hidden group hover:border-primary-500/30 transition-colors">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500/0 via-primary-500/50 to-primary-500/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <h3 className="font-bold text-white text-[17px] leading-snug mb-3 pr-4">
-                {c.title}
-              </h3>
-              
-              <div className="flex items-center justify-between mt-6">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-[#1a1a1a] p-0.5 border border-white/10">
-                    <img src={`https://i.pravatar.cc/150?u=${c.userId}`} alt="" className="w-full h-full rounded-full object-cover" />
+        <div className="flex flex-col gap-3 px-5">
+          {MOCK_COLLECTIONS.slice(0, 3).map((c) => (
+            <div key={c.id} className="bg-[#111] border border-white/10 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24">
+              <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
+                <img src={c.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-black/10"></div>
+              </div>
+              <div className="flex-1 p-3 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-[13px] font-bold text-white group-hover:text-primary-400 transition-colors pr-6 leading-tight line-clamp-2">
+                    {c.title}
+                  </h4>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[9px] text-gray-500 font-medium">{c.userId}</span>
+                    <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
+                      {c.places.length} SPOTS
+                    </span>
                   </div>
-                  <span className="text-xs font-medium text-gray-400">ID: {c.userId}</span>
                 </div>
-                <div className="px-2.5 py-1 rounded-md bg-white/5 backdrop-blur-sm border border-white/5">
-                  <span className="text-[10px] text-gray-300 font-semibold">{c.places.length} SPOTS</span>
+                <div className="flex items-center gap-1 text-primary-500">
+                  <Heart className="w-2.5 h-2.5 fill-primary-500" />
+                  <span className="text-[10px] font-black">{c.likes?.toLocaleString()}</span>
                 </div>
               </div>
             </div>

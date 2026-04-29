@@ -83,28 +83,28 @@ export function GeneralSearch() {
                 <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest">추천 테마</h3>
                 <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</span>
               </div>
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-1 gap-2.5">
                 {MOCK_COLLECTIONS.slice(0, 3).map((collection) => (
-                  <div key={collection.id} className="bg-[#0f0f0f] border border-white/15 rounded-2xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-xl flex">
+                  <div key={collection.id} className="bg-[#111] border border-white/10 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24">
                     <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
                       <img src={collection.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                      <div className="absolute inset-0 bg-black/20"></div>
+                      <div className="absolute inset-0 bg-black/10"></div>
                     </div>
-                    <div className="flex-1 p-4 flex flex-col justify-between">
+                    <div className="flex-1 p-3 flex flex-col justify-between">
                       <div>
-                        <h4 className="text-[14px] font-bold text-white group-hover:text-primary-400 transition-colors pr-6 leading-snug mb-2">
+                        <h4 className="text-[13px] font-bold text-white group-hover:text-primary-400 transition-colors pr-6 leading-tight line-clamp-2">
                           {collection.title}
                         </h4>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] text-gray-500 font-medium">{collection.userId}</span>
-                          <span className="text-[10px] text-primary-500 font-black px-1.5 py-0.5 bg-primary-500/10 rounded uppercase">
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[9px] text-gray-500 font-medium">{collection.userId}</span>
+                          <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
                             {collection.places.length} SPOTS
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 text-primary-500 mt-2">
-                        <Heart className="w-3 h-3 fill-primary-500" />
-                        <span className="text-[11px] font-black">{collection.likes?.toLocaleString()}</span>
+                      <div className="flex items-center gap-1 text-primary-500">
+                        <Heart className="w-2.5 h-2.5 fill-primary-500" />
+                        <span className="text-[10px] font-black">{collection.likes?.toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
@@ -170,19 +170,27 @@ export function GeneralSearch() {
                 </h3>
                 <button className="text-[10px] font-bold text-gray-500 hover:text-primary-500 transition-colors">더보기</button>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {MOCK_COLLECTIONS.filter(c => c.title.includes(keyword)).slice(0, 2).map(collection => (
-                  <div key={collection.id} className="p-4 bg-[#0c0c0c] border border-white/10 rounded-2xl flex items-center gap-4 group hover:border-primary-500/30 transition-all">
-                    <img src={collection.thumbnail} className="w-16 h-16 rounded-xl object-cover" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-white truncate mb-1 group-hover:text-primary-400 transition-colors">{collection.title}</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-gray-500">{collection.userId}</span>
-                        <div className="flex items-center gap-1 text-primary-500">
-                          <Heart className="w-2.5 h-2.5 fill-primary-500" />
-                          <span className="text-[10px] font-black">{collection.likes?.toLocaleString()}</span>
+                  <div key={collection.id} className="bg-[#111] border border-white/10 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24">
+                    <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
+                      <img src={collection.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-black/10"></div>
+                    </div>
+                    <div className="flex-1 p-3 flex flex-col justify-between">
+                      <div>
+                        <p className="text-[13px] font-bold text-white truncate group-hover:text-primary-400 transition-colors mb-1">{collection.title}</p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[9px] text-gray-500">{collection.userId}</span>
+                          <div className="flex items-center gap-1 text-primary-500">
+                            <Heart className="w-2 h-2 fill-primary-500" />
+                            <span className="text-[9px] font-black">{collection.likes?.toLocaleString()}</span>
+                          </div>
                         </div>
                       </div>
+                      <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase w-fit">
+                        {collection.places.length} SPOTS
+                      </span>
                     </div>
                   </div>
                 ))}
