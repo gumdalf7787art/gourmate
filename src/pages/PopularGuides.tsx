@@ -62,7 +62,14 @@ export function PopularGuides() {
                   <div className="px-1.5 py-0.5 bg-primary-500/10 rounded text-[9px] font-black text-primary-500 uppercase tracking-tighter">
                     TOP GUIDE
                   </div>
+                  </div>
                 </div>
+                
+                {guide.bio && (
+                  <p className="text-[12px] text-gray-500 font-medium mb-2.5 line-clamp-1 leading-tight italic">
+                    "{guide.bio}"
+                  </p>
+                )}
                 
                 <div className="flex items-center gap-3 mb-3">
                   <div 
