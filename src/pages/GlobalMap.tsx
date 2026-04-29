@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Filter, Search, LocateFixed, X, Star, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, Filter, Search, LocateFixed, Star, ShieldCheck } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_POSTS } from '@/data/mock';
 import { KakaoMap } from '@/components/KakaoMap';
 
@@ -25,7 +25,7 @@ export default function GlobalMap() {
     if (currentBounds) {
       posts = posts.filter(post => {
         const position = new kakao.maps.LatLng(post.place.latitude, post.place.longitude);
-        return currentBounds.contains(position);
+        return currentBounds.contain(position);
       });
     }
 
