@@ -174,7 +174,6 @@ export default function GuidePostList() {
             )}
           </div>
         </div>
-        </div>
       </main>
 
       {/* Floating Map Button */}
