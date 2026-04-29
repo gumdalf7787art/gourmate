@@ -30,10 +30,6 @@
     
     /* Optimize touch interactions by disabling double-tap-to-zoom delay */
     touch-action: manipulation;
-    
-    /* Better hardware acceleration for scrolling */
-    transform: translateZ(0);
-    backface-visibility: hidden;
   }
 
   /* Improve scrolling performance for all scrollable containers */
