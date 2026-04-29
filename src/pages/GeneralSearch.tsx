@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Search, ArrowLeft, Utensils, User, MapPin, Hash } from 'lucide-react';
 import { MOCK_POSTS } from '@/data/mock';
 
-type TabType = 'restaurant' | 'menu' | 'guide';
 
 export function GeneralSearch() {
   const navigate = useNavigate();
