@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { ChevronLeft, Star, Heart } from 'lucide-react';
+import { ChevronLeft, Star, Heart, Map as MapIcon, X } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_POSTS } from '../data/mock';
+import { KakaoMap } from '../components/KakaoMap';
 
 const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
 
@@ -16,6 +17,7 @@ export default function GuidePostList() {
   
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [sortOrder, setSortOrder] = useState(initialSort);
+  const [showMap, setShowMap] = useState(false);
 
   const guide = MOCK_GUIDES.find(g => g.id === id);
   const guidePosts = useMemo(() => MOCK_POSTS.filter(p => p.guide.id === id), [id]);
@@ -172,7 +174,59 @@ export default function GuidePostList() {
             )}
           </div>
         </div>
+        </div>
       </main>
+
+      {/* Floating Map Button */}
+      {filteredPosts.length > 0 && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[60]">
+          <button 
+            onClick={() => setShowMap(true)}
+            className="flex items-center gap-2 px-6 py-3.5 bg-primary-500 text-white rounded-full font-black shadow-[0_10px_30px_rgba(255,82,0,0.4)] active:scale-95 transition-all"
+          >
+            <MapIcon className="w-5 h-5" />
+            <span className="text-sm tracking-tight">지도로 보기</span>
+          </button>
+        </div>
+      )}
+
+      {/* Map View Modal */}
+      {showMap && (
+        <div className="fixed inset-0 z-[100] bg-black flex flex-col animate-in fade-in slide-in-from-bottom-10 duration-300">
+          <nav className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black">
+            <div className="flex flex-col">
+              <span className="text-xs font-black text-primary-500 uppercase tracking-widest">{guide.nickname}</span>
+              <span className="text-sm font-bold text-white">{activeCategory} 맛집 지도</span>
+            </div>
+            <button 
+              onClick={() => setShowMap(false)}
+              className="p-2 bg-white/5 rounded-full text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </nav>
+          
+          <div className="flex-1 relative">
+            <KakaoMap 
+              places={filteredPosts.map(p => ({
+                id: p.place.id,
+                lat: p.place.latitude,
+                lng: p.place.longitude,
+                name: p.place.name
+              }))}
+              level={7}
+            />
+            
+            {/* Info overlay */}
+            <div className="absolute bottom-10 left-5 right-5 z-10 pointer-events-none">
+               <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl p-4 shadow-2xl">
+                 <p className="text-[11px] text-gray-400 font-bold mb-1 uppercase tracking-widest">Map View</p>
+                 <p className="text-sm font-medium text-white">현재 필터링된 맛집 <span className="text-primary-500 font-black">{filteredPosts.length}</span>곳을 지도에서 확인하세요.</p>
+               </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
