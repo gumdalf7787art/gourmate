@@ -142,34 +142,35 @@ export default function GuideProfile() {
             </div>
             <p className="text-[13px] text-gray-500 font-medium mb-6">믿고 보는 미식가들의 큐레이션</p>
             
-            <div className="flex flex-col gap-4">
-              {guideCollections.map(collection => (
+            <div className="flex flex-col gap-3">
+              {guideCollections.map(c => (
                 <div 
-                  key={collection.id} 
-                  className="bg-[#0f0f0f] rounded-[24px] overflow-hidden border border-white/10 flex h-[140px] group cursor-pointer hover:border-primary-500/30 transition-all shadow-xl"
+                  key={c.id} 
+                  className="bg-[#111] border border-white/30 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24 cursor-pointer"
                 >
                   {/* Left Image */}
-                  <div className="w-[120px] h-full overflow-hidden shrink-0 border-r border-white/10">
-                    <img src={collection.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                  <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
+                    <img src={c.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-black/10"></div>
                   </div>
                   
                   {/* Right Content */}
-                  <div className="flex-1 p-5 flex flex-col justify-between">
+                  <div className="flex-1 p-3 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-[16px] font-black text-white mb-1.5 leading-tight group-hover:text-primary-500 transition-colors">
-                        {collection.title}
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold text-gray-500 tracking-tight">{guide.nickname}</span>
-                        <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[9px] font-black rounded uppercase tracking-tighter border border-primary-500/20">
-                          {collection.places.length} SPOTS
+                      <h4 className="text-[13px] font-bold text-white group-hover:text-primary-400 transition-colors pr-6 leading-tight line-clamp-2">
+                        {c.title}
+                      </h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[9px] text-gray-500 font-medium">{guide.nickname}</span>
+                        <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
+                          {c.places.length} SPOTS
                         </span>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-1">
-                      <Heart className="w-3.5 h-3.5 text-primary-500 fill-primary-500" />
-                      <span className="text-[12px] font-black text-primary-500">{collection.likes.toLocaleString()}</span>
+                    <div className="flex items-center gap-1 text-primary-500">
+                      <Heart className="w-2.5 h-2.5 fill-primary-500" />
+                      <span className="text-[10px] font-black">{c.likes?.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
