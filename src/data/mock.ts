@@ -152,28 +152,44 @@ export const MOCK_PLACES: Place[] = [
 export const MOCK_COLLECTIONS: Collection[] = [
   {
     id: 'c1',
+    userId: 'g1',
     title: '서울 3대 텐동 맛집 투어',
-    userId: 'gourmet_king',
-    thumbnail: 'https://images.unsplash.com/photo-1615361413100-d1e3d368e539?w=800&q=80',
+    thumbnail: 'https://images.unsplash.com/photo-1581546129595-c58469baf249?auto=format&fit=crop&q=80&w=600',
     likes: 1240,
-    places: [MOCK_PLACES[0], MOCK_PLACES[1], MOCK_PLACES[2]],
+    places: [MOCK_PLACES[0], MOCK_PLACES[1], MOCK_PLACES[3]]
   },
   {
     id: 'c2',
+    userId: 'g2',
     title: '비 오는 날 가기 좋은 신당동 감성 카페',
-    userId: 'cafe_tourer',
-    thumbnail: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80',
+    thumbnail: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=600',
     likes: 856,
-    places: [MOCK_PLACES[3], MOCK_PLACES[4]],
+    places: [MOCK_PLACES[4], MOCK_PLACES[5]]
   },
   {
     id: 'c3',
+    userId: 'g3',
     title: '부모님 모시고 가기 좋은 깔끔한 한정식',
-    userId: 'family_food',
-    thumbnail: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80',
+    thumbnail: 'https://images.unsplash.com/photo-1547573854-74d2a71d0826?auto=format&fit=crop&q=80&w=600',
     likes: 2310,
-    places: [MOCK_PLACES[5], MOCK_PLACES[6]],
+    places: [MOCK_PLACES[2], MOCK_PLACES[8]]
   },
+  {
+    id: 'c4',
+    userId: 'g4',
+    title: '실패 없는 압구정 데이트 코스 TOP 5',
+    thumbnail: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=600',
+    likes: 3420,
+    places: [MOCK_PLACES[0], MOCK_PLACES[4], MOCK_PLACES[6]]
+  },
+  {
+    id: 'c5',
+    userId: 'g1',
+    title: '혼밥하기 좋은 숨겨진 라멘 성지',
+    thumbnail: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=600',
+    likes: 920,
+    places: [MOCK_PLACES[3]]
+  }
 ];
 
 export const MOCK_POSTS: Post[] = [
