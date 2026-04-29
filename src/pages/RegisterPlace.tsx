@@ -259,7 +259,7 @@ export function RegisterPlace() {
                     }
                   }}
                   placeholder="예: 인생라멘, 데이트성지, 웨이팅필수"
-                  className="w-full pl-7 pr-4 py-3 bg-[#141414] border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                  className="w-full pl-7 pr-4 py-3 bg-[#141414] border border-white/30 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all"
                 />
               </div>
               <button
@@ -269,7 +269,7 @@ export function RegisterPlace() {
                     setTagInput('');
                   }
                 }}
-                className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white hover:bg-primary-500 hover:border-primary-500 transition-all"
+                className="px-4 py-3 bg-white/5 border border-white/30 rounded-xl text-white hover:bg-primary-500 hover:border-primary-500 transition-all"
               >
                 추가
               </button>
@@ -303,7 +303,7 @@ export function RegisterPlace() {
             
             <div className="space-y-3">
               {menuItems.map((item, idx) => (
-                <div key={idx} className="bg-[#111] border border-white/10 rounded-2xl p-4 space-y-4 shadow-xl">
+                <div key={idx} className="bg-[#111] border border-white/30 rounded-2xl p-4 space-y-4 shadow-xl">
                   <div className="flex items-center gap-3">
                     <input
                       type="text"
@@ -314,7 +314,7 @@ export function RegisterPlace() {
                         setMenuItems(newMenu);
                       }}
                       placeholder="메뉴 이름 (예: 우대갈비)"
-                      className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-500/50 transition-all"
+                      className="flex-1 bg-black/40 border border-white/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-500/50 transition-all"
                     />
                     <button 
                       onClick={() => setMenuItems(menuItems.filter((_, i) => i !== idx))}
@@ -334,7 +334,7 @@ export function RegisterPlace() {
                           setMenuItems(newMenu);
                         }}
                         placeholder="가격 (예: 32,000원)"
-                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-500/50 transition-all"
+                        className="w-full bg-black/40 border border-white/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-500/50 transition-all"
                       />
                     </div>
                     <button 
@@ -435,7 +435,7 @@ export function RegisterPlace() {
               value={review}
               onChange={(e) => setReview(e.target.value)}
               placeholder="예: 웨이팅이 길지만 그럴 가치가 충분합니다..."
-              className="w-full h-24 bg-[#141414] border border-white/10 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all"
+              className="w-full h-24 bg-[#141414] border border-white/30 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all"
             ></textarea>
           </div>
 
@@ -479,7 +479,7 @@ export function RegisterPlace() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="이곳의 분위기, 추천 메뉴, 꿀팁 등 자세한 이야기를 들려주세요..."
-              className="w-full h-80 bg-[#141414] border border-white/10 rounded-2xl p-5 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all leading-relaxed text-[16px] shadow-inner"
+              className="w-full h-80 bg-[#141414] border border-white/30 rounded-2xl p-5 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all leading-relaxed text-[16px] shadow-inner"
             ></textarea>
           </div>
 
@@ -494,7 +494,7 @@ export function RegisterPlace() {
               {/* Upload Button */}
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex-shrink-0 w-32 h-32 bg-[#141414] border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-2 hover:border-primary-500/50 hover:bg-primary-500/5 transition-all snap-start"
+                className="flex-shrink-0 w-32 h-32 bg-[#141414] border-2 border-dashed border-white/30 rounded-2xl flex flex-col items-center justify-center gap-2 hover:border-primary-500/50 hover:bg-primary-500/5 transition-all snap-start"
               >
                 <div className="p-2 bg-white/5 rounded-full">
                   <Plus className="w-6 h-6 text-gray-400" />
@@ -508,7 +508,7 @@ export function RegisterPlace() {
                   key={index} 
                   onClick={() => setRepresentativeIndex(index)}
                   className={`flex-shrink-0 w-32 h-32 relative rounded-2xl overflow-hidden snap-start group border-2 transition-all cursor-pointer ${
-                    representativeIndex === index ? 'border-primary-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]' : 'border-white/10'
+                    representativeIndex === index ? 'border-primary-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]' : 'border-white/30'
                   }`}
                 >
                   {media.type === 'image' ? (
