@@ -25,7 +25,7 @@ export function GeneralSearch() {
               autoFocus
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              className="block w-full pl-10 pr-4 py-3 bg-[#141414] border border-white/10 rounded-xl leading-5 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all font-medium"
+              className="block w-full pl-10 pr-4 py-3 bg-[#111] border border-white/30 rounded-xl leading-5 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all font-medium shadow-2xl"
               placeholder="식당, 메뉴, 가이드, 테마를 검색해보세요"
             />
           </div>
