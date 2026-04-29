@@ -5,12 +5,17 @@ import { MOCK_POSTS, MOCK_COLLECTIONS } from '@/data/mock';
 
 export function Home() {
   const navigate = useNavigate();
-  const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝'];
+  const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
   const [selectedCategory, setSelectedCategory] = useState('전체');
+
+  const CATEGORY_ICONS: { [key: string]: string } = {
+    '전체': '🍽️', '한식': '🍚', '일식': '🍣', '중식': '🥡', 
+    '양식': '🍝', '카페': '☕', '파인다이닝': '🥂', '가성비': '💰'
+  };
 
   // 필터링된 포스트 데이터
   const filteredPosts = selectedCategory === '전체' 
-    ? MOCK_POSTS 
+    ? MOCK_POSTS.slice(0, 5) 
     : MOCK_POSTS.filter(post => post.place.category === selectedCategory);
 
   return (
@@ -42,31 +47,34 @@ export function Home() {
         </div>
       </header>
 
-      {/* 2. Categories & Filtered Results */}
-      <section className="py-6">
-        <div className="px-5 mb-4">
-          <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`flex-none px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                  selectedCategory === cat
-                    ? 'bg-primary-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.3)]'
-                    : 'bg-[#141414] text-gray-400 hover:bg-[#1f1f1f] hover:text-gray-200 border border-white/5'
-                }`}
-              >
+      {/* 2. Compact 2-Row Category Grid */}
+      <section className="px-5 py-6">
+        <div className="grid grid-cols-4 gap-2 mb-8">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`flex flex-col items-center justify-center py-2.5 rounded-2xl border transition-all duration-300 ${
+                selectedCategory === cat
+                  ? 'bg-primary-500 border-primary-500 shadow-lg shadow-primary-500/20 scale-[0.98]'
+                  : 'bg-[#0f0f0f] border-white/5 hover:border-white/20'
+              }`}
+            >
+              <span className="text-lg mb-1">{CATEGORY_ICONS[cat]}</span>
+              <span className={`text-[10px] font-bold tracking-tighter ${
+                selectedCategory === cat ? 'text-white' : 'text-gray-500'
+              }`}>
                 {cat}
-              </button>
-            ))}
-          </div>
+              </span>
+            </button>
+          ))}
         </div>
 
         {/* Category Result Content (Horizontal Scroll) */}
-        <div className="flex gap-4 overflow-x-auto px-5 no-scrollbar pb-4 snap-x">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 snap-x">
           {filteredPosts.length > 0 ? (
             filteredPosts.map((post) => (
-              <Link to={`/post/${post.id}`} key={post.id} className="snap-start flex-none w-[160px] group cursor-pointer">
+              <Link to={`/post/${post.id}`} key={post.id} className="snap-start flex-none w-[150px] group cursor-pointer">
                 <div className="aspect-square w-full rounded-2xl overflow-hidden mb-2 border border-white/5 relative bg-[#111]">
                   <img src={post.images[0]} alt={post.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   <div className="absolute top-2 right-2">
@@ -77,15 +85,15 @@ export function Home() {
                     )}
                   </div>
                 </div>
-                <h4 className="text-white text-[13px] font-bold truncate mb-0.5">{post.place.name}</h4>
+                <h4 className="text-white text-[12px] font-bold truncate mb-0.5">{post.place.name}</h4>
                 <div className="flex items-center gap-1 text-gray-500">
-                  <MapPin className="w-3 h-3 text-primary-500/70" />
-                  <span className="text-[10px] truncate">{post.place.address.split(' ')[1]}</span>
+                  <MapPin className="w-2.5 h-2.5 text-primary-500/70" />
+                  <span className="text-[10px] truncate leading-none">{post.place.address.split(' ')[1]}</span>
                 </div>
               </Link>
             ))
           ) : (
-            <div className="w-full py-10 flex flex-col items-center justify-center text-gray-600 border border-dashed border-white/10 rounded-3xl mx-5">
+            <div className="w-full py-10 flex flex-col items-center justify-center text-gray-600 border border-dashed border-white/10 rounded-3xl">
               <UtensilsCrossed className="w-8 h-8 mb-2 opacity-20" />
               <p className="text-sm">해당 카테고리의 맛집이 아직 없습니다.</p>
             </div>
@@ -93,7 +101,7 @@ export function Home() {
         </div>
       </section>
 
-      <div className="w-full h-[1px] bg-white/5 mx-5"></div>
+      <div className="w-full h-[1px] bg-white/5 px-5 mx-auto max-w-[calc(100%-40px)]"></div>
 
       {/* 3. Popular User Lists (Themed Collections) */}
       <section className="py-8">
