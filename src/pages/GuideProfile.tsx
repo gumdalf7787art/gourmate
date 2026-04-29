@@ -223,6 +223,16 @@ export default function GuideProfile() {
               ))}
             </div>
 
+            {/* View List Button (CTA) */}
+            <div className="mb-8">
+              <button className="w-full py-4 bg-primary-500 rounded-2xl flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-[0.98] transition-all group">
+                <Utensils className="w-5 h-5 text-white" />
+                <span className="text-[15px] font-black text-white">
+                  {activeCategory === '전체' ? '전체' : activeCategory} 맛집 {filteredPosts.length}개 리스트 보기
+                </span>
+              </button>
+            </div>
+
             {/* Grid Posts */}
             <div className="grid grid-cols-2 gap-4">
               {filteredPosts.length > 0 ? (
