@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Heart } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_COLLECTIONS } from '../data/mock';
 
