@@ -21,6 +21,8 @@ export type Collection = {
   id: string;
   userId: string;
   title: string;
+  thumbnail: string;
+  likes: number;
   places: Place[];
 };
 
@@ -98,6 +100,26 @@ export const MOCK_PLACES: Place[] = [
     openingHours: '17:00 - 22:00',
     tags: ['멘보샤', '중식당', '미쉐린가이드']
   },
+  {
+    id: 'p6',
+    name: '한일관',
+    category: '한식',
+    address: '서울 강남구 압구정로38길 14',
+    latitude: 37.5268,
+    longitude: 127.0345,
+    phone: '02-732-3735',
+    tags: ['불고기', '한정식', '백년가게']
+  },
+  {
+    id: 'p7',
+    name: '필동면옥',
+    category: '한식',
+    address: '서울 중구 서애로 26',
+    latitude: 37.5602,
+    longitude: 126.9972,
+    phone: '02-2266-2611',
+    tags: ['평양냉면', '미쉐린가이드', '필동맛집']
+  }
 ];
 
 export const MOCK_COLLECTIONS: Collection[] = [
@@ -107,7 +129,7 @@ export const MOCK_COLLECTIONS: Collection[] = [
     userId: 'gourmet_king',
     thumbnail: 'https://images.unsplash.com/photo-1615361413100-d1e3d368e539?w=800&q=80',
     likes: 1240,
-    places: ['p1', 'p2', 'p3'],
+    places: [MOCK_PLACES[0], MOCK_PLACES[1], MOCK_PLACES[2]],
   },
   {
     id: 'c2',
@@ -115,7 +137,7 @@ export const MOCK_COLLECTIONS: Collection[] = [
     userId: 'cafe_tourer',
     thumbnail: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80',
     likes: 856,
-    places: ['p4', 'p5'],
+    places: [MOCK_PLACES[3], MOCK_PLACES[4]],
   },
   {
     id: 'c3',
@@ -123,7 +145,7 @@ export const MOCK_COLLECTIONS: Collection[] = [
     userId: 'family_food',
     thumbnail: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80',
     likes: 2310,
-    places: ['p6', 'p7', 'p8'],
+    places: [MOCK_PLACES[5], MOCK_PLACES[6]],
   },
 ];
 
