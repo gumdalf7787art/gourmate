@@ -7,8 +7,8 @@ import { RegisterPlace } from '@/pages/RegisterPlace';
 import GuideProfile from '@/pages/GuideProfile';
 import GuidePostList from '@/pages/GuidePostList';
 import { PopularGuides } from './pages/PopularGuides';
-import { GuideCollectionList } from './pages/GuideCollectionList';
-import { ThemeDetail } from './pages/ThemeDetail';
+import GuideCollectionList from './pages/GuideCollectionList';
+import ThemeDetail from './pages/ThemeDetail';
 import { BottomNav } from '@/components/BottomNav';
 
 function Layout({ children }: { children: React.ReactNode }) {

@@ -7,6 +7,7 @@ export type Guide = {
   followers?: number;
   following?: number;
   totalPosts?: number;
+  likes?: number;
 };
 
 export type Place = {
