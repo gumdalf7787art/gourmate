@@ -199,9 +199,12 @@ export function PostDetail() {
 
           <div className="w-full aspect-video bg-[#141414] rounded-2xl overflow-hidden relative border border-white/30 shadow-2xl">
             <KakaoMap 
-              lat={post.place.latitude} 
-              lng={post.place.longitude} 
-              name={post.place.name} 
+              places={[{
+                id: post.place.id,
+                lat: post.place.latitude,
+                lng: post.place.longitude,
+                name: post.place.name
+              }]}
             />
           </div>
           

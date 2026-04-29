@@ -178,7 +178,14 @@ export function RegisterPlace() {
       <main className="flex-1">
         {/* Map View */}
         <section className="h-[240px] w-full relative bg-[#111]">
-          <KakaoMap lat={parseFloat(place.y)} lng={parseFloat(place.x)} name={place.place_name} />
+          <KakaoMap 
+            places={[{
+              id: place.id,
+              lat: parseFloat(place.y),
+              lng: parseFloat(place.x),
+              name: place.place_name
+            }]} 
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none"></div>
         </section>
 
