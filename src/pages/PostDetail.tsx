@@ -344,16 +344,16 @@ export function PostDetail() {
                 <Link 
                   key={similarPost.id} 
                   to={`/post/${similarPost.id}`}
-                  className="flex-none w-[140px] bg-[#111] border border-white/10 rounded-[20px] overflow-hidden snap-start group"
+                  className="flex-none w-[130px] bg-[#111] border border-white/10 rounded-[20px] overflow-hidden snap-start group"
                 >
                   <div className="aspect-square relative overflow-hidden">
                     <img src={similarPost.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
                     <div className="absolute bottom-2.5 left-2.5 right-2.5">
-                      <p className="text-[11px] font-black text-white truncate leading-tight">{similarPost.place.name}</p>
+                      <p className="text-[10px] font-black text-white truncate leading-tight">{similarPost.place.name}</p>
                       <div className="flex items-center gap-1 mt-0.5">
                         <Star className="w-2 h-2 text-yellow-500 fill-yellow-500" />
-                        <span className="text-[9px] font-black text-white">{similarPost.rating}</span>
+                        <span className="text-[8px] font-black text-white">{similarPost.rating}</span>
                       </div>
                     </div>
                   </div>
