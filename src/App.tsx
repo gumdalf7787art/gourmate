@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
 import { Home } from '@/pages/Home';
 import { PostDetail } from '@/pages/PostDetail';
 import { GeneralSearch } from '@/pages/GeneralSearch';
@@ -14,6 +15,21 @@ import GlobalMap from './pages/GlobalMap';
 import Wishlist from './pages/Wishlist';
 import { BottomNav } from '@/components/BottomNav';
 
+// 똑똑한 스크롤 관리 컴포넌트
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  const navType = useNavigationType();
+
+  useEffect(() => {
+    // 뒤로 가기(POP)가 아닐 때만 최상단으로 스크롤
+    if (navType !== 'POP') {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, navType]);
+
+  return null;
+}
+
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto max-w-[640px] w-full min-h-screen bg-black border-x border-white/10 relative shadow-2xl">
@@ -26,6 +42,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
