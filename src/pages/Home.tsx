@@ -40,7 +40,7 @@ export function Home() {
             <Search className="h-4 w-4 text-gray-500 group-focus-within:text-primary-500 transition-colors" />
           </div>
           <div
-            className="block w-full pl-11 pr-4 py-3.5 bg-[#141414] border border-white/5 rounded-2xl leading-5 text-gray-500 sm:text-sm shadow-inner select-none cursor-pointer hover:bg-[#1a1a1a] transition-all"
+            className="block w-full pl-11 pr-4 py-3.5 bg-[#111] border border-white/30 rounded-2xl leading-5 text-gray-500 sm:text-sm shadow-inner select-none cursor-pointer hover:bg-[#1a1a1a] transition-all"
           >
             어떤 맛집을 찾으시나요?
           </div>
@@ -54,7 +54,7 @@ export function Home() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`flex flex-col items-center justify-center py-1.5 rounded-2xl border transition-all duration-300 ${
+              className={`flex flex-col items-center justify-center py-1.5 rounded-xl border transition-all duration-300 ${
                 selectedCategory === cat
                   ? 'bg-primary-500 border-primary-500 shadow-lg shadow-primary-500/20 scale-[0.96]'
                   : 'bg-[#161616] border-white/20 hover:border-white/40'
@@ -83,11 +83,11 @@ export function Home() {
           {filteredPosts.length > 0 ? (
             filteredPosts.sort((a, b) => b.likes - a.likes).slice(0, 4).map((post) => (
               <Link to={`/post/${post.id}`} key={post.id} className="group cursor-pointer">
-                <div className="aspect-[4/5] w-full rounded-2xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
+                <div className="aspect-square w-full rounded-xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
                   <img src={post.images[0]} alt={post.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <div className="absolute top-2 right-2 flex flex-col gap-1">
                     {post.isPaidByMe && (
-                      <div className="bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[8px] font-black text-primary-500 border border-primary-500/30 uppercase">
+                      <div className="bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded-md text-[8px] font-black text-primary-500 border border-primary-500/30 uppercase">
                         Verified
                       </div>
                     )}
