@@ -53,32 +53,31 @@ export default function Wishlist() {
         {activeTab === 'places' ? (
           <>
             {/* Places View */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-black text-white leading-tight mb-2">
-                가고 싶은<br />
-                <span className="text-primary-500">관심 맛집</span>입니다.
+            <div className="mb-6">
+              <h2 className="text-xl font-black text-white leading-tight">
+                가고 싶은 <span className="text-primary-500">관심 맛집</span>
               </h2>
             </div>
 
-            <div className="grid gap-6">
+            <div className="grid gap-3">
               {wishlistedPosts.length > 0 ? (
                 wishlistedPosts.map((post) => (
                   <Link 
                     key={post.id}
                     to={`/post/${post.id}`}
-                    className="bg-[#111] border border-white/10 rounded-[32px] overflow-hidden flex gap-4 p-4 active:scale-[0.98] transition-all group"
+                    className="bg-[#111] border border-white/30 rounded-2xl overflow-hidden flex gap-4 p-3 active:scale-[0.98] transition-all group"
                   >
-                    <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-white/5">
+                    <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 border border-white/5">
                       <img src={post.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
+                    <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                       <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[11px] font-black text-primary-500 uppercase tracking-widest">{post.place.category}</span>
-                          <Heart className="w-4 h-4 text-primary-500 fill-primary-500" />
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest">{post.place.category}</span>
+                          <Heart className="w-3.5 h-3.5 text-primary-500 fill-primary-500" />
                         </div>
-                        <h3 className="text-sm font-bold text-white truncate mb-1 group-hover:text-primary-400 transition-colors">{post.place.name}</h3>
-                        <p className="text-[12px] text-gray-500 truncate">{post.place.address.split(' ').slice(0, 3).join(' ')}</p>
+                        <h3 className="text-sm font-bold text-white truncate mb-0.5 group-hover:text-primary-400 transition-colors">{post.place.name}</h3>
+                        <p className="text-[11px] text-gray-500 truncate">{post.place.address.split(' ').slice(0, 3).join(' ')}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-5 h-5 rounded-full overflow-hidden border border-white/20">
@@ -109,37 +108,36 @@ export default function Wishlist() {
         ) : (
           <>
             {/* Guides View */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-black text-white leading-tight mb-2">
-                신뢰하는<br />
-                <span className="text-primary-500">관심 가이드</span>입니다.
+            <div className="mb-6">
+              <h2 className="text-xl font-black text-white leading-tight">
+                신뢰하는 <span className="text-primary-500">관심 가이드</span>
               </h2>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {followedGuides.length > 0 ? (
                 followedGuides.map((guide) => (
                   <div 
                     key={guide.id}
                     onClick={() => navigate(`/guide/${guide.id}`)}
-                    className="bg-[#111] border border-white/10 rounded-[32px] p-5 flex items-center gap-4 active:scale-[0.98] transition-all cursor-pointer group hover:border-primary-500/30"
+                    className="bg-[#111] border border-white/30 rounded-2xl p-4 flex items-center gap-4 active:scale-[0.98] transition-all cursor-pointer group hover:border-primary-500/30"
                   >
                     <div className="relative flex-shrink-0">
                       <img 
                         src={guide.profileImageUrl} 
                         alt={guide.nickname}
-                        className="w-16 h-16 rounded-full object-cover border-2 border-white/10 group-hover:border-primary-500/50 transition-all"
+                        className="w-14 h-14 rounded-full object-cover border-2 border-white/10 group-hover:border-primary-500/50 transition-all"
                       />
                       {guide.trustScore > 90 && (
-                        <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-1 border border-white/10 shadow-lg">
+                        <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 border border-white/10 shadow-lg">
                           <BadgeCheck className="w-3 h-3 text-primary-500" />
                         </div>
                       )}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <span className="text-[15px] font-black text-white block truncate mb-1">{guide.nickname}</span>
-                      <p className="text-[11px] text-gray-500 font-medium mb-3 line-clamp-1 italic">"{guide.bio}"</p>
+                      <span className="text-[14px] font-black text-white block truncate mb-0.5">{guide.nickname}</span>
+                      <p className="text-[11px] text-gray-500 font-medium mb-2 line-clamp-1 italic">"{guide.bio}"</p>
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1">
                           <Users className="w-3 h-3 text-gray-600" />
@@ -153,8 +151,8 @@ export default function Wishlist() {
                       </div>
                     </div>
 
-                    <button className="w-10 h-10 bg-primary-500 text-white rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
-                      <Heart className="w-5 h-5 fill-white" />
+                    <button className="w-9 h-9 bg-primary-500 text-white rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
+                      <Heart className="w-4 h-4 fill-white" />
                     </button>
                   </div>
                 ))
