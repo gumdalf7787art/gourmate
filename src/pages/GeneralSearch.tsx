@@ -8,8 +8,49 @@ export function GeneralSearch() {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState('');
 
+  // 지능형 검색 로직
+  const getFilteredPosts = () => {
+    if (!keyword) return [];
+    const lowKeyword = keyword.toLowerCase().trim();
+    
+    // 의미론적 연관 키워드 확장 (예: 데이트 -> 분위기, 기념일 등)
+    const semanticMap: Record<string, string[]> = {
+      '데이트': ['분위기', '커플', '야경', '파인다이닝', '기념일'],
+      '한식': ['국밥', '찌개', '고기', '백반', '반상'],
+      '일식': ['스시', '텐동', '오마카세', '라멘', '이자카야'],
+      '중식': ['짜장', '짬뽕', '딤섬', '마라'],
+      '카페': ['디저트', '베이커리', '커피', '카공', '감성'],
+      '술집': ['와인', '맥주', '소주', '칵테일', '바'],
+      '혼밥': ['1인분', '바테이블', '가성비', '빠른'],
+    };
+
+    const relatedKeywords = semanticMap[lowKeyword] || [];
+
+    return MOCK_POSTS.filter(post => {
+      const targetString = `
+        ${post.place.name} 
+        ${post.place.category} 
+        ${post.place.address} 
+        ${post.content} 
+        ${post.tags?.join(' ')}
+      `.toLowerCase();
+
+      // 1. 직접 포함 여부
+      if (targetString.includes(lowKeyword)) return true;
+      
+      // 2. 의미론적 연관 검색어 포함 여부
+      return relatedKeywords.some(rk => targetString.includes(rk));
+    });
+  };
+
+  const filteredPosts = getFilteredPosts();
+  const filteredCollections = MOCK_COLLECTIONS.filter(c => 
+    c.title.toLowerCase().includes(keyword.toLowerCase()) ||
+    c.keywords?.some(k => k.toLowerCase().includes(keyword.toLowerCase()))
+  );
+
   return (
-    <div className="flex flex-col min-h-screen bg-black">
+    <div className="flex flex-col min-h-screen bg-black pb-24">
       {/* Search Header */}
       <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl px-5 pt-12 pb-4 border-b border-white/5">
         <div className="flex items-center gap-3">
@@ -145,12 +186,11 @@ export function GeneralSearch() {
                   <MapPin className="w-4 h-4 text-primary-500" />
                   식당 리스트
                 </h3>
-                <span className="text-[10px] font-bold text-primary-500">전체보기</span>
+                <span className="text-[10px] font-bold text-primary-500">전체 {Array.from(new Set(filteredPosts.map(p => p.place.id))).length}</span>
               </div>
               <div className="space-y-4">
-                {/* uniquePlaces logic */}
-                {Array.from(new Set(MOCK_POSTS.filter(p => p.place.name.includes(keyword)).map(p => p.place.id))).map(placeId => {
-                  const placePosts = MOCK_POSTS.filter(p => p.place.id === placeId);
+                {Array.from(new Set(filteredPosts.map(p => p.place.id))).map(placeId => {
+                  const placePosts = filteredPosts.filter(p => p.place.id === placeId);
                   const place = placePosts[0].place;
                   
                   return (
@@ -245,10 +285,10 @@ export function GeneralSearch() {
                   <Hash className="w-4 h-4 text-primary-500" />
                   테마 큐레이션
                 </h3>
-                <button className="text-[10px] font-bold text-gray-500 hover:text-primary-500 transition-colors">더보기</button>
+                <Link to="/popular-guides" className="text-[10px] font-bold text-gray-500 hover:text-primary-500 transition-colors">더보기</Link>
               </div>
               <div className="space-y-2.5">
-                {MOCK_COLLECTIONS.filter(c => c.title.includes(keyword)).slice(0, 2).map(collection => (
+                {filteredCollections.slice(0, 3).map(collection => (
                   <div key={collection.id} className="bg-[#111] border border-white/10 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24">
                     <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
                       <img src={collection.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
