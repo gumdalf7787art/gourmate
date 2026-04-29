@@ -1,11 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, Share2, Heart, Star, MapPin } from 'lucide-react';
+import { ChevronLeft, Share2, Heart, Star, MapPin, Map as MapIcon, X } from 'lucide-react';
 import { MOCK_COLLECTIONS, MOCK_POSTS, MOCK_GUIDES } from '../data/mock';
+import { KakaoMap } from '@/components/KakaoMap';
 
 export default function ThemeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [showMap, setShowMap] = useState(false);
 
   const theme = MOCK_COLLECTIONS.find(c => c.id === id);
   const guide = MOCK_GUIDES.find(g => g.id === theme?.userId);
@@ -128,8 +130,55 @@ export default function ThemeDetail() {
               </Link>
             ))}
           </div>
+
+          {/* Floating Map Button */}
+          {themePosts.length > 0 && (
+            <div className="mt-12">
+              <button 
+                onClick={() => setShowMap(true)}
+                className="w-full py-5 bg-white text-black rounded-[24px] flex items-center justify-center gap-3 shadow-2xl active:scale-[0.98] transition-all group border-b-4 border-gray-200"
+              >
+                <MapIcon className="w-5 h-5" />
+                <span className="text-[15px] font-black">테마 맛집 지도로 보기</span>
+              </button>
+            </div>
+          )}
         </div>
       </main>
+
+      {/* Map View Modal */}
+      {showMap && (
+        <div className="fixed inset-0 z-[100] bg-black flex flex-col animate-in fade-in slide-in-from-bottom-10 duration-300">
+          <nav className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black">
+            <div className="flex flex-col">
+              <span className="text-xs font-black text-primary-500 uppercase tracking-widest">Theme Explorer</span>
+              <span className="text-sm font-bold text-white truncate max-w-[200px]">{theme.title}</span>
+            </div>
+            <button 
+              onClick={() => setShowMap(false)}
+              className="p-2 bg-white/5 rounded-full text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </nav>
+          
+          <div className="flex-1 relative">
+            <KakaoMap 
+              places={themePosts.map((p: any) => ({
+                id: p.place.id,
+                postId: p.id,
+                lat: p.place.latitude,
+                lng: p.place.longitude,
+                name: p.place.name,
+                category: p.place.category,
+                rating: p.rating
+              }))}
+              level={7}
+              onSelect={(postId) => navigate(`/post/${postId}`)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
