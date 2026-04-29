@@ -84,7 +84,7 @@ export function PostDetail() {
       </header>
 
       {/* Hero Image Gallery */}
-      <section className="relative w-full aspect-square bg-[#111]">
+      <section className="relative w-full aspect-[4/3] bg-[#111]">
         <div className="w-full h-full overflow-x-auto snap-x snap-mandatory flex no-scrollbar">
           {post.images.map((img, idx) => (
             <div key={idx} className="flex-none w-full h-full snap-start">
