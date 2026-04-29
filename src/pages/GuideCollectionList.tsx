@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, Heart } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_COLLECTIONS } from '../data/mock';
 
@@ -35,8 +35,9 @@ export default function GuideCollectionList() {
         <div className="flex flex-col gap-4">
           {guideCollections.length > 0 ? (
             guideCollections.map(c => (
-              <div 
+              <Link 
                 key={c.id} 
+                to={`/theme/${c.id}`}
                 className="bg-[#111] border border-white/30 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24 cursor-pointer"
               >
                 {/* Left Image */}
@@ -64,7 +65,7 @@ export default function GuideCollectionList() {
                     <span className="text-[10px] font-black">{c.likes?.toLocaleString()}</span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
             <div className="py-20 flex flex-col items-center justify-center text-center border-2 border-dashed border-white/5 rounded-[32px] bg-white/5">

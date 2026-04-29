@@ -168,8 +168,9 @@ export default function GuideProfile() {
             
             <div className="flex flex-col gap-3">
               {guideCollections.map(c => (
-                <div 
+                <Link 
                   key={c.id} 
+                  to={`/theme/${c.id}`}
                   className="bg-[#111] border border-white/30 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24 cursor-pointer"
                 >
                   {/* Left Image */}
@@ -197,7 +198,7 @@ export default function GuideProfile() {
                       <span className="text-[10px] font-black">{c.likes?.toLocaleString()}</span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>

@@ -132,7 +132,11 @@ export function Home() {
         
         <div className="flex flex-col gap-3 px-5">
           {MOCK_COLLECTIONS.slice(0, 3).map((c) => (
-            <div key={c.id} className="bg-[#111] border border-white/30 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24">
+            <Link 
+              key={c.id} 
+              to={`/theme/${c.id}`}
+              className="bg-[#111] border border-white/30 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24"
+            >
               <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
                 <img src={c.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-black/10"></div>
@@ -154,7 +158,7 @@ export function Home() {
                   <span className="text-[10px] font-black">{c.likes?.toLocaleString()}</span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
