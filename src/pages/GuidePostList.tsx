@@ -10,27 +10,47 @@ export default function GuidePostList() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Get category from URL or default to '전체'
+  // Get category and sort from URL or use defaults
   const initialCategory = searchParams.get('category') || '전체';
+  const initialSort = searchParams.get('sort') || 'latest';
+  
   const [activeCategory, setActiveCategory] = useState(initialCategory);
+  const [sortOrder, setSortOrder] = useState(initialSort);
 
   const guide = MOCK_GUIDES.find(g => g.id === id);
   const guidePosts = useMemo(() => MOCK_POSTS.filter(p => p.guide.id === id), [id]);
 
-  // Update URL when category changes
+  // Update URL when category or sort changes
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
-    setSearchParams({ category });
+    setSearchParams(prev => { prev.set('category', category); return prev; });
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSort = e.target.value;
+    setSortOrder(newSort);
+    setSearchParams(prev => { prev.set('sort', newSort); return prev; });
   };
 
   const filteredPosts = useMemo(() => {
-    if (activeCategory === '전체') return guidePosts;
-    return guidePosts.filter(post => {
-      if (activeCategory === '가성비') return post.tags?.includes('가성비');
-      if (activeCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place.category === '파인다이닝';
-      return post.place.category === activeCategory;
+    // 1. Filter
+    let result = guidePosts;
+    if (activeCategory !== '전체') {
+      result = guidePosts.filter(post => {
+        if (activeCategory === '가성비') return post.tags?.includes('가성비');
+        if (activeCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place.category === '파인다이닝';
+        return post.place.category === activeCategory;
+      });
+    }
+
+    // 2. Sort
+    return [...result].sort((a, b) => {
+      if (sortOrder === 'rating') return b.rating - a.rating;
+      if (sortOrder === 'likes') return b.likes - a.likes;
+      // Default: 'latest'
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-  }, [guidePosts, activeCategory]);
+  }, [guidePosts, activeCategory, sortOrder]);
 
   if (!guide) return null;
 
@@ -66,14 +86,33 @@ export default function GuidePostList() {
           ))}
         </div>
 
-        {/* Results Info */}
+        {/* Results Info & Sort */}
         <div className="px-6 mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-black text-white flex items-center gap-2 tracking-tighter">
-            {activeCategory} 맛집
-          </h2>
-          <span className="text-[12px] font-bold text-gray-500">
-            총 <span className="text-primary-500 font-black">{filteredPosts.length}</span>곳
-          </span>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-black text-white tracking-tighter">
+              {activeCategory} 맛집
+            </h2>
+            <span className="text-[12px] font-bold text-gray-500">
+              <span className="text-primary-500 font-black">{filteredPosts.length}</span>곳
+            </span>
+          </div>
+
+          <div className="relative">
+            <select 
+              value={sortOrder}
+              onChange={handleSortChange}
+              className="appearance-none bg-[#111] text-gray-300 text-xs font-bold py-1.5 pl-3 pr-8 rounded-lg border border-white/10 outline-none focus:border-primary-500/50 cursor-pointer"
+            >
+              <option value="latest">최신순</option>
+              <option value="rating">평점 높은순</option>
+              <option value="likes">좋아요 많은순</option>
+            </select>
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
         </div>
 
         {/* Grid Posts */}
