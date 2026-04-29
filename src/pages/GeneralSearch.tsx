@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, ArrowLeft, Utensils, User, MapPin, Hash } from 'lucide-react';
-import { MOCK_POSTS } from '@/data/mock';
+import { MOCK_POSTS, MOCK_COLLECTIONS } from '@/data/mock';
 
 
 export function GeneralSearch() {
@@ -26,7 +26,7 @@ export function GeneralSearch() {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               className="block w-full pl-10 pr-4 py-3 bg-[#141414] border border-white/10 rounded-xl leading-5 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all font-medium"
-              placeholder="식당, 메뉴, 가이드를 검색해보세요"
+              placeholder="식당, 메뉴, 가이드, 테마를 검색해보세요"
             />
           </div>
         </div>
@@ -123,6 +123,32 @@ export function GeneralSearch() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </section>
+
+            {/* Section: Themes (Collections) */}
+            <section>
+              <div className="flex items-center justify-between mb-4 px-1">
+                <h3 className="text-sm font-black text-white flex items-center gap-2">
+                  <Hash className="w-4 h-4 text-primary-500" />
+                  테마 큐레이션
+                </h3>
+                <button className="text-[10px] font-bold text-gray-500 hover:text-primary-500 transition-colors">더보기</button>
+              </div>
+              <div className="space-y-3">
+                {MOCK_COLLECTIONS.filter(c => c.title.includes(keyword)).slice(0, 2).map(collection => (
+                  <div key={collection.id} className="p-5 bg-[#0c0c0c] border border-white/5 rounded-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-primary-500 opacity-50"></div>
+                    <h4 className="text-sm font-bold text-white mb-2 pr-4">{collection.title}</h4>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] text-gray-500 font-medium">가이드 ID: {collection.userId}</span>
+                      <span className="text-[10px] px-2 py-0.5 bg-white/5 rounded text-primary-500 font-bold border border-white/5">{collection.places.length} SPOTS</span>
+                    </div>
+                  </div>
+                ))}
+                {MOCK_COLLECTIONS.filter(c => c.title.includes(keyword)).length === 0 && (
+                  <p className="text-xs text-gray-600 px-1 italic">'{keyword}' 키워드를 포함한 테마가 없습니다.</p>
+                )}
               </div>
             </section>
 
