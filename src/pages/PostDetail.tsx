@@ -26,6 +26,7 @@ export function PostDetail() {
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showMapModal, setShowMapModal] = useState(false);
   
   const post = MOCK_POSTS.find(p => p.id === id);
 
@@ -239,7 +240,10 @@ export function PostDetail() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 pt-4">
-            <button className="flex items-center justify-center gap-2 h-14 bg-primary-500 text-white font-black text-sm uppercase tracking-widest rounded-[20px] shadow-[0_10px_20px_rgba(255,107,0,0.2)] active:scale-95 transition-all">
+            <button 
+              onClick={() => setShowMapModal(true)}
+              className="flex items-center justify-center gap-2 h-14 bg-primary-500 text-white font-black text-sm uppercase tracking-widest rounded-[20px] shadow-[0_10px_20px_rgba(255,107,0,0.2)] active:scale-95 transition-all"
+            >
               <Navigation className="w-4 h-4" />
               길찾기
             </button>
@@ -253,6 +257,68 @@ export function PostDetail() {
               카카오맵 정보
             </a>
           </div>
+
+          {/* Map Selection Modal */}
+          {showMapModal && (
+            <div className="fixed inset-0 z-[100] flex items-end justify-center px-4 pb-10 sm:pb-20">
+              <div 
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
+                onClick={() => setShowMapModal(false)}
+              />
+              <div className="relative w-full max-w-[400px] bg-[#111] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-10 duration-300">
+                <div className="p-6 border-b border-white/5">
+                  <h3 className="text-lg font-black text-white text-center">길찾기 앱 선택</h3>
+                  <p className="text-[11px] text-gray-500 text-center mt-1 font-bold uppercase tracking-widest">어떤 지도로 안내해 드릴까요?</p>
+                </div>
+                <div className="p-4 space-y-2">
+                  {[
+                    { 
+                      name: '네이버 지도', 
+                      icon: '/naver-map.png', 
+                      color: 'bg-[#2DB400]',
+                      url: `https://map.naver.com/v5/search/${encodeURIComponent(post.place.name)}`
+                    },
+                    { 
+                      name: '카카오맵', 
+                      icon: '/kakao-map.png', 
+                      color: 'bg-[#FFCD00]',
+                      url: `https://map.kakao.com/link/to/${post.place.name},${post.place.latitude},${post.place.longitude}`
+                    },
+                    { 
+                      name: '구글 지도', 
+                      icon: '/google-map.png', 
+                      color: 'bg-white',
+                      url: `https://www.google.com/maps/dir/?api=1&destination=${post.place.latitude},${post.place.longitude}`
+                    }
+                  ].map((map, i) => (
+                    <a
+                      key={i}
+                      href={map.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => setShowMapModal(false)}
+                      className="flex items-center gap-4 p-4 hover:bg-white/5 rounded-2xl transition-colors group"
+                    >
+                      <div className={`w-12 h-12 ${map.color} rounded-xl flex items-center justify-center overflow-hidden border border-white/5 shadow-lg group-active:scale-90 transition-transform`}>
+                        <img src={map.icon} alt={map.name} className="w-8 h-8 object-contain" />
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-white font-black text-[15px]">{map.name}</span>
+                        <p className="text-[11px] text-gray-500 font-medium">앱으로 연결하여 길찾기 시작</p>
+                      </div>
+                      <ChevronLeft className="w-5 h-5 text-gray-700 rotate-180" />
+                    </a>
+                  ))}
+                </div>
+                <button 
+                  onClick={() => setShowMapModal(false)}
+                  className="w-full py-5 text-gray-500 font-bold text-sm hover:text-white transition-colors"
+                >
+                  닫기
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Menu Items Section */}
           {post.menuItems && post.menuItems.length > 0 && (
