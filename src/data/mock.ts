@@ -37,6 +37,7 @@ export type Post = {
   likes: number;
   bookmarks: number;
   tags?: string[];
+  rating: number;
 };
 
 export const MOCK_GUIDES: Guide[] = [
@@ -165,6 +166,7 @@ export const MOCK_POSTS: Post[] = [
     likes: 128,
     bookmarks: 45,
     tags: ['인생우대갈비', '웨이팅지옥', '용산핫플'],
+    rating: 4.9,
   },
   {
     id: 'post2',
@@ -179,6 +181,7 @@ export const MOCK_POSTS: Post[] = [
     likes: 85,
     bookmarks: 22,
     tags: ['라멘성지', '해장완료', '합정맛집'],
+    rating: 4.7,
   },
   {
     id: 'post3',
@@ -193,5 +196,6 @@ export const MOCK_POSTS: Post[] = [
     likes: 210,
     bookmarks: 78,
     tags: ['명동필수코스', '미쉐린맛집', '마늘김치중독'],
+    rating: 4.5,
   }
 ];

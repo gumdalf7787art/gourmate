@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   ChevronLeft, 
   Share2, 
@@ -11,7 +11,9 @@ import {
   BadgeCheck,
   Navigation,
   ExternalLink,
-  Info
+  Info,
+  Star,
+  Flame
 } from 'lucide-react';
 import { MOCK_POSTS } from '@/data/mock';
 import { useState, useEffect } from 'react';
@@ -65,7 +67,7 @@ export function PostDetail() {
         </button>
         
         {scrolled && (
-          <h2 className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-white transition-opacity">
+          <h2 className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-white transition-opacity truncate max-w-[200px]">
             {post.place.name}
           </h2>
         )}
@@ -80,8 +82,8 @@ export function PostDetail() {
       </header>
 
       {/* Hero Image Gallery */}
-      <section className="relative w-full aspect-[4/3] bg-[#111]">
-        <div className="w-full h-full overflow-x-auto snap-x flex no-scrollbar">
+      <section className="relative w-full aspect-square bg-[#111]">
+        <div className="w-full h-full overflow-x-auto snap-x snap-mandatory flex no-scrollbar">
           {post.images.map((img, idx) => (
             <div key={idx} className="flex-none w-full h-full snap-start">
               <img 
@@ -93,48 +95,50 @@ export function PostDetail() {
           ))}
         </div>
         
-        {/* Verification Badge Overlay */}
-        {post.isPaidByMe && (
-          <div className="absolute bottom-10 left-6 z-20">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-primary-500 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg">
-              <BadgeCheck className="w-3.5 h-3.5" />
-              내돈내산 인증 가이드
-            </div>
-          </div>
-        )}
-
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30 pointer-events-none z-10" />
         
         {/* Pagination Dots */}
         {post.images.length > 1 && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
             {post.images.map((_, i) => (
-              <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-white' : 'bg-white/30'}`} />
+              <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-primary-500 w-4' : 'bg-white/30'}`} />
             ))}
           </div>
         )}
       </section>
 
       {/* Content Area */}
-      <main className="px-6 -mt-6 relative z-30 rounded-t-[32px] bg-black border-t border-white/5">
+      <main className="px-6 -mt-8 relative z-30 rounded-t-[32px] bg-black border-t border-white/10">
         
         {/* Place Basic Info */}
-        <div className="pt-8 pb-6 border-b border-white/5">
-          <div className="flex justify-between items-start mb-2 text-primary-500 text-[10px] font-black uppercase tracking-widest">
-            <span>{post.place.category}</span>
-            <span className="text-gray-500">{post.createdAt}</span>
+        <div className="pt-10 pb-6 border-b border-white/5">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="px-2 py-0.5 bg-primary-500 text-white text-[9px] font-black rounded-md uppercase tracking-tight">
+              {post.place.category}
+            </span>
+            <div className="flex items-center gap-1 ml-auto">
+              <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+              <span className="text-sm font-black text-white">{post.rating.toFixed(1)}</span>
+            </div>
           </div>
+          
           <h1 className="text-3xl font-black text-white tracking-tighter mb-4 leading-tight">
             {post.place.name}
           </h1>
-          
-          <div className="flex flex-wrap gap-2">
-            {post.place.tags?.map(tag => (
-              <span key={tag} className="px-2.5 py-1 bg-[#141414] border border-white/10 rounded-lg text-gray-400 text-[11px] font-medium">
+
+          {/* Keywords/Tags */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {post.tags?.map((tag, idx) => (
+              <span key={idx} className="text-[11px] text-primary-500 font-bold px-2.5 py-1.5 bg-primary-500/5 rounded-xl border border-primary-500/20">
                 #{tag}
               </span>
             ))}
+          </div>
+
+          <div className="flex items-center gap-2 text-gray-500">
+            <MapPin className="w-3.5 h-3.5 text-primary-500/70" />
+            <span className="text-[13px] font-medium">{post.place.address}</span>
           </div>
         </div>
 
@@ -148,42 +152,50 @@ export function PostDetail() {
                   alt={post.guide.nickname} 
                   className="w-12 h-12 rounded-full object-cover border border-white/10" 
                 />
-                <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 border border-white/10">
-                  <BadgeCheck className="w-4 h-4 text-primary-500" />
-                </div>
+                {post.guide.trustScore > 90 && (
+                  <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 border border-white/10">
+                    <BadgeCheck className="w-4 h-4 text-primary-500" />
+                  </div>
+                )}
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-white leading-none mb-1.5">{post.guide.nickname}</span>
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] text-gray-400 font-medium">신뢰지수 {post.guide.trustScore}</span>
                   <div className="w-[1px] h-2.5 bg-white/10"></div>
-                  <span className="text-[11px] text-primary-500 font-bold">TOP GUIDE</span>
+                  <span className="text-[11px] text-primary-500 font-bold uppercase tracking-tighter">Verified Guide</span>
                 </div>
               </div>
             </div>
-            <button className="px-4 py-1.5 bg-white text-black text-[12px] font-bold rounded-full active:scale-95 transition-transform">
+            <button className="px-5 py-2 bg-white/5 border border-white/30 text-white text-[12px] font-bold rounded-xl active:scale-95 transition-transform">
               팔로우
             </button>
           </div>
 
-          <div className="bg-[#0c0c0c] rounded-2xl p-5 border border-white/5 relative">
-            <div className="absolute -top-3 left-6 bg-black px-2">
-              <span className="text-primary-500 font-serif text-3xl">“</span>
+          <div className="bg-[#111] rounded-2xl p-6 border border-white/30 relative shadow-2xl">
+            <div className="absolute -top-3 left-6 bg-black px-2 flex items-center gap-1">
+              <Flame className="w-4 h-4 text-primary-500" />
+              <span className="text-primary-500 font-black text-xs uppercase tracking-widest">Guide's Choice</span>
             </div>
-            <p className="text-[15px] text-gray-300 leading-relaxed font-light whitespace-pre-wrap pt-2">
-              {post.content}
+            <p className="text-[15px] text-gray-200 leading-relaxed font-light whitespace-pre-wrap pt-2 italic">
+              "{post.content}"
             </p>
           </div>
         </div>
 
         {/* Detailed Place Info */}
         <section className="py-8 space-y-6">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Info className="w-4 h-4 text-primary-500" />
-            상세 정보
-          </h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <Info className="w-4 h-4 text-primary-500" />
+              상세 정보
+            </h2>
+            <button className="text-[10px] font-black text-primary-500 uppercase tracking-widest border border-primary-500/30 px-2 py-1 rounded-md">
+              정보수정 제안
+            </button>
+          </div>
 
-          <div className="w-full aspect-video bg-[#141414] rounded-2xl overflow-hidden relative border border-white/5 shadow-2xl">
+          <div className="w-full aspect-video bg-[#141414] rounded-2xl overflow-hidden relative border border-white/30 shadow-2xl">
             <KakaoMap 
               lat={post.place.latitude} 
               lng={post.place.longitude} 
@@ -191,44 +203,32 @@ export function PostDetail() {
             />
           </div>
           
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-lg bg-[#141414] flex items-center justify-center shrink-0 border border-white/5">
-                <MapPin className="w-4 h-4 text-gray-400" />
+          <div className="grid grid-cols-1 gap-4">
+            {[
+              { icon: MapPin, label: '주소', value: post.place.address },
+              { icon: Clock, label: '영업시간', value: post.place.openingHours || '정보 없음' },
+              { icon: Phone, label: '전화번호', value: post.place.phone || '정보 없음', isLink: true },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-4 p-4 bg-[#111] border border-white/10 rounded-2xl">
+                <div className="w-10 h-10 rounded-xl bg-black/50 flex items-center justify-center shrink-0 border border-white/10">
+                  <item.icon className="w-4 h-4 text-primary-500" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-gray-500 mb-0.5 font-bold uppercase tracking-widest">{item.label}</span>
+                  <span className={`text-sm text-gray-200 ${item.isLink ? 'underline decoration-primary-500/30 underline-offset-4' : ''}`}>
+                    {item.value}
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-500 mb-0.5 font-medium">주소</span>
-                <span className="text-sm text-gray-200">{post.place.address}</span>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-lg bg-[#141414] flex items-center justify-center shrink-0 border border-white/5">
-                <Clock className="w-4 h-4 text-gray-400" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-500 mb-0.5 font-medium">영업시간</span>
-                <span className="text-sm text-gray-200">{post.place.openingHours}</span>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 rounded-lg bg-[#141414] flex items-center justify-center shrink-0 border border-white/5">
-                <Phone className="w-4 h-4 text-gray-400" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-500 mb-0.5 font-medium">전화번호</span>
-                <span className="text-sm text-gray-200 underline decoration-white/20 underline-offset-4">{post.place.phone}</span>
-              </div>
-            </div>
+            ))}
           </div>
 
           <div className="grid grid-cols-2 gap-3 pt-4">
-            <button className="flex items-center justify-center gap-2 h-14 bg-[#141414] border border-white/10 rounded-2xl text-white font-bold active:bg-[#1a1a1a] transition-colors">
-              <Navigation className="w-4 h-4 text-primary-500" />
+            <button className="flex items-center justify-center gap-2 h-14 bg-primary-500 text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-lg shadow-primary-500/20 active:scale-95 transition-all">
+              <Navigation className="w-4 h-4" />
               길찾기
             </button>
-            <button className="flex items-center justify-center gap-2 h-14 bg-[#141414] border border-white/10 rounded-2xl text-white font-bold active:bg-[#1a1a1a] transition-colors">
+            <button className="flex items-center justify-center gap-2 h-14 bg-white/5 border border-white/30 text-white font-black text-xs uppercase tracking-widest rounded-2xl active:bg-white/10 transition-all">
               <ExternalLink className="w-4 h-4 text-primary-500" />
               웹사이트
             </button>
@@ -237,20 +237,20 @@ export function PostDetail() {
       </main>
 
       {/* Bottom Action Bar */}
-      <footer className="fixed bottom-0 z-50 w-full max-w-[640px] bg-black/80 backdrop-blur-3xl border-t border-white/5 px-6 py-4 flex items-center gap-4">
+      <footer className="fixed bottom-0 z-50 w-full max-w-[640px] bg-black/80 backdrop-blur-3xl border-t border-white/10 px-6 py-4 flex items-center gap-4">
         <div className="flex items-center gap-6 pr-2">
           <button 
             onClick={() => setIsLiked(!isLiked)}
             className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
           >
-            <Heart className={`w-6 h-6 ${isLiked ? 'fill-red-500 text-red-500 shadow-lg' : 'text-gray-400'}`} />
+            <Heart className={`w-6 h-6 transition-all ${isLiked ? 'fill-primary-500 text-primary-500 scale-110' : 'text-gray-400'}`} />
             <span className="text-[10px] font-bold text-gray-500">{post.likes + (isLiked ? 1 : 0)}</span>
           </button>
           <button 
             onClick={() => setIsBookmarked(!isBookmarked)}
             className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
           >
-            <Bookmark className={`w-6 h-6 ${isBookmarked ? 'fill-primary-500 text-primary-500' : 'text-gray-400'}`} />
+            <Bookmark className={`w-6 h-6 transition-all ${isBookmarked ? 'fill-white text-white scale-110' : 'text-gray-400'}`} />
             <span className="text-[10px] font-bold text-gray-500">저장</span>
           </button>
           <button className="flex flex-col items-center gap-1 active:scale-90 transition-transform">
@@ -258,7 +258,7 @@ export function PostDetail() {
             <span className="text-[10px] font-bold text-gray-500">댓글</span>
           </button>
         </div>
-        <button className="flex-1 h-14 bg-primary-500 rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-[0_10px_20px_rgba(249,115,22,0.3)] active:scale-[0.98] transition-transform">
+        <button className="flex-1 h-14 bg-white text-black font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl active:scale-[0.98] transition-transform">
           예약하기
         </button>
       </footer>
