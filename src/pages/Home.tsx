@@ -54,15 +54,15 @@ export function Home() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`flex flex-col items-center justify-center py-2.5 rounded-2xl border transition-all duration-300 ${
+              className={`flex flex-col items-center justify-center py-1.5 rounded-2xl border transition-all duration-300 ${
                 selectedCategory === cat
-                  ? 'bg-primary-500 border-primary-500 shadow-lg shadow-primary-500/20 scale-[0.98]'
-                  : 'bg-[#0f0f0f] border-white/5 hover:border-white/20'
+                  ? 'bg-primary-500 border-primary-500 shadow-lg shadow-primary-500/20 scale-[0.96]'
+                  : 'bg-[#161616] border-white/20 hover:border-white/40'
               }`}
             >
-              <span className="text-lg mb-1">{CATEGORY_ICONS[cat]}</span>
+              <span className="text-base mb-0.5">{CATEGORY_ICONS[cat]}</span>
               <span className={`text-[10px] font-bold tracking-tighter ${
-                selectedCategory === cat ? 'text-white' : 'text-gray-500'
+                selectedCategory === cat ? 'text-white' : 'text-gray-400'
               }`}>
                 {cat}
               </span>
