@@ -122,7 +122,7 @@ export function RegisterPlace() {
     });
   };
 
-  const CUSTOM_TAGS = ['한식', '일식', '중식', '양식', '카페', '파인다이닝', '기타'];
+  const CUSTOM_TAGS = ['한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비', '기타'];
 
   if (!place) {
     return (
