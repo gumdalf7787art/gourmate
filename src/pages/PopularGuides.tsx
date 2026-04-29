@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, BadgeCheck, UserPlus, Heart, Users, Star, Info } from 'lucide-react';
-import { MOCK_GUIDES } from '@/data/mock';
+import { ArrowLeft, BadgeCheck, UserPlus, Heart, Users, Star, Info, Map as MapIcon, X } from 'lucide-react';
+import { MOCK_GUIDES, MOCK_POSTS } from '@/data/mock';
 import type { Guide } from '@/data/mock';
 import { TrustScoreModal } from '@/components/TrustScoreModal';
+import { KakaoMap } from '@/components/KakaoMap';
 
 export function PopularGuides() {
   const navigate = useNavigate();
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
+  const [showMap, setShowMap] = useState(false);
+
+  // 인기 가이드들의 맛집 포스트들 (Top 20 기준)
+  const popularPlaces = MOCK_POSTS.filter(post => post.isTop20);
 
   // 신뢰지수 높은 순으로 정렬
   const sortedGuides = [...MOCK_GUIDES].sort((a, b) => b.trustScore - a.trustScore);
@@ -111,7 +116,56 @@ export function PopularGuides() {
             </div>
           ))}
         </div>
+
+        {/* View All Places on Map Button */}
+        {popularPlaces.length > 0 && (
+          <div className="mt-12 mb-10">
+            <button 
+              onClick={() => setShowMap(true)}
+              className="w-full py-4 bg-primary-500 rounded-2xl flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-[0.98] transition-all group"
+            >
+              <MapIcon className="w-5 h-5 text-white" />
+              <span className="text-[15px] font-black text-white">
+                인기 가이드 추천맛집 지도로 보기
+              </span>
+            </button>
+          </div>
+        )}
       </main>
+
+      {/* Map View Modal */}
+      {showMap && (
+        <div className="fixed inset-0 z-[100] bg-black flex flex-col animate-in fade-in slide-in-from-bottom-10 duration-300">
+          <nav className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black">
+            <div className="flex flex-col">
+              <span className="text-xs font-black text-primary-500 uppercase tracking-widest">Global Curation</span>
+              <span className="text-sm font-bold text-white">인기 가이드 연합 지도</span>
+            </div>
+            <button 
+              onClick={() => setShowMap(false)}
+              className="p-2 bg-white/5 rounded-full text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </nav>
+          
+          <div className="flex-1 relative">
+            <KakaoMap 
+              places={popularPlaces.map(p => ({
+                id: p.place.id,
+                postId: p.id,
+                lat: p.place.latitude,
+                lng: p.place.longitude,
+                name: p.place.name,
+                category: p.place.category,
+                rating: p.rating
+              }))}
+              level={8}
+              onSelect={(postId) => navigate(`/post/${postId}`)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Trust Score Detail Modal */}
       {selectedGuide && (
