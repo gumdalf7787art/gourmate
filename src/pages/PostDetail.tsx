@@ -234,7 +234,7 @@ export function PostDetail() {
             </button>
           </div>
 
-          {/* New Detailed Content Section */}
+          {/* Detailed Content Section */}
           <div className="pt-6 space-y-4">
             <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
               <Info className="w-3.5 h-3.5 text-primary-500" />
@@ -250,6 +250,49 @@ export function PostDetail() {
                 주요 특징으로는 정갈한 분위기 속에서 즐기는 {post.place.category}의 정수를 맛보실 수 있으며, 방문객들에게 잊지 못할 미식 경험을 선사합니다. 상세한 메뉴 구성과 일자별 특선 요리는 매장 상황에 따라 변동될 수 있으니 방문 전 확인을 권장드립니다.
               </p>
             </div>
+          </div>
+
+          {/* New Visitor Reviews Section */}
+          <div className="pt-10 space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
+                <MessageCircle className="w-3.5 h-3.5 text-primary-500" />
+                방문후기
+              </h3>
+              <button className="text-[11px] font-bold text-gray-500 hover:text-white transition-colors">전체보기</button>
+            </div>
+
+            <div className="space-y-3">
+              {[
+                { name: '미식가S', date: '2026.04.25', rating: 5, content: '진짜 여기는 인생 맛집이에요! 분위기도 너무 좋고 음식 하나하나 정성이 느껴집니다.' },
+                { name: '초코바닐라', date: '2026.04.22', rating: 4, content: '웨이팅이 조금 있었지만 기다린 보람이 있네요. 깔끔하고 맛있습니다.' },
+                { name: '맛따라멋따라', date: '2026.04.18', rating: 5, content: '가족들과 함께 방문했는데 모두 만족해하셨어요. 재방문 의사 200%입니다!' }
+              ].map((review, idx) => (
+                <div key={idx} className="p-5 bg-[#111] border border-white/10 rounded-2xl">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-primary-500/10 border border-primary-500/20 flex items-center justify-center text-[10px] text-primary-500 font-black">
+                        {review.name[0]}
+                      </div>
+                      <span className="text-[12px] font-bold text-gray-200">{review.name}</span>
+                    </div>
+                    <span className="text-[10px] text-gray-500 font-medium">{review.date}</span>
+                  </div>
+                  <div className="flex gap-0.5 mb-2.5">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-700'}`} />
+                    ))}
+                  </div>
+                  <p className="text-[13px] text-gray-400 leading-relaxed">
+                    {review.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+            
+            <button className="w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-[13px] text-gray-300 font-bold hover:bg-white/10 transition-colors">
+              후기 작성하기
+            </button>
           </div>
         </section>
       </main>
