@@ -398,26 +398,28 @@ export function RegisterPlace() {
               * 여러 장의 사진과 동영상을 선택하여 가로로 넘겨볼 수 있습니다.
             </p>
           </div>
+          {/* Submit Button at the end of the flow */}
+          <div className="pt-10 pb-20">
+            <button
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="w-full bg-primary-500 text-white font-black text-xl py-5 rounded-2xl shadow-[0_10px_30px_rgba(249,115,22,0.4)] hover:bg-primary-600 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            >
+              {isLoading ? (
+                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-6 h-6" />
+                  <span>맛집 등록 완료하기</span>
+                </>
+              )}
+            </button>
+            <p className="mt-4 text-center text-xs text-gray-600">
+              * 등록된 정보는 가이드님의 맛집 지도에 즉시 반영됩니다.
+            </p>
+          </div>
         </section>
       </main>
-
-      {/* Fixed Bottom Button */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-[640px] mx-auto p-5 bg-gradient-to-t from-black via-black/90 to-transparent z-50">
-        <button
-          onClick={handleSubmit}
-          disabled={isLoading}
-          className="w-full bg-primary-500 text-white font-black text-lg py-4 rounded-2xl shadow-[0_4px_20px_rgba(249,115,22,0.4)] hover:bg-primary-600 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          {isLoading ? (
-            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          ) : (
-            <>
-              <CheckCircle2 className="w-5 h-5" />
-              <span>맛집 등록하기</span>
-            </>
-          )}
-        </button>
-      </div>
     </div>
   );
 }
