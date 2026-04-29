@@ -1,16 +1,91 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, MapPin, Tag } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, MapPin, Tag, Image as ImageIcon, Video, X, Plus } from 'lucide-react';
 import { KakaoMap } from '@/components/KakaoMap';
 
 export function RegisterPlace() {
   const navigate = useNavigate();
   const location = useLocation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const place = location.state?.place;
 
   const [isLoading, setIsLoading] = useState(false);
   const [review, setReview] = useState('');
+  const [content, setContent] = useState('');
   const [selectedTag, setSelectedTag] = useState(place?.category_group_name || '음식점');
+  const [mediaFiles, setMediaFiles] = useState<{ file: File; preview: string; type: 'image' | 'video' }[]>([]);
+
+  // 이미지 리사이징 유틸리티
+  const resizeImage = (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const MAX_WIDTH = 1200;
+
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const resizedFile = new File([blob], file.name, { type: 'image/jpeg' });
+              resolve(resizedFile);
+            } else {
+              resolve(file);
+            }
+          }, 'image/jpeg', 0.8);
+        };
+      };
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const newFiles = Array.from(files);
+    const processedFiles = await Promise.all(
+      newFiles.map(async (file) => {
+        const type = file.type.startsWith('video/') ? 'video' : 'image';
+        let finalFile = file;
+        
+        if (type === 'image') {
+          finalFile = await resizeImage(file);
+        }
+
+        return {
+          file: finalFile,
+          preview: URL.createObjectURL(finalFile),
+          type: type as 'image' | 'video'
+        };
+      })
+    );
+
+    setMediaFiles((prev) => [...prev, ...processedFiles]);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const removeMedia = (index: number) => {
+    setMediaFiles((prev) => {
+      const newMedia = [...prev];
+      URL.revokeObjectURL(newMedia[index].preview);
+      newMedia.splice(index, 1);
+      return newMedia;
+    });
+  };
 
   const CUSTOM_TAGS = ['한식', '일식', '중식', '양식', '카페', '파인다이닝', '기타'];
 
@@ -27,12 +102,23 @@ export function RegisterPlace() {
 
   const handleSubmit = () => {
     setIsLoading(true);
+    
+    // 등록 데이터 요약 (디버깅용)
+    console.log('등록 시도 데이터:', {
+      place_name: place.place_name,
+      tag: selectedTag,
+      short_review: review,
+      detailed_content: content,
+      media_count: mediaFiles.length,
+      media_info: mediaFiles.map(m => ({ name: m.file.name, size: m.file.size, type: m.type }))
+    });
+
     // 실제로는 여기에 서버 API 호출 로직이 들어갑니다.
     setTimeout(() => {
       setIsLoading(false);
-      alert('맛집 등록이 완료되었습니다!');
+      alert('맛집 등록이 완료되었습니다!\n상세 글과 미디어가 성공적으로 업로드되었습니다.');
       navigate('/');
-    }, 1000);
+    }, 1500);
   };
 
   return (
@@ -106,8 +192,86 @@ export function RegisterPlace() {
               value={review}
               onChange={(e) => setReview(e.target.value)}
               placeholder="예: 웨이팅이 길지만 그럴 가치가 충분합니다..."
-              className="w-full h-32 bg-[#141414] border border-white/10 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all"
+              className="w-full h-24 bg-[#141414] border border-white/10 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all"
             ></textarea>
+          </div>
+
+          {/* Detailed Content Input */}
+          <div>
+            <h3 className="text-sm font-bold text-white mb-4">상세한 후기를 들려주세요 (블로그 스타일)</h3>
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="이곳의 분위기, 추천 메뉴, 꿀팁 등 자세한 이야기를 들려주세요..."
+              className="w-full h-64 bg-[#141414] border border-white/10 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all leading-relaxed"
+            ></textarea>
+          </div>
+
+          {/* Media Upload Section */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-white">사진 및 동영상 첨부</h3>
+              <span className="text-xs text-gray-500">{mediaFiles.length}개 선택됨</span>
+            </div>
+            
+            <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar">
+              {/* Upload Button */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-shrink-0 w-32 h-32 bg-[#141414] border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-2 hover:border-primary-500/50 hover:bg-primary-500/5 transition-all snap-start"
+              >
+                <div className="p-2 bg-white/5 rounded-full">
+                  <Plus className="w-6 h-6 text-gray-400" />
+                </div>
+                <span className="text-[10px] font-bold text-gray-500">추가하기</span>
+              </button>
+
+              {/* Media Previews */}
+              {mediaFiles.map((media, index) => (
+                <div key={index} className="flex-shrink-0 w-32 h-32 relative rounded-2xl overflow-hidden snap-start group border border-white/10">
+                  {media.type === 'image' ? (
+                    <img src={media.preview} alt="preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full relative">
+                      <video src={media.preview} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                        <Video className="w-8 h-8 text-white/70" />
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Remove Button */}
+                  <button
+                    onClick={() => removeMedia(index)}
+                    className="absolute top-1.5 right-1.5 p-1.5 bg-black/60 backdrop-blur-md rounded-full text-white hover:bg-red-500 transition-colors shadow-lg border border-white/10"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+
+                  {/* Media Type Icon */}
+                  <div className="absolute bottom-1.5 left-1.5 p-1 bg-black/40 backdrop-blur-md rounded-md">
+                    {media.type === 'image' ? (
+                      <ImageIcon className="w-3 h-3 text-white/80" />
+                    ) : (
+                      <Video className="w-3 h-3 text-white/80" />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              multiple
+              accept="image/*,video/*"
+              className="hidden"
+            />
+            <p className="mt-3 text-[11px] text-gray-500 leading-relaxed px-1">
+              * 사진은 자동으로 최적화되어 업로드됩니다.<br/>
+              * 여러 장의 사진과 동영상을 선택하여 가로로 넘겨볼 수 있습니다.
+            </p>
           </div>
         </section>
       </main>
