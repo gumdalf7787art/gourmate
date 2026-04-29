@@ -162,6 +162,5 @@ export function GeneralSearch() {
         )}
       </main>
     </div>
-    </div>
   );
 }
