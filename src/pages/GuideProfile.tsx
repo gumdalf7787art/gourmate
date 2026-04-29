@@ -225,60 +225,15 @@ export default function GuideProfile() {
 
             {/* View List Button (CTA) */}
             <div className="mb-8">
-              <button className="w-full py-4 bg-primary-500 rounded-2xl flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-[0.98] transition-all group">
+              <Link 
+                to={`/guide/${id}/posts?category=${activeCategory}`}
+                className="w-full py-4 bg-primary-500 rounded-2xl flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-[0.98] transition-all group"
+              >
                 <Utensils className="w-5 h-5 text-white" />
                 <span className="text-[15px] font-black text-white">
                   {activeCategory === '전체' ? '전체' : activeCategory} 맛집 {filteredPosts.length}개 리스트 보기
                 </span>
-              </button>
-            </div>
-
-            {/* Grid Posts */}
-            <div className="grid grid-cols-2 gap-4">
-              {filteredPosts.length > 0 ? (
-                filteredPosts.map(post => (
-                  <Link 
-                    key={post.id} 
-                    to={`/post/${post.id}`}
-                    className="bg-[#111] rounded-[24px] overflow-hidden border border-white/10 group flex flex-col shadow-xl"
-                  >
-                    {/* Top Image (4:3) */}
-                    <div className="relative aspect-[4/3] overflow-hidden">
-                      <img src={post.images[0]} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="" />
-                      <div className="absolute top-2 right-2 px-1.5 py-0.5 bg-black/40 backdrop-blur-md rounded-md flex items-center gap-1">
-                        <Star className="w-2 h-2 text-yellow-500 fill-yellow-500" />
-                        <span className="text-[9px] font-black text-white">{post.rating}</span>
-                      </div>
-                    </div>
-
-                    {/* Bottom Content */}
-                    <div className="p-3.5 flex flex-col flex-1 justify-between gap-2.5">
-                      <div>
-                        <h3 className="text-[14px] font-black text-white truncate mb-1 group-hover:text-primary-500 transition-colors">
-                          {post.place.name}
-                        </h3>
-                        <p className="text-[11px] text-gray-400 font-medium leading-relaxed line-clamp-2 italic">
-                          "{post.content}"
-                        </p>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-1 border-t border-white/5">
-                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tight">
-                          {post.place.category}
-                        </span>
-                        <div className="flex items-center gap-1 text-primary-500">
-                          <Heart className="w-2.5 h-2.5 fill-primary-500" />
-                          <span className="text-[10px] font-black">{post.likes.toLocaleString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <div className="col-span-2 py-20 text-center border-2 border-dashed border-white/5 rounded-[32px] bg-white/5">
-                  <p className="text-gray-500 font-bold">포스트가 없습니다.</p>
-                </div>
-              )}
+              </Link>
             </div>
           </div>
         </section>
