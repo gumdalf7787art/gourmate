@@ -240,26 +240,17 @@ export default function GuideProfile() {
               ))}
             </div>
 
-            {/* View List & Map Buttons (CTA) */}
-            <div className="flex gap-3 mb-8">
+            {/* View List Button (CTA) */}
+            <div className="mb-6">
               <Link 
                 to={`/guide/${id}/posts?category=${activeCategory}`}
-                className="flex-1 py-4 bg-[#111] border border-white/20 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all group"
+                className="w-full py-4 bg-primary-500 rounded-2xl flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-[0.98] transition-all group"
               >
-                <Utensils className="w-4 h-4 text-gray-400 group-hover:text-primary-500 transition-colors" />
-                <span className="text-[13px] font-bold text-white">
-                  리스트 보기
+                <Utensils className="w-5 h-5 text-white" />
+                <span className="text-[15px] font-black text-white">
+                  {activeCategory === '전체' ? '전체' : activeCategory} 맛집 {filteredPosts.length}개 리스트 보기
                 </span>
               </Link>
-              <button 
-                onClick={() => setShowMap(true)}
-                className="flex-[1.2] py-4 bg-primary-500 rounded-2xl flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-[0.98] transition-all"
-              >
-                <MapIcon className="w-4 h-4 text-white" />
-                <span className="text-[13px] font-black text-white">
-                  {activeCategory === '전체' ? '전체' : activeCategory} {filteredPosts.length}개 지도로 보기
-                </span>
-              </button>
             </div>
 
             {/* Preview Grid (Show 2 items) */}
@@ -302,6 +293,19 @@ export default function GuideProfile() {
                   </div>
                 </Link>
               ))}
+            </div>
+
+            {/* View on Map Button (Below Grid) */}
+            <div className="mt-6">
+              <button 
+                onClick={() => setShowMap(true)}
+                className="w-full py-4 bg-[#111] border border-white/20 rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all group hover:border-primary-500/50"
+              >
+                <MapIcon className="w-5 h-5 text-gray-500 group-hover:text-primary-500 transition-colors" />
+                <span className="text-[15px] font-black text-white">
+                  {activeCategory === '전체' ? '전체' : activeCategory} 맛집 지도로 보기
+                </span>
+              </button>
             </div>
           </div>
         </section>
