@@ -166,9 +166,48 @@ export function Home() {
         </div>
       </section>
 
-      <div className="w-full h-[1px] bg-white/5 mx-5"></div>
+      <div className="w-full h-[1px] bg-white/5 px-5 mx-auto max-w-[calc(100%-40px)]"></div>
 
-      {/* 4. Popular Posts (Recommended Restaurants) */}
+      {/* 4. Popular Guides */}
+      <section className="py-8">
+        <div className="px-5 mb-5 flex justify-between items-end">
+          <div>
+            <h2 className="text-lg font-bold text-white tracking-tight">오늘의 인기 가이드 추천</h2>
+            <p className="text-[11px] text-gray-500 mt-0.5">가장 신뢰받는 미식가들의 지도를 구독해보세요</p>
+          </div>
+          <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</span>
+        </div>
+
+        <div className="flex flex-col gap-3 px-5">
+          {MOCK_POSTS.slice(0, 3).map((post) => (
+            <div key={post.guide.id} className="flex items-center justify-between p-4 bg-[#0f0f0f] border border-white/10 rounded-2xl group hover:border-white/20 transition-all shadow-xl">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-primary-500 to-orange-300 shadow-lg group-hover:scale-105 transition-transform">
+                    <img src={post.guide.profileImageUrl} alt="" className="w-full h-full rounded-full object-cover border-2 border-black" />
+                  </div>
+                  {post.guide.trustScore > 90 && (
+                    <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 border border-white/10">
+                      <BadgeCheck className="w-3.5 h-3.5 text-primary-500" />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors">{post.guide.nickname}</p>
+                  <p className="text-[11px] text-gray-500 font-medium">신뢰지수 {post.guide.trustScore} • 포스트 24개</p>
+                </div>
+              </div>
+              <button className="px-4 py-2 bg-white/5 border border-white/10 text-white text-[11px] font-black rounded-xl hover:bg-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter shadow-inner">
+                팔로우
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="w-full h-[1px] bg-white/5 px-5 mx-auto max-w-[calc(100%-40px)]"></div>
+
+      {/* 5. 실시간 트렌딩 */}
       <section className="py-8 flex-1">
         <div className="px-5 mb-6 space-y-1">
           <h2 className="text-xl font-bold text-white tracking-tight">실시간 트렌딩</h2>
