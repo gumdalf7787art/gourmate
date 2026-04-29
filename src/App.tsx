@@ -6,8 +6,9 @@ import { SearchPlace } from '@/pages/SearchPlace';
 import { RegisterPlace } from '@/pages/RegisterPlace';
 import GuideProfile from '@/pages/GuideProfile';
 import GuidePostList from '@/pages/GuidePostList';
-import GuideCollectionList from '@/pages/GuideCollectionList';
-import ThemeDetail from '@/pages/ThemeDetail';
+import { PopularGuides } from './pages/PopularGuides';
+import { GuideCollectionList } from './pages/GuideCollectionList';
+import { ThemeDetail } from './pages/ThemeDetail';
 import { BottomNav } from '@/components/BottomNav';
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/guide/:id" element={<GuideProfile />} />
           <Route path="/guide/:id/posts" element={<GuidePostList />} />
           <Route path="/guide/:id/themes" element={<GuideCollectionList />} />
+          <Route path="/popular-guides" element={<PopularGuides />} />
           <Route path="/theme/:id" element={<ThemeDetail />} />
           <Route path="/search" element={<GeneralSearch />} />
           <Route path="/register-place" element={<RegisterPlace />} />

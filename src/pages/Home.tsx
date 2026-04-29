@@ -191,7 +191,7 @@ export function Home() {
             <h2 className="text-lg font-bold text-white tracking-tight">오늘의 인기 가이드 추천</h2>
             <p className="text-[11px] text-gray-500 mt-0.5">가장 신뢰받는 미식가들의 지도를 구독해보세요</p>
           </div>
-          <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</span>
+          <Link to="/popular-guides" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</Link>
         </div>
 
         <div className="flex flex-col gap-3 px-5">
