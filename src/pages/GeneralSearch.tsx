@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, ArrowLeft, Utensils, User, MapPin, Hash, Heart, Star } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Search, ArrowLeft, Utensils, User, MapPin, Hash, Heart, Star, BadgeCheck } from 'lucide-react';
 import { MOCK_POSTS, MOCK_COLLECTIONS } from '@/data/mock';
 
 
