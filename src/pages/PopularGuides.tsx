@@ -62,7 +62,6 @@ export function PopularGuides() {
                   <div className="px-1.5 py-0.5 bg-primary-500/10 rounded text-[9px] font-black text-primary-500 uppercase tracking-tighter">
                     TOP GUIDE
                   </div>
-                  </div>
                 </div>
                 
                 {guide.bio && (
