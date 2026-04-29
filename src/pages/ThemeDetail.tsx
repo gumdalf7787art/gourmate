@@ -39,9 +39,13 @@ export default function ThemeDetail() {
 
         {/* Theme Title & Intro */}
         <div className="absolute bottom-0 left-0 w-full p-6">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="px-2 py-0.5 bg-primary-500 rounded text-[10px] font-black uppercase tracking-widest">Recommended Theme</span>
-            <span className="text-[10px] text-white/60 font-bold">{theme.places.length} SPOTS</span>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {theme.keywords?.map((keyword, idx) => (
+              <span key={idx} className="px-2 py-0.5 bg-primary-500/80 backdrop-blur-md rounded text-[9px] font-black uppercase tracking-widest text-white">
+                #{keyword}
+              </span>
+            ))}
+            <span className="text-[10px] text-white/60 font-bold ml-auto">{theme.places.length} SPOTS</span>
           </div>
           <h1 className="text-3xl font-black tracking-tighter mb-4 leading-tight">
             {theme.title}

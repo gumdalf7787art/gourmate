@@ -15,8 +15,21 @@ export function Home() {
 
   // 필터링된 포스트 데이터
   const filteredPosts = selectedCategory === '전체' 
-    ? MOCK_POSTS.slice(0, 5) 
-    : MOCK_POSTS.filter(post => post.place.category === selectedCategory);
+    ? MOCK_POSTS
+    : MOCK_POSTS.filter(post => {
+        if (selectedCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place.category === '파인다이닝';
+        if (selectedCategory === '가성비') return post.tags?.includes('가성비');
+        return post.place.category === selectedCategory;
+      });
+
+  // 필터링된 테마 데이터
+  const filteredCollections = selectedCategory === '전체'
+    ? MOCK_COLLECTIONS
+    : MOCK_COLLECTIONS.filter(c => {
+        if (selectedCategory === '파인다이닝') return c.keywords?.includes('파인다이닝') || c.keywords?.includes('양식');
+        if (selectedCategory === '가성비') return c.keywords?.includes('가성비');
+        return c.keywords?.includes(selectedCategory);
+      });
 
   return (
     <div className="flex flex-col min-h-screen pb-24 bg-black selection:bg-primary-500/30">
@@ -131,35 +144,41 @@ export function Home() {
         </div>
         
         <div className="flex flex-col gap-3 px-5">
-          {MOCK_COLLECTIONS.slice(0, 3).map((c) => (
-            <Link 
-              key={c.id} 
-              to={`/theme/${c.id}`}
-              className="bg-[#111] border border-white/30 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24"
-            >
-              <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
-                <img src={c.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-black/10"></div>
-              </div>
-              <div className="flex-1 p-3 flex flex-col justify-between">
-                <div>
-                  <h4 className="text-[13px] font-bold text-white group-hover:text-primary-400 transition-colors pr-6 leading-tight line-clamp-2">
-                    {c.title}
-                  </h4>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[9px] text-gray-500 font-medium">{c.userId}</span>
-                    <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
-                      {c.places.length} SPOTS
-                    </span>
+          {filteredCollections.length > 0 ? (
+            filteredCollections.slice(0, 3).map((c) => (
+              <Link 
+                key={c.id} 
+                to={`/theme/${c.id}`}
+                className="bg-[#111] border border-white/30 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24"
+              >
+                <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
+                  <img src={c.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-black/10"></div>
+                </div>
+                <div className="flex-1 p-3 flex flex-col justify-between">
+                  <div>
+                    <h4 className="text-[13px] font-bold text-white group-hover:text-primary-400 transition-colors pr-6 leading-tight line-clamp-2">
+                      {c.title}
+                    </h4>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[9px] text-gray-500 font-medium">{c.userId}</span>
+                      <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
+                        {c.places.length} SPOTS
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-primary-500">
+                    <Heart className="w-2.5 h-2.5 fill-primary-500" />
+                    <span className="text-[10px] font-black">{c.likes?.toLocaleString()}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-primary-500">
-                  <Heart className="w-2.5 h-2.5 fill-primary-500" />
-                  <span className="text-[10px] font-black">{c.likes?.toLocaleString()}</span>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))
+          ) : (
+            <div className="py-10 text-center border border-dashed border-white/10 rounded-xl bg-white/5">
+              <p className="text-gray-500 text-xs font-bold">해당 카테고리의 추천 테마가 없습니다.</p>
+            </div>
+          )}
         </div>
       </section>
 

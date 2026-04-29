@@ -26,6 +26,7 @@ export type Collection = {
   userId: string;
   title: string;
   description?: string;
+  keywords?: string[];
   thumbnail: string;
   likes: number;
   places: Place[];
@@ -155,6 +156,8 @@ export const MOCK_COLLECTIONS: Collection[] = [
     id: 'c1',
     userId: 'g1',
     title: '서울 3대 텐동 맛집 투어',
+    description: '바삭한 튀김과 비법 타레 소스의 조화. 서울에서 가장 줄 서서 먹는 텐동 맛집들만 모았습니다.',
+    keywords: ['일식', '일식'],
     thumbnail: 'https://images.unsplash.com/photo-1581546129595-c58469baf249?auto=format&fit=crop&q=80&w=600',
     likes: 1240,
     places: [MOCK_PLACES[0], MOCK_PLACES[1], MOCK_PLACES[3]]
@@ -163,6 +166,8 @@ export const MOCK_COLLECTIONS: Collection[] = [
     id: 'c2',
     userId: 'g2',
     title: '비 오는 날 가기 좋은 신당동 감성 카페',
+    description: '비 오는 창밖 풍경과 따뜻한 커피 한 잔. 신당동 골목 안에 숨겨진 아늑한 무드의 카페 투어.',
+    keywords: ['카페', '카페'],
     thumbnail: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=600',
     likes: 856,
     places: [MOCK_PLACES[4], MOCK_PLACES[5]]
@@ -171,6 +176,8 @@ export const MOCK_COLLECTIONS: Collection[] = [
     id: 'c3',
     userId: 'g3',
     title: '부모님 모시고 가기 좋은 깔끔한 한정식',
+    description: '정갈한 상차림과 깊은 손맛. 부모님께 칭찬받을 수 있는 검증된 한정식 전문점 리스트입니다.',
+    keywords: ['한식', '한식'],
     thumbnail: 'https://images.unsplash.com/photo-1547573854-74d2a71d0826?auto=format&fit=crop&q=80&w=600',
     likes: 2310,
     places: [MOCK_PLACES[2], MOCK_PLACES[8]]
@@ -179,6 +186,8 @@ export const MOCK_COLLECTIONS: Collection[] = [
     id: 'c4',
     userId: 'g4',
     title: '실패 없는 압구정 데이트 코스 TOP 5',
+    description: '분위기에 취하고 맛에 반하는 곳. 연인과의 특별한 날을 위한 압구정 최고의 파인다이닝 테마.',
+    keywords: ['파인다이닝', '양식'],
     thumbnail: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=600',
     likes: 3420,
     places: [MOCK_PLACES[0], MOCK_PLACES[4], MOCK_PLACES[6]]
@@ -187,6 +196,8 @@ export const MOCK_COLLECTIONS: Collection[] = [
     id: 'c5',
     userId: 'g1',
     title: '혼밥하기 좋은 숨겨진 라멘 성지',
+    description: '눈치 보지 않고 혼자서도 깊은 육수의 맛을 즐길 수 있는 라멘집들입니다.',
+    keywords: ['일식', '일식'],
     thumbnail: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=600',
     likes: 920,
     places: [MOCK_PLACES[3]]
