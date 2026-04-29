@@ -228,14 +228,27 @@ export function Home() {
                 </div>
               </div>
               
-              {/* Image Card (1:1 Aspect Ratio) */}
-              <Link to={`/post/${post.id}`} className="aspect-square w-full rounded-[24px] overflow-hidden relative bg-[#111] mb-4 
+              {/* Image Card (1:1 Aspect Ratio with Horizontal Slider) */}
+              <div className="relative aspect-square w-full rounded-[24px] overflow-hidden bg-[#111] mb-4 
                             ring-1 ring-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] group-hover:ring-white/25 transition-all duration-700 ease-in-out">
-                <img src={post.images[0]} alt={post.place.name} className="object-cover w-full h-full transform group-hover:scale-110 transition-transform duration-1000 ease-out" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80"></div>
                 
-                {/* Image Overlay Info */}
-                <div className="absolute bottom-5 left-5 right-5">
+                {/* Horizontal Image Slider */}
+                <div className="flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar">
+                  {post.images.map((img, idx) => (
+                    <div key={idx} className="flex-none w-full h-full snap-start">
+                      <img 
+                        src={img} 
+                        alt={`${post.place.name} ${idx + 1}`} 
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+                
+                {/* Image Overlay Info (Fixed on top of slider) */}
+                <div className="absolute bottom-5 left-5 right-5 pointer-events-none">
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
@@ -257,7 +270,10 @@ export function Home() {
                     </div>
                   </div>
                 </div>
-              </Link>
+
+                {/* Detail Link (Absolute Overlay) */}
+                <Link to={`/post/${post.id}`} className="absolute inset-0 z-10 opacity-0">상세보기</Link>
+              </div>
               
               {/* Content Description & Keywords */}
               <div className="px-1">
