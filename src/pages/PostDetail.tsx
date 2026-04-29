@@ -454,15 +454,15 @@ export function PostDetail() {
             onClick={() => setIsLiked(!isLiked)}
             className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
           >
-            <Heart className={`w-6 h-6 transition-all ${isLiked ? 'fill-primary-500 text-primary-500 scale-110' : 'text-gray-400'}`} />
+            <Flame className={`w-6 h-6 transition-all ${isLiked ? 'text-primary-500 scale-110' : 'text-gray-400'}`} />
             <span className="text-[10px] font-bold text-gray-500">{post.likes + (isLiked ? 1 : 0)}</span>
           </button>
           <button 
             onClick={() => setIsBookmarked(!isBookmarked)}
             className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
           >
-            <Bookmark className={`w-6 h-6 transition-all ${isBookmarked ? 'fill-white text-white scale-110' : 'text-gray-400'}`} />
-            <span className="text-[10px] font-bold text-gray-500">저장</span>
+            <Heart className={`w-6 h-6 transition-all ${isBookmarked ? 'fill-primary-500 text-primary-500 scale-110' : 'text-gray-400'}`} />
+            <span className="text-[10px] font-bold text-gray-500">관심</span>
           </button>
           <button className="flex flex-col items-center gap-1 active:scale-90 transition-transform">
             <MessageCircle className="w-6 h-6 text-gray-400" />
