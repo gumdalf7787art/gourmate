@@ -35,7 +35,7 @@ export function Home() {
     <div className="flex flex-col min-h-screen pb-24 bg-black selection:bg-primary-500/30">
       {/* 1. Header & Search Bar */}
       <header className="sticky top-0 z-40 bg-black/70 backdrop-blur-2xl px-5 pt-6 pb-4 border-b border-white/5">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="Gourmate Logo" className="w-8 h-8 object-contain" />
             <h1 className="text-2xl font-black tracking-tighter">
@@ -64,8 +64,8 @@ export function Home() {
       </header>
 
       {/* 2. Compact 2-Row Category Grid */}
-      <section className="px-5 py-6">
-        <div className="grid grid-cols-4 gap-2 mb-8">
+      <section className="px-5 py-4">
+        <div className="grid grid-cols-4 gap-2 mb-5">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
