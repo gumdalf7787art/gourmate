@@ -228,8 +228,8 @@ export function Home() {
                 </div>
               </div>
               
-              {/* Image Card (1:1 Aspect Ratio with Horizontal Slider) */}
-              <div className="relative aspect-square w-full rounded-[24px] overflow-hidden bg-[#111] mb-4 
+              {/* Image Card (4:3 Aspect Ratio with Horizontal Slider) */}
+              <div className="relative aspect-[4/3] w-full rounded-[24px] overflow-hidden bg-[#111] mb-4 
                             ring-1 ring-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] group-hover:ring-white/25 transition-all duration-700 ease-in-out">
                 
                 {/* Horizontal Image Slider */}
