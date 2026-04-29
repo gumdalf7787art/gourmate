@@ -254,24 +254,6 @@ export function PostDetail() {
             </a>
           </div>
 
-          {/* Detailed Content Section */}
-          <div className="pt-6 space-y-4">
-            <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
-              <Info className="w-3.5 h-3.5 text-primary-500" />
-              상세 내용
-            </h3>
-            <div className="p-6 bg-[#080808] border border-white/10 rounded-[24px] relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Info className="w-12 h-12" />
-              </div>
-              <p className="text-[14px] text-gray-400 leading-relaxed font-light">
-                {post.place.name}은(는) {post.place.category} 전문점으로, 엄선된 식재료와 {post.guide.nickname} 가이드가 보증하는 특별한 레시피로 많은 사랑을 받고 있는 곳입니다. 
-                <br /><br />
-                주요 특징으로는 정갈한 분위기 속에서 즐기는 {post.place.category}의 정수를 맛보실 수 있으며, 방문객들에게 잊지 못할 미식 경험을 선사합니다. 상세한 메뉴 구성과 일자별 특선 요리는 매장 상황에 따라 변동될 수 있으니 방문 전 확인을 권장드립니다.
-              </p>
-            </div>
-          </div>
-
           {/* Menu Items Section */}
           {post.menuItems && post.menuItems.length > 0 && (
             <div className="pt-10 space-y-4">
@@ -304,6 +286,24 @@ export function PostDetail() {
               </div>
             </div>
           )}
+
+          {/* Detailed Content Section */}
+          <div className="pt-10 space-y-4">
+            <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
+              <Info className="w-3.5 h-3.5 text-primary-500" />
+              상세 내용
+            </h3>
+            <div className="p-6 bg-[#080808] border border-white/10 rounded-[24px] relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Info className="w-12 h-12" />
+              </div>
+              <p className="text-[14px] text-gray-400 leading-relaxed font-light">
+                {post.place.name}은(는) {post.place.category} 전문점으로, 엄선된 식재료와 {post.guide.nickname} 가이드가 보증하는 특별한 레시피로 많은 사랑을 받고 있는 곳입니다. 
+                <br /><br />
+                주요 특징으로는 정갈한 분위기 속에서 즐기는 {post.place.category}의 정수를 맛보실 수 있으며, 방문객들에게 잊지 못할 미식 경험을 선사합니다. 상세한 메뉴 구성과 일자별 특선 요리는 매장 상황에 따라 변동될 수 있으니 방문 전 확인을 권장드립니다.
+              </p>
+            </div>
+          </div>
 
           {/* New Visitor Reviews Section */}
           <div className="pt-10 space-y-6">
