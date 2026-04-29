@@ -208,9 +208,14 @@ export function Home() {
                     </div>
                   )}
                 </div>
-                <div>
-                  <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors">{post.guide.nickname}</p>
-                  <p className="text-[11px] text-gray-500 font-medium">신뢰지수 {post.guide.trustScore} • 포스트 24개</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors truncate mb-0.5">{post.guide.nickname}</p>
+                  {post.guide.bio && (
+                    <p className="text-[10px] text-gray-500 font-medium line-clamp-1 italic mb-0.5 opacity-70">
+                      "{post.guide.bio}"
+                    </p>
+                  )}
+                  <p className="text-[10px] text-gray-500 font-medium">신뢰지수 {post.guide.trustScore} • 포스트 24개</p>
                 </div>
               </Link>
               <button className="px-4 py-2 bg-white/5 border border-white/30 text-white text-[11px] font-black rounded-xl hover:bg-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter shadow-inner">
