@@ -6,7 +6,6 @@ import {
   Phone, 
   Clock, 
   Heart, 
-  Bookmark, 
   MessageCircle,
   BadgeCheck,
   Navigation,

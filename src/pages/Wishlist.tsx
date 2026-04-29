@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, Heart, Map as MapIcon, X, Search, Utensils } from 'lucide-react';
+import { ChevronLeft, Heart, Map as MapIcon, X, Search } from 'lucide-react';
 import { MOCK_POSTS } from '@/data/mock';
 import { KakaoMap } from '@/components/KakaoMap';
 
