@@ -23,13 +23,19 @@ export default function GuidePostList() {
   // Update URL when category or sort changes
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
-    setSearchParams(prev => { prev.set('category', category); return prev; });
+    setSearchParams(prev => { 
+      prev.set('category', category); 
+      return prev; 
+    }, { replace: true });
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newSort = e.target.value;
     setSortOrder(newSort);
-    setSearchParams(prev => { prev.set('sort', newSort); return prev; });
+    setSearchParams(prev => { 
+      prev.set('sort', newSort); 
+      return prev; 
+    }, { replace: true });
   };
 
   const filteredPosts = useMemo(() => {
