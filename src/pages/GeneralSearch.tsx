@@ -44,7 +44,7 @@ export function GeneralSearch() {
                   <button 
                     key={tag}
                     onClick={() => setKeyword(tag)}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-[#0c0c0c] border border-white/5 rounded-2xl text-sm text-gray-300 hover:border-primary-500/50 hover:bg-primary-500/5 transition-all"
+                    className="flex items-center gap-2 px-4 py-2.5 bg-[#161616] border border-white/20 rounded-2xl text-sm text-gray-300 hover:border-primary-500/50 hover:bg-primary-500/5 hover:text-white transition-all shadow-lg"
                   >
                     <Hash className="w-3.5 h-3.5 text-primary-500" />
                     {tag}
@@ -57,21 +57,21 @@ export function GeneralSearch() {
             <div>
               <div className="flex items-center justify-between mb-5 px-1">
                 <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest">추천 가이드</h3>
-                <span className="text-[10px] font-bold text-primary-500 cursor-pointer">더보기</span>
+                <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</span>
               </div>
               <div className="space-y-3">
                 {MOCK_POSTS.slice(0, 3).map((post) => (
-                  <div key={post.guide.id} className="flex items-center justify-between p-4 bg-[#0c0c0c] border border-white/5 rounded-2xl group hover:border-white/20 transition-all">
+                  <div key={post.guide.id} className="flex items-center justify-between p-4 bg-[#0f0f0f] border border-white/15 rounded-2xl group hover:border-white/30 transition-all shadow-xl">
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-primary-500 to-orange-300">
+                      <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-primary-500 to-orange-300 shadow-lg">
                         <img src={post.guide.profileImageUrl} alt="" className="w-full h-full rounded-full object-cover border-2 border-black" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white">{post.guide.nickname}</p>
-                        <p className="text-[11px] text-gray-500">신뢰지수 {post.guide.trustScore} • 포스트 24개</p>
+                        <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors">{post.guide.nickname}</p>
+                        <p className="text-[11px] text-gray-500 font-medium">신뢰지수 {post.guide.trustScore} • 포스트 24개</p>
                       </div>
                     </div>
-                    <button className="px-4 py-1.5 bg-white/5 border border-white/10 text-white text-xs font-bold rounded-lg hover:bg-primary-500 hover:border-primary-500 transition-all">팔로우</button>
+                    <button className="px-4 py-2 bg-white/5 border border-white/10 text-white text-[11px] font-black rounded-xl hover:bg-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter">팔로우</button>
                   </div>
                 ))}
               </div>
