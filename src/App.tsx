@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home } from '@/pages/Home';
 import { PostDetail } from '@/pages/PostDetail';
+import { GeneralSearch } from '@/pages/GeneralSearch';
 import { SearchPlace } from '@/pages/SearchPlace';
 import { RegisterPlace } from '@/pages/RegisterPlace';
 import { BottomNav } from '@/components/BottomNav';
@@ -21,7 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/post/:id" element={<PostDetail />} />
-          <Route path="/search" element={<SearchPlace />} />
+          <Route path="/search" element={<GeneralSearch />} />
           <Route path="/register-place" element={<RegisterPlace />} />
           <Route path="/map" element={<div className="p-8 pb-24 text-center text-white">지도 페이지 준비중</div>} />
           <Route path="/write" element={<SearchPlace />} />

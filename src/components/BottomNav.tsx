@@ -5,7 +5,7 @@ import clsx from 'clsx';
 const navItems = [
   { path: '/', label: '홈', icon: Home },
   { path: '/map', label: '지도', icon: MapIcon },
-  { path: '/search', label: '포스팅', icon: PlusSquare },
+  { path: '/write', label: '포스팅', icon: PlusSquare },
   { path: '/my', label: '마이', icon: User },
 ];
 
