@@ -157,7 +157,12 @@ export default function GuideProfile() {
           <section className="mb-12 px-6">
             <div className="flex items-center justify-between mb-1">
               <h2 className="text-2xl font-black text-white tracking-tight">추천 테마</h2>
-              <button className="text-[11px] font-bold text-primary-500 uppercase tracking-widest">전체보기</button>
+              <Link 
+                to={`/guide/${id}/themes`}
+                className="text-[11px] font-bold text-primary-500 uppercase tracking-widest cursor-pointer hover:text-primary-400 transition-colors"
+              >
+                전체보기
+              </Link>
             </div>
             <p className="text-[13px] text-gray-500 font-medium mb-6">믿고 보는 미식가들의 큐레이션</p>
             
