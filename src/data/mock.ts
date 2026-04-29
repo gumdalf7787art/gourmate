@@ -25,6 +25,7 @@ export type Collection = {
   id: string;
   userId: string;
   title: string;
+  description?: string;
   thumbnail: string;
   likes: number;
   places: Place[];
