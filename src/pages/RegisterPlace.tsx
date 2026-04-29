@@ -226,21 +226,36 @@ export function RegisterPlace() {
 
           {/* Rating Input */}
           <div>
-            <h3 className="text-sm font-bold text-white mb-4">평점을 매겨주세요</h3>
-            <div className="flex gap-2">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-white">평점을 매겨주세요</h3>
+              <span className="text-primary-500 font-black text-xl">{rating.toFixed(1)}</span>
+            </div>
+            <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onClick={() => setRating(star)}
-                  className="transition-all active:scale-90"
-                >
-                  <Star 
-                    className={`w-10 h-10 ${
-                      rating >= star ? 'fill-primary-500 text-primary-500' : 'text-gray-700'
-                    }`} 
-                    strokeWidth={1.5}
-                  />
-                </button>
+                <div key={star} className="relative w-12 h-12">
+                  {/* Gray Background Star */}
+                  <Star className="w-full h-full text-gray-700" strokeWidth={1.5} />
+                  
+                  {/* Filled Star Overlay */}
+                  <div 
+                    className="absolute inset-0 overflow-hidden pointer-events-none"
+                    style={{ width: `${Math.max(0, Math.min(100, (rating - (star - 1)) * 100))}%` }}
+                  >
+                    <Star className="w-12 h-12 fill-primary-500 text-primary-500" strokeWidth={1.5} />
+                  </div>
+
+                  {/* Invisible Interactive Buttons (Left/Right halves) */}
+                  <div className="absolute inset-0 flex">
+                    <button 
+                      onClick={() => setRating(star - 0.5)}
+                      className="w-1/2 h-full cursor-pointer"
+                    />
+                    <button 
+                      onClick={() => setRating(star)}
+                      className="w-1/2 h-full cursor-pointer"
+                    />
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -341,8 +356,8 @@ export function RegisterPlace() {
                   
                   {/* Representative Badge */}
                   {representativeIndex === index && (
-                    <div className="absolute top-2 left-2 px-2 py-1 bg-primary-500 text-white text-[8px] font-black rounded-md shadow-lg uppercase tracking-tighter z-10">
-                      Representative
+                    <div className="absolute top-2 left-2 px-2 py-1 bg-primary-500 text-white text-[10px] font-black rounded-md shadow-lg z-10">
+                      대표사진
                     </div>
                   )}
 
