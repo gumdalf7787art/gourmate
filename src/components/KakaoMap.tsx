@@ -36,8 +36,14 @@ export function KakaoMap({ center, places, level = 3, onSelect }: KakaoMapProps)
             position={{ lat: place.lat, lng: place.lng }}
             onClick={() => place.postId && onSelect?.(place.postId)}
           >
-            <div className="p-3 bg-black/90 backdrop-blur-md rounded-xl border border-primary-500/30 text-white min-w-[120px] shadow-2xl cursor-pointer active:scale-95 transition-all">
-              <div className="flex flex-col gap-1">
+            <div 
+              className="p-3 bg-black/90 backdrop-blur-md rounded-xl border border-primary-500/30 text-white min-w-[120px] shadow-2xl cursor-pointer active:scale-95 transition-all"
+              onClick={(e) => {
+                // Ensure the event triggers properly on the card
+                if (place.postId) onSelect?.(place.postId);
+              }}
+            >
+              <div className="flex flex-col gap-1 pointer-events-none">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-black text-primary-500 text-[12px] truncate">{place.name}</span>
                   {place.rating && (
