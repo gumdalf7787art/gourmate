@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Plus, Heart, Info } from 'lucide-react';
+import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Plus, Heart, Info, Map as MapIcon, X } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_POSTS, MOCK_COLLECTIONS } from '../data/mock';
 import { TrustScoreModal } from '../components/TrustScoreModal';
+import { KakaoMap } from '../components/KakaoMap';
 
 const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
 
@@ -11,6 +12,7 @@ export default function GuideProfile() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('전체');
   const [showTrustModal, setShowTrustModal] = useState(false);
+  const [showMap, setShowMap] = useState(false);
 
   const guide = MOCK_GUIDES.find(g => g.id === id);
   
@@ -238,17 +240,26 @@ export default function GuideProfile() {
               ))}
             </div>
 
-            {/* View List Button (CTA) */}
-            <div className="mb-6">
+            {/* View List & Map Buttons (CTA) */}
+            <div className="flex gap-3 mb-8">
               <Link 
                 to={`/guide/${id}/posts?category=${activeCategory}`}
-                className="w-full py-4 bg-primary-500 rounded-2xl flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-[0.98] transition-all group"
+                className="flex-1 py-4 bg-[#111] border border-white/20 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all group"
               >
-                <Utensils className="w-5 h-5 text-white" />
-                <span className="text-[15px] font-black text-white">
-                  {activeCategory === '전체' ? '전체' : activeCategory} 맛집 {filteredPosts.length}개 리스트 보기
+                <Utensils className="w-4 h-4 text-gray-400 group-hover:text-primary-500 transition-colors" />
+                <span className="text-[13px] font-bold text-white">
+                  리스트 보기
                 </span>
               </Link>
+              <button 
+                onClick={() => setShowMap(true)}
+                className="flex-[1.2] py-4 bg-primary-500 rounded-2xl flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-[0.98] transition-all"
+              >
+                <MapIcon className="w-4 h-4 text-white" />
+                <span className="text-[13px] font-black text-white">
+                  {activeCategory === '전체' ? '전체' : activeCategory} {filteredPosts.length}개 지도로 보기
+                </span>
+              </button>
             </div>
 
             {/* Preview Grid (Show 2 items) */}
@@ -295,12 +306,51 @@ export default function GuideProfile() {
           </div>
         </section>
       </main>
+      
       {/* Trust Score Detail Modal */}
       {showTrustModal && (
         <TrustScoreModal 
           guide={guide} 
           onClose={() => setShowTrustModal(false)} 
         />
+      )}
+
+      {/* Map View Modal */}
+      {showMap && (
+        <div className="fixed inset-0 z-[100] bg-black flex flex-col animate-in fade-in slide-in-from-bottom-10 duration-300">
+          <nav className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black">
+            <div className="flex flex-col">
+              <span className="text-xs font-black text-primary-500 uppercase tracking-widest">{guide.nickname}</span>
+              <span className="text-sm font-bold text-white">{activeCategory} 맛집 지도</span>
+            </div>
+            <button 
+              onClick={() => setShowMap(false)}
+              className="p-2 bg-white/5 rounded-full text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </nav>
+          
+          <div className="flex-1 relative">
+            <KakaoMap 
+              places={filteredPosts.map(p => ({
+                id: p.place.id,
+                lat: p.place.latitude,
+                lng: p.place.longitude,
+                name: p.place.name
+              }))}
+              level={7}
+            />
+            
+            {/* Info overlay */}
+            <div className="absolute bottom-10 left-5 right-5 z-10 pointer-events-none">
+               <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl p-4 shadow-2xl">
+                 <p className="text-[11px] text-gray-400 font-bold mb-1 uppercase tracking-widest">Map View</p>
+                 <p className="text-sm font-medium text-white">현재 필터링된 맛집 <span className="text-primary-500 font-black">{filteredPosts.length}</span>곳을 지도에서 확인하세요.</p>
+               </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
