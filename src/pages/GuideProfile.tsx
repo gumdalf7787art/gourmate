@@ -3,7 +3,6 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Layers, Plus, Heart } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_POSTS, MOCK_COLLECTIONS } from '../data/mock';
 
-// Remove 'Top 20' from general categories as it will have its own section
 const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
 
 export default function GuideProfile() {
@@ -16,6 +15,11 @@ export default function GuideProfile() {
   const guidePosts = useMemo(() => MOCK_POSTS.filter(p => p.guide.id === id), [id]);
   const top20Posts = useMemo(() => guidePosts.filter(p => p.isTop20), [guidePosts]);
   const guideCollections = useMemo(() => MOCK_COLLECTIONS.filter(c => c.userId === id), [id]);
+
+  // Calculate total likes from all posts
+  const totalLikes = useMemo(() => {
+    return guidePosts.reduce((sum, post) => sum + post.likes, 0);
+  }, [guidePosts]);
 
   const filteredPosts = useMemo(() => {
     if (activeCategory === '전체') return guidePosts;
@@ -73,6 +77,11 @@ export default function GuideProfile() {
                   <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest opacity-80">Followers</span>
                   <span className="text-lg font-black leading-none mt-1">{(guide.followers || 0).toLocaleString()}</span>
                 </div>
+                <div className="w-px h-6 bg-white/10" />
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest opacity-80">Likes</span>
+                  <span className="text-lg font-black leading-none mt-1">{totalLikes > 1000 ? `${(totalLikes / 1000).toFixed(1)}k` : totalLikes}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -124,29 +133,43 @@ export default function GuideProfile() {
           </section>
         )}
 
-        {/* 3. My Themes Section */}
+        {/* 3. Recommended Themes (Redesigned as per screenshot) */}
         {guideCollections.length > 0 && (
-          <section className="mb-12">
-            <div className="px-6 mb-5 flex items-center justify-between">
-              <h2 className="text-xl font-black text-white flex items-center gap-2 tracking-tighter">
-                <Layers className="w-5 h-5 text-primary-500" />
-                가이드의 미식 테마
-              </h2>
+          <section className="mb-12 px-6">
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="text-2xl font-black text-white tracking-tight">추천 테마</h2>
+              <button className="text-[11px] font-bold text-primary-500 uppercase tracking-widest">전체보기</button>
             </div>
-            <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 snap-x pb-4">
+            <p className="text-[13px] text-gray-500 font-medium mb-6">믿고 보는 미식가들의 큐레이션</p>
+            
+            <div className="flex flex-col gap-4">
               {guideCollections.map(collection => (
                 <div 
                   key={collection.id} 
-                  className="flex-none w-[280px] aspect-[2/1.2] relative rounded-[32px] overflow-hidden border border-white/10 snap-start group cursor-pointer"
+                  className="bg-[#0f0f0f] rounded-[24px] overflow-hidden border border-white/10 flex h-[140px] group cursor-pointer hover:border-primary-500/30 transition-all shadow-xl"
                 >
-                  <img src={collection.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all" />
-                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                    <h3 className="text-lg font-black text-white mb-2 leading-tight">{collection.title}</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-black text-white/90 bg-primary-500 px-2 py-1 rounded-full uppercase tracking-tight">
-                        Spot {collection.places.length}곳
-                      </span>
+                  {/* Left Image */}
+                  <div className="w-[120px] h-full overflow-hidden shrink-0 border-r border-white/10">
+                    <img src={collection.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                  </div>
+                  
+                  {/* Right Content */}
+                  <div className="flex-1 p-5 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-[16px] font-black text-white mb-1.5 leading-tight group-hover:text-primary-500 transition-colors">
+                        {collection.title}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold text-gray-500 tracking-tight">{guide.nickname}</span>
+                        <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[9px] font-black rounded uppercase tracking-tighter border border-primary-500/20">
+                          {collection.places.length} SPOTS
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-1">
+                      <Heart className="w-3.5 h-3.5 text-primary-500 fill-primary-500" />
+                      <span className="text-[12px] font-black text-primary-500">{collection.likes.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
