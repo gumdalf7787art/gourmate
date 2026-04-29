@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, CheckCircle2, MapPin, Tag, Image as ImageIcon, 
-  Video, X, Plus, Type, Minus, Utensils, Lightbulb, Star 
+  Video, X, Plus, Type, Minus, Utensils, Lightbulb, Star, Hash 
 } from 'lucide-react';
 import { KakaoMap } from '@/components/KakaoMap';
 
@@ -20,6 +20,8 @@ export function RegisterPlace() {
   const [selectedTag, setSelectedTag] = useState(place?.category_group_name || '음식점');
   const [mediaFiles, setMediaFiles] = useState<{ file: File; preview: string; type: 'image' | 'video' }[]>([]);
   const [representativeIndex, setRepresentativeIndex] = useState<number | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState('');
 
   // 텍스트 삽입 유틸리티 (커서 위치에 삽입)
   const insertText = (before: string, after: string = '') => {
@@ -149,7 +151,8 @@ export function RegisterPlace() {
         size: m.file.size, 
         type: m.type,
         is_representative: i === representativeIndex 
-      }))
+      })),
+      tags: tags
     });
 
     // 실제로는 여기에 서버 API 호출 로직이 들어갑니다.
@@ -220,6 +223,56 @@ export function RegisterPlace() {
                 >
                   {tag}
                 </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Keywords (Tags) Input */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Hash className="w-4 h-4 text-primary-500" />
+              <h3 className="text-sm font-bold text-white">이 식당의 특이점(키워드)은 무엇인가요?</h3>
+            </div>
+            <div className="flex gap-2 mb-3">
+              <div className="relative flex-1">
+                <span className="absolute inset-y-0 left-3 flex items-center text-gray-500 text-sm">#</span>
+                <input
+                  type="text"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && tagInput.trim()) {
+                      e.preventDefault();
+                      if (!tags.includes(tagInput.trim())) {
+                        setTags([...tags, tagInput.trim()]);
+                      }
+                      setTagInput('');
+                    }
+                  }}
+                  placeholder="예: 인생라멘, 데이트성지, 웨이팅필수"
+                  className="w-full pl-7 pr-4 py-3 bg-[#141414] border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                />
+              </div>
+              <button
+                onClick={() => {
+                  if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+                    setTags([...tags, tagInput.trim()]);
+                    setTagInput('');
+                  }
+                }}
+                className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white hover:bg-primary-500 hover:border-primary-500 transition-all"
+              >
+                추가
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag, idx) => (
+                <div key={idx} className="flex items-center gap-1 px-3 py-1.5 bg-primary-500/10 border border-primary-500/30 rounded-lg text-primary-500 text-xs font-bold">
+                  <span>#{tag}</span>
+                  <button onClick={() => setTags(tags.filter((_, i) => i !== idx))} className="ml-1 hover:text-white transition-colors">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
               ))}
             </div>
           </div>
