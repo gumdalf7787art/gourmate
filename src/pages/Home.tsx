@@ -85,13 +85,6 @@ export function Home() {
               <Link to={`/post/${post.id}`} key={post.id} className="group cursor-pointer">
                 <div className="aspect-square w-full rounded-xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
                   <img src={post.images[0]} alt={post.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute top-2 right-2 flex flex-col gap-1">
-                    {post.isPaidByMe && (
-                      <div className="bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded-md text-[8px] font-black text-primary-500 border border-primary-500/30 uppercase">
-                        Verified
-                      </div>
-                    )}
-                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
                   <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
                     <div className="flex items-center gap-1 text-white">
@@ -233,11 +226,6 @@ export function Home() {
                     <span className="text-[11px] text-gray-500 leading-none font-medium">Top Guide • 신뢰지수 {post.guide.trustScore}</span>
                   </div>
                 </div>
-                {post.isPaidByMe && (
-                  <span className="px-3 py-1 bg-white/5 border border-white/10 text-primary-500 text-[10px] font-black rounded-full tracking-wider uppercase">
-                    Verified
-                  </span>
-                )}
               </div>
               
               {/* Image Card (1:1 Aspect Ratio) */}
