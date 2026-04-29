@@ -45,7 +45,7 @@ export default function GuideProfile() {
         <button onClick={() => navigate(-1)} className="p-2 bg-white/5 rounded-full text-white border border-white/10 active:scale-90 transition-all">
           <ChevronLeft className="w-6 h-6" />
         </button>
-        <span className="font-black text-sm tracking-widest uppercase opacity-80">{guide.nickname}'s Guide</span>
+        <span className="font-black text-sm tracking-widest uppercase opacity-80">{guide.nickname} 가이드</span>
         <button className="p-2 bg-white/5 rounded-full text-white border border-white/10 active:scale-90 transition-all">
           <Share2 className="w-5 h-5" />
         </button>
@@ -69,17 +69,17 @@ export default function GuideProfile() {
               <h1 className="text-3xl font-black tracking-tighter mb-2">{guide.nickname}</h1>
               <div className="flex items-center gap-4">
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest opacity-80">Trust Score</span>
+                  <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest opacity-80">신뢰지수</span>
                   <span className="text-lg font-black leading-none mt-1">{guide.trustScore}%</span>
                 </div>
                 <div className="w-px h-6 bg-white/10" />
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest opacity-80">Followers</span>
+                  <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest opacity-80">팔로워</span>
                   <span className="text-lg font-black leading-none mt-1">{(guide.followers || 0).toLocaleString()}</span>
                 </div>
                 <div className="w-px h-6 bg-white/10" />
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest opacity-80">Likes</span>
+                  <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest opacity-80">좋아요</span>
                   <span className="text-lg font-black leading-none mt-1">{totalLikes > 1000 ? `${(totalLikes / 1000).toFixed(1)}k` : totalLikes}</span>
                 </div>
               </div>
@@ -104,7 +104,7 @@ export default function GuideProfile() {
                 <Medal className="w-5 h-5 text-yellow-500" />
                 가이드 추천 Top 20
               </h2>
-              <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest border border-yellow-500/30 px-2 py-1 rounded-md">The Best</span>
+              <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest border border-yellow-500/30 px-2 py-1 rounded-md">최고의 맛집</span>
             </div>
             <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 snap-x pb-4">
               {top20Posts.map((post, idx) => (
@@ -182,7 +182,7 @@ export default function GuideProfile() {
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-[9px] text-gray-500 font-medium">{guide.nickname}</span>
                         <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
-                          {c.places.length} SPOTS
+                          {c.places.length} 스팟
                         </span>
                       </div>
                     </div>
