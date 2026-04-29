@@ -111,19 +111,38 @@ export default function GuideProfile() {
                 <Link 
                   key={post.id} 
                   to={`/post/${post.id}`}
-                  className="flex-none w-[200px] bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] rounded-[32px] overflow-hidden border border-white/10 snap-start group shadow-2xl"
+                  className="flex-none w-[240px] bg-[#111] rounded-[28px] overflow-hidden border border-white/10 snap-start group shadow-2xl flex flex-col"
                 >
-                  <div className="aspect-[4/5] relative overflow-hidden">
+                  {/* Top Image (4:3) */}
+                  <div className="aspect-[4/3] relative overflow-hidden">
                     <img src={post.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
-                    <div className="absolute top-4 left-4 w-10 h-10 bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center border border-yellow-500/30 text-yellow-500 font-black text-lg shadow-xl">
+                    <div className="absolute top-3 left-3 w-8 h-8 bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center border border-yellow-500/30 text-yellow-500 font-black text-sm shadow-xl">
                       {idx + 1}
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <p className="text-sm font-black text-white truncate mb-1">{post.place.name}</p>
-                      <div className="flex items-center gap-1.5">
-                        <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                        <span className="text-xs font-black text-white">{post.rating}</span>
+                    <div className="absolute top-3 right-3 px-2 py-1 bg-primary-500 rounded-lg flex items-center gap-1 shadow-lg">
+                      <Star className="w-2.5 h-2.5 text-white fill-white" />
+                      <span className="text-[10px] font-black text-white">{post.rating}</span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Content */}
+                  <div className="p-4 flex flex-col flex-1 justify-between gap-3">
+                    <div>
+                      <h3 className="text-[15px] font-black text-white truncate mb-1.5 group-hover:text-primary-500 transition-colors">
+                        {post.place.name}
+                      </h3>
+                      <p className="text-[12px] text-gray-400 font-medium leading-relaxed line-clamp-2 italic">
+                        "{post.content}"
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-white/5">
+                      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-tight">
+                        {post.place.category}
+                      </span>
+                      <div className="flex items-center gap-1 text-primary-500">
+                        <Heart className="w-3 h-3 fill-primary-500" />
+                        <span className="text-[11px] font-black">{post.likes.toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
