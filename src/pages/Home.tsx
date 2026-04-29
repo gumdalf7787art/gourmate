@@ -87,7 +87,7 @@ export function Home() {
         </div>
 
         {/* 2. 인기 추천맛집 (2x2 Grid) */}
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-3">
           <div>
             <h2 className="text-lg font-bold text-white tracking-tight">인기 추천맛집</h2>
             <p className="text-[11px] text-gray-500 mt-0.5">오늘 가장 많은 좋아요를 받은 가이드의 선택</p>
