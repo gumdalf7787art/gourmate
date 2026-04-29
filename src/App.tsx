@@ -10,6 +10,7 @@ import { PopularGuides } from './pages/PopularGuides';
 import GuideCollectionList from './pages/GuideCollectionList';
 import ThemeDetail from './pages/ThemeDetail';
 import PopularRestaurants from './pages/PopularRestaurants';
+import GlobalMap from './pages/GlobalMap';
 import { BottomNav } from '@/components/BottomNav';
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -36,7 +37,7 @@ function App() {
           <Route path="/popular-restaurants" element={<PopularRestaurants />} />
           <Route path="/search" element={<GeneralSearch />} />
           <Route path="/register-place" element={<RegisterPlace />} />
-          <Route path="/map" element={<div className="p-8 pb-24 text-center text-white">지도 페이지 준비중</div>} />
+          <Route path="/map" element={<GlobalMap />} />
           <Route path="/write" element={<SearchPlace />} />
           <Route path="/my" element={<div className="p-8 pb-24 text-center text-white">마이 페이지 준비중</div>} />
         </Routes>
