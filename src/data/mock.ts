@@ -162,6 +162,15 @@ export const MOCK_PLACES: Place[] = [
     latitude: 37.5266,
     longitude: 127.0366,
     tags: ['디저트', '전시같은카페', '압구정핫플']
+  },
+  {
+    id: 'p10',
+    name: '할아버지공장',
+    category: '카페',
+    address: '서울 성동구 성수이로7가길 9',
+    latitude: 37.5411,
+    longitude: 127.0561,
+    tags: ['성수동카페', '복합문화공간', '정원카페']
   }
 ];
 
@@ -390,6 +399,26 @@ export const MOCK_POSTS: Post[] = [
       { name: '전통 불고기', price: '31,000원', isSignature: true },
       { name: '갈비탕', price: '16,000원', isSignature: true },
       { name: '육회 비빔밥', price: '15,000원' }
+    ]
+  },
+  {
+    id: 'post9',
+    guide: MOCK_GUIDES[2],
+    place: MOCK_PLACES[9],
+    content: '성수동의 폐공장을 개조한 카페인데 웅장함이 느껴집니다. 내부 정원과 루프탑까지 공간이 정말 넓어서 쾌적해요. 커피 맛도 깊고 특히 시그니처 샌드위치가 든든합니다.',
+    images: [
+      'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800'
+    ],
+    isPaidByMe: true,
+    createdAt: '2026-04-21',
+    likes: 1250,
+    bookmarks: 320,
+    tags: ['성수동핫플', '공장형카페', '주말나들이'],
+    rating: 4.6,
+    menuItems: [
+      { name: '콜드브루', price: '6,500원' },
+      { name: '새우 오일 파스타', price: '18,000원', isSignature: true }
     ]
   }
 ];
