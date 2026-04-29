@@ -294,6 +294,71 @@ export function PostDetail() {
               후기 작성하기
             </button>
           </div>
+
+          {/* New: Same Place, Other Guides Slider */}
+          {MOCK_POSTS.filter(p => p.place.id === post.place.id && p.id !== post.id).length > 0 && (
+            <div className="pt-12 space-y-5">
+              <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 px-1">
+                <User className="w-3.5 h-3.5 text-primary-500" />
+                다른 가이드의 시선
+              </h3>
+              <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-6 px-6 snap-x">
+                {MOCK_POSTS.filter(p => p.place.id === post.place.id && p.id !== post.id).map(otherPost => (
+                  <Link 
+                    key={otherPost.id} 
+                    to={`/post/${otherPost.id}`}
+                    className="flex-none w-[240px] bg-[#111] border border-white/10 rounded-[24px] overflow-hidden snap-start group"
+                  >
+                    <div className="aspect-[4/3] relative overflow-hidden">
+                      <img src={otherPost.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <div className="absolute top-3 left-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg flex items-center gap-1 border border-white/10">
+                        <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
+                        <span className="text-[10px] font-black text-white">{otherPost.rating}</span>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <img src={otherPost.guide.profileImageUrl} className="w-5 h-5 rounded-full border border-white/10" />
+                        <span className="text-[11px] font-bold text-gray-300">{otherPost.guide.nickname}</span>
+                      </div>
+                      <p className="text-[12px] text-gray-400 line-clamp-2 italic leading-relaxed">
+                        "{otherPost.content.split('.')[0]}..."
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* New: Similar Restaurants Slider */}
+          <div className="pt-10 space-y-5">
+            <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 px-1">
+              <Utensils className="w-3.5 h-3.5 text-primary-500" />
+              비슷한 느낌의 {post.place.category} 맛집
+            </h3>
+            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-6 px-6 snap-x">
+              {MOCK_POSTS.filter(p => p.place.category === post.place.category && p.place.id !== post.place.id).map(similarPost => (
+                <Link 
+                  key={similarPost.id} 
+                  to={`/post/${similarPost.id}`}
+                  className="flex-none w-[180px] bg-[#111] border border-white/10 rounded-[24px] overflow-hidden snap-start group"
+                >
+                  <div className="aspect-square relative overflow-hidden">
+                    <img src={similarPost.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <p className="text-[12px] font-black text-white truncate leading-tight">{similarPost.place.name}</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
+                        <span className="text-[10px] font-black text-white">{similarPost.rating}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
         </section>
       </main>
 
