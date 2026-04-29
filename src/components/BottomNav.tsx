@@ -70,7 +70,12 @@ export function BottomNav() {
           )}>
             {({ isActive }) => (
               <>
-                <User className="w-[22px] h-[22px]" strokeWidth={isActive ? 2.5 : 1.5} />
+                <div className="relative">
+                  <User className="w-[22px] h-[22px]" strokeWidth={isActive ? 2.5 : 1.5} />
+                  <span className="absolute -top-1 -right-1.5 w-3.5 h-3.5 bg-red-500 text-white text-[9px] font-black flex items-center justify-center rounded-full border border-black">
+                    3
+                  </span>
+                </div>
                 <span className="text-[10px] font-bold">마이</span>
               </>
             )}

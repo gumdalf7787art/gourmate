@@ -35,16 +35,13 @@ export function Home() {
     <div className="flex flex-col min-h-screen pb-24 bg-black selection:bg-primary-500/30">
       {/* 1. Header & Search Bar */}
       <header className="sticky top-0 z-40 bg-black/70 backdrop-blur-2xl px-5 pt-6 pb-4 border-b border-white/5">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center mb-4">
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="Gourmate Logo" className="w-8 h-8 object-contain" />
             <h1 className="text-2xl font-black tracking-tighter">
               <span className="text-white">GOUR</span>
               <span className="text-primary-500">MATE.</span>
             </h1>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-[#1a1a1a] flex items-center justify-center border border-white/10">
-            <Flame className="w-4 h-4 text-primary-500" />
           </div>
         </div>
         
