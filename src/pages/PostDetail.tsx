@@ -270,6 +270,39 @@ export function PostDetail() {
             </div>
           </div>
 
+          {/* Menu Items Section */}
+          {post.menuItems && post.menuItems.length > 0 && (
+            <div className="pt-10 space-y-4">
+              <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
+                <Utensils className="w-3.5 h-3.5 text-primary-500" />
+                가이드 추천 메뉴
+              </h3>
+              <div className="bg-[#111] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl">
+                {post.menuItems.map((item, idx) => (
+                  <div 
+                    key={idx} 
+                    className={`flex items-center justify-between p-5 ${
+                      idx !== post.menuItems!.length - 1 ? 'border-b border-white/5' : ''
+                    }`}
+                  >
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[15px] font-black text-white">{item.name}</span>
+                        {item.isSignature && (
+                          <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[9px] font-black rounded uppercase tracking-tighter">
+                            Signature
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[11px] text-gray-500 font-bold italic">가이드의 진심 어린 선택</span>
+                    </div>
+                    <span className="text-[14px] font-black text-primary-500">{item.price}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* New Visitor Reviews Section */}
           <div className="pt-10 space-y-6">
             <div className="flex items-center justify-between">

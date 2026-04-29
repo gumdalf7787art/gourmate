@@ -21,6 +21,12 @@ export type Place = {
   tags?: string[];
 };
 
+export type MenuItem = {
+  name: string;
+  price: string;
+  isSignature?: boolean;
+};
+
 export type Collection = {
   id: string;
   userId: string;
@@ -45,6 +51,7 @@ export type Post = {
   tags?: string[];
   rating: number;
   isTop20?: boolean;
+  menuItems?: MenuItem[];
 };
 
 export const MOCK_GUIDES: Guide[] = [
@@ -221,6 +228,11 @@ export const MOCK_POSTS: Post[] = [
     tags: ['인생우대갈비', '웨이팅지옥', '용산핫플'],
     rating: 4.9,
     isTop20: true,
+    menuItems: [
+      { name: '우대갈비', price: '32,000원', isSignature: true },
+      { name: '짚불삼겹살', price: '15,000원' },
+      { name: '양파볶음밥', price: '5,000원', isSignature: true }
+    ]
   },
   {
     id: 'post4',

@@ -22,6 +22,7 @@ export function RegisterPlace() {
   const [representativeIndex, setRepresentativeIndex] = useState<number | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
+  const [menuItems, setMenuItems] = useState<{ name: string; price: string; isSignature: boolean }[]>([]);
 
   // 텍스트 삽입 유틸리티 (커서 위치에 삽입)
   const insertText = (before: string, after: string = '') => {
@@ -146,6 +147,7 @@ export function RegisterPlace() {
       detailed_content: content,
       media_count: mediaFiles.length,
       representative_media: representativeIndex !== null ? mediaFiles[representativeIndex].file.name : '없음',
+      menu_items: menuItems,
       media_info: mediaFiles.map((m, i) => ({ 
         name: m.file.name, 
         size: m.file.size, 
@@ -274,6 +276,92 @@ export function RegisterPlace() {
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Menu Items Input */}
+          <div className="pt-2">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Utensils className="w-4 h-4 text-primary-500" />
+                <h3 className="text-sm font-bold text-white tracking-tight">가이드 추천 메뉴</h3>
+              </div>
+              <button 
+                onClick={() => setMenuItems([...menuItems, { name: '', price: '', isSignature: false }])}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[11px] font-black text-gray-300 hover:text-white transition-all active:scale-95"
+              >
+                <Plus className="w-3.5 h-3.5 text-primary-500" /> 메뉴 추가
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              {menuItems.map((item, idx) => (
+                <div key={idx} className="bg-[#111] border border-white/10 rounded-2xl p-4 space-y-4 shadow-xl">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="text"
+                      value={item.name}
+                      onChange={(e) => {
+                        const newMenu = [...menuItems];
+                        newMenu[idx].name = e.target.value;
+                        setMenuItems(newMenu);
+                      }}
+                      placeholder="메뉴 이름 (예: 우대갈비)"
+                      className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-500/50 transition-all"
+                    />
+                    <button 
+                      onClick={() => setMenuItems(menuItems.filter((_, i) => i !== idx))}
+                      className="p-2 text-gray-500 hover:text-red-500 transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex-1">
+                      <input
+                        type="text"
+                        value={item.price}
+                        onChange={(e) => {
+                          const newMenu = [...menuItems];
+                          newMenu[idx].price = e.target.value;
+                          setMenuItems(newMenu);
+                        }}
+                        placeholder="가격 (예: 32,000원)"
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-500/50 transition-all"
+                      />
+                    </div>
+                    <button 
+                      onClick={() => {
+                        const newMenu = [...menuItems];
+                        newMenu[idx].isSignature = !newMenu[idx].isSignature;
+                        setMenuItems(newMenu);
+                      }}
+                      className={`px-4 py-3 rounded-xl text-[11px] font-black transition-all border shrink-0 ${
+                        item.isSignature 
+                          ? 'bg-primary-500 border-primary-500 text-white shadow-[0_5px_15px_rgba(249,115,22,0.3)]' 
+                          : 'bg-white/5 border-white/10 text-gray-500'
+                      }`}
+                    >
+                      시그니처
+                    </button>
+                  </div>
+                </div>
+              ))}
+              
+              {menuItems.length === 0 && (
+                <div 
+                  onClick={() => setMenuItems([{ name: '', price: '', isSignature: false }])}
+                  className="py-12 border-2 border-dashed border-white/5 rounded-[32px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-white/5 transition-all group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Utensils className="w-6 h-6 text-gray-700" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 font-bold">가이드님이 추천하는 메뉴를</p>
+                    <p className="text-xs text-primary-500 font-black mt-0.5">이곳을 눌러 등록해 보세요!</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
