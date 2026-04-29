@@ -101,24 +101,30 @@ export const MOCK_PLACES: Place[] = [
 ];
 
 export const MOCK_COLLECTIONS: Collection[] = [
-  { 
-    id: 'c1', 
-    userId: 'g1', 
-    title: '나만 아는 강북 찐맛집 Top 5', 
-    places: [MOCK_PLACES[0], MOCK_PLACES[2]] 
+  {
+    id: 'c1',
+    title: '서울 3대 텐동 맛집 투어',
+    userId: 'gourmet_king',
+    thumbnail: 'https://images.unsplash.com/photo-1615361413100-d1e3d368e539?w=800&q=80',
+    likes: 1240,
+    places: ['p1', 'p2', 'p3'],
   },
-  { 
-    id: 'c2', 
-    userId: 'g2', 
-    title: '실패없는 데이트 양식 맛집', 
-    places: [MOCK_PLACES[3]] 
+  {
+    id: 'c2',
+    title: '비 오는 날 가기 좋은 신당동 감성 카페',
+    userId: 'cafe_tourer',
+    thumbnail: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80',
+    likes: 856,
+    places: ['p4', 'p5'],
   },
   {
     id: 'c3',
-    userId: 'g3',
-    title: '비오는 날 생각나는 국물 요리',
-    places: [MOCK_PLACES[0], MOCK_PLACES[1]]
-  }
+    title: '부모님 모시고 가기 좋은 깔끔한 한정식',
+    userId: 'family_food',
+    thumbnail: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80',
+    likes: 2310,
+    places: ['p6', 'p7', 'p8'],
+  },
 ];
 
 export const MOCK_POSTS: Post[] = [
