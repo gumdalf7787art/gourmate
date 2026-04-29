@@ -249,6 +249,12 @@ export const MOCK_POSTS: Post[] = [
     bookmarks: 120,
     tags: ['줄서는식당', '고기장인', '짚불구이'],
     rating: 4.7,
+    isTop20: true,
+    menuItems: [
+      { name: '우대갈비', price: '32,000원', isSignature: true },
+      { name: '짚불삼겹살', price: '15,000원' },
+      { name: '몽탄냉면', price: '7,000원' }
+    ]
   },
   {
     id: 'post2',
@@ -266,6 +272,11 @@ export const MOCK_POSTS: Post[] = [
     tags: ['라멘성지', '해장완료', '합정맛집'],
     rating: 4.7,
     isTop20: true,
+    menuItems: [
+      { name: '토리빠이탄 라멘', price: '11,000원', isSignature: true },
+      { name: '카라빠이탄 라멘', price: '11,000원' },
+      { name: '삼겹차슈 추가', price: '2,000원' }
+    ]
   },
   {
     id: 'post5',
@@ -281,6 +292,12 @@ export const MOCK_POSTS: Post[] = [
     bookmarks: 85,
     tags: ['인생라멘', '미쉐린가이드', '합정역맛집'],
     rating: 4.8,
+    isTop20: true,
+    menuItems: [
+      { name: '토리빠이탄 라멘', price: '11,000원', isSignature: true },
+      { name: '쇼유 라멘', price: '11,000원' },
+      { name: '토리빠이탄 (특)', price: '14,000원' }
+    ]
   },
   {
     id: 'post3',
@@ -297,6 +314,12 @@ export const MOCK_POSTS: Post[] = [
     bookmarks: 780,
     tags: ['명동필수코스', '미쉐린맛집', '마늘김치중독'],
     rating: 4.5,
+    isTop20: true,
+    menuItems: [
+      { name: '칼국수', price: '10,000원', isSignature: true },
+      { name: '만두 (10개)', price: '12,000원', isSignature: true },
+      { name: '비빔국수', price: '10,000원' }
+    ]
   },
   {
     id: 'post6',
@@ -314,6 +337,11 @@ export const MOCK_POSTS: Post[] = [
     tags: ['힙한카페', '디저트맛집', '압구정데이트', '파인다이닝'],
     rating: 4.6,
     isTop20: true,
+    menuItems: [
+      { name: 'PEAK 케이크 (S)', price: '23,000원', isSignature: true },
+      { name: '마이크로와상', price: '2,500원' },
+      { name: '누 메이크 에이드', price: '7,500원' }
+    ]
   },
   {
     id: 'post7',
@@ -330,6 +358,12 @@ export const MOCK_POSTS: Post[] = [
     bookmarks: 420,
     tags: ['수제버거맛집', '아보카도버거', '청담핫플'],
     rating: 4.8,
+    isTop20: true,
+    menuItems: [
+      { name: '아보카도 버거', price: '9,300원', isSignature: true },
+      { name: '베이컨 치즈 버거', price: '7,800원' },
+      { name: '갈릭 버터 프라이즈', price: '6,300원', isSignature: true }
+    ]
   },
   {
     id: 'post8',
@@ -343,8 +377,12 @@ export const MOCK_POSTS: Post[] = [
     createdAt: '2026-04-18',
     likes: 920,
     bookmarks: 180,
-    tags: ['압구정불고기', '전통맛집', '효도코스'],
-    rating: 4.9,
+    rating: 4.7,
     isTop20: true,
+    menuItems: [
+      { name: '전통 불고기', price: '31,000원', isSignature: true },
+      { name: '갈비탕', price: '16,000원', isSignature: true },
+      { name: '육회 비빔밥', price: '15,000원' }
+    ]
   }
 ];
