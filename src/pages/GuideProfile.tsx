@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, Share2, MapPin, Star, BadgeCheck, Utensils, Medal, Layers, Plus, Heart } from 'lucide-react';
+import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Layers, Plus, Heart } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_POSTS, MOCK_COLLECTIONS } from '../data/mock';
 
 // Remove 'Top 20' from general categories as it will have its own section
@@ -27,8 +27,6 @@ export default function GuideProfile() {
   }, [guidePosts, activeCategory]);
 
   if (!guide) return null;
-
-  const totalLikes = guidePosts.reduce((sum, post) => sum + post.likes, 0);
 
   return (
     <div className="min-h-screen bg-black text-white pb-32 font-pretendard no-scrollbar">
