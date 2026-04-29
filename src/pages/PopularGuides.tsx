@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, BadgeCheck, UserPlus, Heart, Users, Star, Info } from 'lucide-react';
-import { MOCK_GUIDES, Guide } from '@/data/mock';
+import { MOCK_GUIDES } from '@/data/mock';
+import type { Guide } from '@/data/mock';
 import { TrustScoreModal } from '@/components/TrustScoreModal';
 
 export function PopularGuides() {

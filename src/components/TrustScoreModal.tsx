@@ -1,5 +1,5 @@
 import { X, Info, ShieldCheck, Wallet, FileText, Users, Activity } from 'lucide-react';
-import { Guide } from '@/data/mock';
+import type { Guide } from '@/data/mock';
 
 interface TrustScoreModalProps {
   guide: Guide;
