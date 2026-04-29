@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { ChevronLeft, Star, Heart } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_POSTS } from '../data/mock';
