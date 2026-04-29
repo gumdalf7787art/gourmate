@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, CheckCircle2, MapPin, Tag, Image as ImageIcon, 
-  Video, X, Plus, Type, Minus, Utensils, Lightbulb 
+  Video, X, Plus, Type, Minus, Utensils, Lightbulb, Star 
 } from 'lucide-react';
 import { KakaoMap } from '@/components/KakaoMap';
 
@@ -16,8 +16,10 @@ export function RegisterPlace() {
   const [isLoading, setIsLoading] = useState(false);
   const [review, setReview] = useState('');
   const [content, setContent] = useState('');
+  const [rating, setRating] = useState(0);
   const [selectedTag, setSelectedTag] = useState(place?.category_group_name || '음식점');
   const [mediaFiles, setMediaFiles] = useState<{ file: File; preview: string; type: 'image' | 'video' }[]>([]);
+  const [representativeIndex, setRepresentativeIndex] = useState<number | null>(null);
 
   // 텍스트 삽입 유틸리티 (커서 위치에 삽입)
   const insertText = (before: string, after: string = '') => {
@@ -137,10 +139,17 @@ export function RegisterPlace() {
     console.log('등록 시도 데이터:', {
       place_name: place.place_name,
       tag: selectedTag,
+      rating: rating,
       short_review: review,
       detailed_content: content,
       media_count: mediaFiles.length,
-      media_info: mediaFiles.map(m => ({ name: m.file.name, size: m.file.size, type: m.type }))
+      representative_media: representativeIndex !== null ? mediaFiles[representativeIndex].file.name : '없음',
+      media_info: mediaFiles.map((m, i) => ({ 
+        name: m.file.name, 
+        size: m.file.size, 
+        type: m.type,
+        is_representative: i === representativeIndex 
+      }))
     });
 
     // 실제로는 여기에 서버 API 호출 로직이 들어갑니다.
@@ -215,6 +224,27 @@ export function RegisterPlace() {
             </div>
           </div>
 
+          {/* Rating Input */}
+          <div>
+            <h3 className="text-sm font-bold text-white mb-4">평점을 매겨주세요</h3>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className="transition-all active:scale-90"
+                >
+                  <Star 
+                    className={`w-10 h-10 ${
+                      rating >= star ? 'fill-primary-500 text-primary-500' : 'text-gray-700'
+                    }`} 
+                    strokeWidth={1.5}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Review Input */}
           <div>
             <h3 className="text-sm font-bold text-white mb-4">가이드님의 한줄 평을 남겨주세요</h3>
@@ -266,7 +296,7 @@ export function RegisterPlace() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="이곳의 분위기, 추천 메뉴, 꿀팁 등 자세한 이야기를 들려주세요..."
-              className="w-full h-80 bg-[#141414] border border-white/10 rounded-2xl p-5 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all leading-relaxed font-serif text-lg shadow-inner"
+              className="w-full h-80 bg-[#141414] border border-white/10 rounded-2xl p-5 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all leading-relaxed text-[16px] shadow-inner"
             ></textarea>
           </div>
 
@@ -291,7 +321,13 @@ export function RegisterPlace() {
 
               {/* Media Previews */}
               {mediaFiles.map((media, index) => (
-                <div key={index} className="flex-shrink-0 w-32 h-32 relative rounded-2xl overflow-hidden snap-start group border border-white/10">
+                <div 
+                  key={index} 
+                  onClick={() => setRepresentativeIndex(index)}
+                  className={`flex-shrink-0 w-32 h-32 relative rounded-2xl overflow-hidden snap-start group border-2 transition-all cursor-pointer ${
+                    representativeIndex === index ? 'border-primary-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]' : 'border-white/10'
+                  }`}
+                >
                   {media.type === 'image' ? (
                     <img src={media.preview} alt="preview" className="w-full h-full object-cover" />
                   ) : (
@@ -303,16 +339,27 @@ export function RegisterPlace() {
                     </div>
                   )}
                   
+                  {/* Representative Badge */}
+                  {representativeIndex === index && (
+                    <div className="absolute top-2 left-2 px-2 py-1 bg-primary-500 text-white text-[8px] font-black rounded-md shadow-lg uppercase tracking-tighter z-10">
+                      Representative
+                    </div>
+                  )}
+
                   {/* Remove Button */}
                   <button
-                    onClick={() => removeMedia(index)}
-                    className="absolute top-1.5 right-1.5 p-1.5 bg-black/60 backdrop-blur-md rounded-full text-white hover:bg-red-500 transition-colors shadow-lg border border-white/10"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeMedia(index);
+                      if (representativeIndex === index) setRepresentativeIndex(null);
+                    }}
+                    className="absolute top-1.5 right-1.5 p-1.5 bg-black/60 backdrop-blur-md rounded-full text-white hover:bg-red-500 transition-colors shadow-lg border border-white/10 z-20"
                   >
                     <X className="w-3 h-3" />
                   </button>
 
                   {/* Media Type Icon */}
-                  <div className="absolute bottom-1.5 left-1.5 p-1 bg-black/40 backdrop-blur-md rounded-md">
+                  <div className="absolute bottom-1.5 right-1.5 p-1 bg-black/40 backdrop-blur-md rounded-md z-10">
                     {media.type === 'image' ? (
                       <ImageIcon className="w-3 h-3 text-white/80" />
                     ) : (
