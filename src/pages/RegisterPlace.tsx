@@ -368,36 +368,56 @@ export function RegisterPlace() {
           {/* Rating Input */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-white">평점을 매겨주세요</h3>
-              <span className="text-primary-500 font-black text-xl">{rating.toFixed(1)}</span>
+              <h3 className="text-sm font-bold text-white tracking-tight">평점을 매겨주세요</h3>
+              <div className="flex items-center gap-2">
+                <Star className="w-4 h-4 text-primary-500 fill-primary-500" />
+                <span className="text-primary-500 font-black text-2xl tracking-tighter">{rating.toFixed(1)}</span>
+              </div>
             </div>
-            <div className="flex gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <div key={star} className="relative w-12 h-12">
-                  {/* Gray Background Star */}
-                  <Star className="w-full h-full text-gray-700" strokeWidth={1.5} />
-                  
-                  {/* Filled Star Overlay */}
-                  <div 
-                    className="absolute inset-0 overflow-hidden pointer-events-none"
-                    style={{ width: `${Math.max(0, Math.min(100, (rating - (star - 1)) * 100))}%` }}
-                  >
-                    <Star className="w-12 h-12 fill-primary-500 text-primary-500" strokeWidth={1.5} />
+            
+            <div className="relative px-1 pt-2 pb-6">
+              {/* Star Display behind the slider */}
+              <div className="flex gap-1.5 mb-6 justify-between">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <div key={star} className="relative w-12 h-12 flex-1 max-w-[56px]">
+                    <Star className="w-full h-full text-gray-800" strokeWidth={1} />
+                    <div 
+                      className="absolute inset-0 overflow-hidden pointer-events-none"
+                      style={{ width: `${Math.max(0, Math.min(100, (rating - (star - 1)) * 100))}%` }}
+                    >
+                      <Star className="w-full h-full fill-primary-500 text-primary-500" strokeWidth={1} />
+                    </div>
                   </div>
+                ))}
+              </div>
 
-                  {/* Invisible Interactive Buttons (Left/Right halves) */}
-                  <div className="absolute inset-0 flex">
-                    <button 
-                      onClick={() => setRating(star - 0.5)}
-                      className="w-1/2 h-full cursor-pointer"
-                    />
-                    <button 
-                      onClick={() => setRating(star)}
-                      className="w-1/2 h-full cursor-pointer"
-                    />
-                  </div>
+              {/* Range Input Overlay */}
+              <div className="relative h-2 group">
+                <input 
+                  type="range"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  value={rating}
+                  onChange={(e) => setRating(parseFloat(e.target.value))}
+                  className="absolute -top-14 inset-0 w-full h-20 opacity-0 cursor-pointer z-20"
+                />
+                
+                {/* Visual Track */}
+                <div className="w-full h-1.5 bg-white/5 rounded-full relative overflow-hidden border border-white/5">
+                  <div 
+                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary-600 to-primary-400 shadow-[0_0_10px_rgba(249,115,22,0.3)]"
+                    style={{ width: `${(rating / 5) * 100}%` }}
+                  ></div>
                 </div>
-              ))}
+                
+                {/* Indicator Dots */}
+                <div className="flex justify-between mt-3 px-1">
+                  {[0, 1, 2, 3, 4, 5].map(v => (
+                    <span key={v} className="text-[10px] font-black text-gray-700">{v}</span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
