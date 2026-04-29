@@ -104,7 +104,7 @@ export default function GuideProfile() {
                 <Medal className="w-5 h-5 text-yellow-500" />
                 가이드 추천 Top 20
               </h2>
-              <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest border border-yellow-500/30 px-2 py-1 rounded-md">최고의 맛집</span>
+              <button className="text-[11px] font-bold text-primary-500 uppercase tracking-widest">전체보기</button>
             </div>
             <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 snap-x pb-4">
               {top20Posts.map((post, idx) => (
