@@ -205,35 +205,51 @@ export function PostDetail() {
             />
           </div>
           
-          <div className="grid grid-cols-1 gap-2.5">
+          <div className="grid grid-cols-1 gap-3">
             {[
-              { icon: MapPin, label: '주소', value: post.place.address },
-              { icon: Clock, label: '영업시간', value: post.place.openingHours || '정보 없음' },
-              { icon: Phone, label: '전화번호', value: post.place.phone || '정보 없음', isLink: true },
+              { icon: MapPin, label: '주소', value: post.place.address, copy: true },
+              { icon: Phone, label: '전화번호', value: post.place.phone || '등록된 번호가 없습니다.', copy: !!post.place.phone },
+              { icon: Clock, label: '영업시간', value: post.place.openingHours || '11:00 AM - 10:00 PM (확인 필요)' },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-4 py-2 px-4 bg-[#111] border border-white/10 rounded-xl">
-                <div className="w-8 h-8 rounded-lg bg-black/50 flex items-center justify-center shrink-0 border border-white/10">
-                  <item.icon className="w-3.5 h-3.5 text-primary-500" />
+              <div key={i} className="flex items-center gap-4 py-3 px-4 bg-[#111] border border-white/10 rounded-2xl group transition-all hover:border-primary-500/30">
+                <div className="w-10 h-10 rounded-xl bg-black/50 flex items-center justify-center shrink-0 border border-white/5">
+                  <item.icon className="w-4 h-4 text-primary-500" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[9px] text-gray-500 mb-0.5 font-bold uppercase tracking-widest">{item.label}</span>
-                  <span className={`text-[13px] text-gray-200 leading-tight ${item.isLink ? 'underline decoration-primary-500/30 underline-offset-4' : ''}`}>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] text-gray-500 mb-0.5 font-black uppercase tracking-widest block opacity-70">{item.label}</span>
+                  <span className="text-[14px] text-gray-200 leading-tight font-bold truncate block">
                     {item.value}
                   </span>
                 </div>
+                {item.copy && (
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(item.value);
+                      alert(`${item.label}가 복사되었습니다.`);
+                    }}
+                    className="p-2 text-gray-500 hover:text-primary-500 transition-colors"
+                  >
+                    <span className="text-[10px] font-black uppercase">복사</span>
+                  </button>
+                )}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-2">
-            <button className="flex items-center justify-center gap-2 h-14 bg-primary-500 text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-lg shadow-primary-500/20 active:scale-95 transition-all">
+          <div className="grid grid-cols-2 gap-3 pt-4">
+            <button className="flex items-center justify-center gap-2 h-14 bg-primary-500 text-white font-black text-sm uppercase tracking-widest rounded-[20px] shadow-[0_10px_20px_rgba(255,107,0,0.2)] active:scale-95 transition-all">
               <Navigation className="w-4 h-4" />
               길찾기
             </button>
-            <button className="flex items-center justify-center gap-2 h-14 bg-white/5 border border-white/30 text-white font-black text-xs uppercase tracking-widest rounded-2xl active:bg-white/10 transition-all">
+            <a 
+              href={`https://map.kakao.com/link/search/${encodeURIComponent(post.place.name)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 h-14 bg-white/5 border border-white/30 text-white font-black text-sm uppercase tracking-widest rounded-[20px] active:bg-white/10 transition-all"
+            >
               <ExternalLink className="w-4 h-4 text-primary-500" />
-              웹사이트
-            </button>
+              카카오맵 정보
+            </a>
           </div>
 
           {/* Detailed Content Section */}
