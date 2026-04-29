@@ -240,56 +240,53 @@ export function Home() {
                 )}
               </div>
               
-              {/* Image Card */}
-              <Link to={`/post/${post.id}`} className="aspect-[4/5] w-full rounded-[32px] overflow-hidden relative bg-[#111] mb-5 
+              {/* Image Card (1:1 Aspect Ratio) */}
+              <Link to={`/post/${post.id}`} className="aspect-square w-full rounded-[24px] overflow-hidden relative bg-[#111] mb-4 
                             ring-1 ring-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] group-hover:ring-white/25 transition-all duration-700 ease-in-out">
                 <img src={post.images[0]} alt={post.place.name} className="object-cover w-full h-full transform group-hover:scale-110 transition-transform duration-1000 ease-out" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80"></div>
                 
                 {/* Image Overlay Info */}
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-1 bg-primary-500 text-white text-[10px] font-black rounded-lg uppercase tracking-tight">
-                        {post.place.category}
-                      </span>
-                      {post.isPaidByMe && (
-                        <span className="px-2.5 py-1 bg-white text-black text-[10px] font-black rounded-lg uppercase tracking-tight">
-                          내돈내산
+                <div className="absolute bottom-5 left-5 right-5">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2 py-0.5 bg-primary-500 text-white text-[9px] font-black rounded-md uppercase tracking-tight">
+                          {post.place.category}
                         </span>
-                      )}
+                        <div className="flex items-center gap-1 px-2 py-0.5 bg-black/50 backdrop-blur-md rounded-md border border-white/10">
+                          <Heart className="w-2.5 h-2.5 text-primary-500 fill-primary-500" />
+                          <span className="text-[10px] font-black text-white">{post.likes.toLocaleString()}</span>
+                        </div>
+                      </div>
                     </div>
-                    <h3 className="text-3xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl">
+                    <h3 className="text-2xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl">
                       {post.place.name}
                     </h3>
-                    <div className="flex items-center gap-2 text-gray-300 font-medium">
-                      <MapPin className="w-4 h-4 text-primary-500" />
-                      <span className="text-[13px]">{post.place.address}</span>
+                    <div className="flex items-center gap-1.5 text-gray-400 font-medium">
+                      <MapPin className="w-3.5 h-3.5 text-primary-500/70" />
+                      <span className="text-[12px]">{post.place.address}</span>
                     </div>
                   </div>
                 </div>
               </Link>
               
-              {/* Content Description */}
-              <div className="px-2">
-                <p className="text-[15px] text-gray-300 line-clamp-3 leading-relaxed font-light">
-                  <span className="text-white font-bold mr-3 text-lg">“</span>
-                  {post.content}
-                  <span className="text-white font-bold ml-1 text-lg">”</span>
-                </p>
-                <div className="flex items-center gap-4 mt-4">
-                  <Link to={`/post/${post.id}`} className="px-6 py-2.5 bg-white/5 border border-white/10 rounded-xl text-[12px] text-primary-500 font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
-                    상세보기
-                  </Link>
-                  <div className="flex -space-x-2 ml-auto">
-                    {[1,2,3].map(i => (
-                      <div key={i} className="w-6 h-6 rounded-full border-2 border-black bg-[#111]">
-                        <img src={`https://i.pravatar.cc/100?u=a${i}`} className="w-full h-full rounded-full" />
-                      </div>
-                    ))}
-                    <span className="pl-3 text-[11px] text-gray-500 font-medium self-center">외 24명이 찜했습니다</span>
-                  </div>
+              {/* Content Description & Keywords */}
+              <div className="px-1">
+                {/* Keywords/Tags */}
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {post.tags?.map((tag, idx) => (
+                    <span key={idx} className="text-[11px] text-primary-500 font-bold px-2 py-1 bg-primary-500/5 rounded-lg border border-primary-500/10">
+                      #{tag}
+                    </span>
+                  ))}
                 </div>
+
+                <p className="text-[14px] text-gray-300 line-clamp-3 leading-relaxed font-light mb-4">
+                  <span className="text-white font-bold mr-2 text-lg">“</span>
+                  {post.content}
+                  <span className="text-white font-bold ml-0.5 text-lg">”</span>
+                </p>
               </div>
             </article>
           ))}
