@@ -116,25 +116,78 @@ export function GeneralSearch() {
           <div className="space-y-10 pt-4">
             {/* Section: Restaurants */}
             <section>
-              <div className="flex items-center justify-between mb-4 px-1">
-                <h3 className="text-sm font-black text-white flex items-center gap-2">
+              <div className="flex items-center justify-between mb-5 px-1">
+                <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest">
                   <MapPin className="w-4 h-4 text-primary-500" />
-                  식당
+                  식당 리스트
                 </h3>
-                <button className="text-[10px] font-bold text-gray-500 hover:text-primary-500 transition-colors">더보기</button>
+                <span className="text-[10px] font-bold text-primary-500">전체보기</span>
               </div>
-              <div className="space-y-2">
-                {MOCK_POSTS.filter(p => p.place.name.includes(keyword)).slice(0, 2).map(post => (
-                  <div key={post.id} className="p-4 bg-[#0c0c0c] border border-white/5 rounded-2xl flex items-center gap-4">
-                    <img src={post.images[0]} className="w-14 h-14 rounded-xl object-cover" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-white truncate">{post.place.name}</p>
-                      <p className="text-[11px] text-gray-500 truncate">{post.place.address}</p>
+              <div className="space-y-4">
+                {/* uniquePlaces logic */}
+                {Array.from(new Set(MOCK_POSTS.filter(p => p.place.name.includes(keyword)).map(p => p.place.id))).map(placeId => {
+                  const placePosts = MOCK_POSTS.filter(p => p.place.id === placeId);
+                  const place = placePosts[0].place;
+                  
+                  return (
+                    <div key={placeId} className="bg-[#111] border border-white/20 rounded-[24px] overflow-hidden shadow-2xl">
+                      {/* Restaurant Header */}
+                      <div 
+                        onClick={() => navigate(`/post/${placePosts[0].id}`)}
+                        className="p-5 flex items-center gap-4 border-b border-white/5 active:bg-white/5 transition-colors cursor-pointer"
+                      >
+                        <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 border border-white/10 shadow-lg">
+                          <img src={placePosts[0].images[0]} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <span className="text-[9px] font-black text-primary-500 uppercase tracking-tighter px-1.5 py-0.5 bg-primary-500/10 rounded">
+                              {place.category}
+                            </span>
+                          </div>
+                          <h4 className="text-lg font-black text-white truncate leading-tight">{place.name}</h4>
+                          <p className="text-[11px] text-gray-500 truncate mt-0.5 font-medium">{place.address}</p>
+                        </div>
+                      </div>
+
+                      {/* Guides Recommended Section */}
+                      <div className="bg-[#0c0c0c] p-4">
+                        <p className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] mb-3 px-1">Recommended By</p>
+                        <div className="space-y-3">
+                          {placePosts.map(post => (
+                            <div 
+                              key={post.id} 
+                              onClick={() => navigate(`/post/${post.id}`)}
+                              className="flex items-center gap-3 p-2.5 rounded-xl border border-white/5 bg-black/40 hover:border-primary-500/30 transition-all cursor-pointer group"
+                            >
+                              <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 shrink-0">
+                                <img src={post.guide.profileImageUrl} alt="" className="w-full h-full object-cover" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-0.5">
+                                  <span className="text-[11px] font-bold text-white group-hover:text-primary-400 transition-colors">{post.guide.nickname}</span>
+                                  <div className="flex items-center gap-1">
+                                    <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
+                                    <span className="text-[10px] font-black text-white">{post.rating}</span>
+                                  </div>
+                                </div>
+                                <p className="text-[11px] text-gray-400 line-clamp-1 italic font-light">
+                                  "{post.content.split('.')[0]}..."
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
+
                 {MOCK_POSTS.filter(p => p.place.name.includes(keyword)).length === 0 && (
-                  <p className="text-xs text-gray-600 px-1 italic">'{keyword}' 이름의 식당 검색 결과가 없습니다.</p>
+                  <div className="py-12 flex flex-col items-center justify-center opacity-30">
+                    <MapPin className="w-12 h-12 mb-3" />
+                    <p className="text-sm font-medium">'{keyword}' 검색 결과가 없습니다.</p>
+                  </div>
                 )}
               </div>
             </section>
