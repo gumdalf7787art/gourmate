@@ -382,6 +382,37 @@ export function PostDetail() {
             </div>
           )}
 
+          {/* New: Other Restaurants by the Same Guide Slider */}
+          {MOCK_POSTS.filter(p => p.guide.id === post.guide.id && p.place.category === post.place.category && p.id !== post.id).length > 0 && (
+            <div className="pt-12 space-y-5">
+              <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 px-1">
+                <BadgeCheck className="w-4 h-4 text-primary-500" />
+                {post.guide.nickname}의 또 다른 {post.place.category} 맛집
+              </h3>
+              <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-6 px-6 snap-x">
+                {MOCK_POSTS.filter(p => p.guide.id === post.guide.id && p.place.category === post.place.category && p.id !== post.id).map(guideOtherPost => (
+                  <Link 
+                    key={guideOtherPost.id} 
+                    to={`/post/${guideOtherPost.id}`}
+                    className="flex-none w-[140px] bg-[#111] border border-white/10 rounded-[24px] overflow-hidden snap-start group shadow-2xl"
+                  >
+                    <div className="aspect-[4/3] relative overflow-hidden">
+                      <img src={guideOtherPost.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                    </div>
+                    <div className="p-3">
+                      <p className="text-[11px] font-black text-white truncate leading-tight mb-1">{guideOtherPost.place.name}</p>
+                      <div className="flex items-center gap-1.5">
+                        <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
+                        <span className="text-[10px] font-black text-gray-400">{guideOtherPost.rating}</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* New: Similar Restaurants Slider */}
           <div className="pt-10 space-y-5">
             <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 px-1">
