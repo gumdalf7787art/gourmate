@@ -209,11 +209,15 @@ export default function GuidePostList() {
             <KakaoMap 
               places={filteredPosts.map(p => ({
                 id: p.place.id,
+                postId: p.id,
                 lat: p.place.latitude,
                 lng: p.place.longitude,
-                name: p.place.name
+                name: p.place.name,
+                category: p.place.category,
+                rating: p.rating
               }))}
               level={7}
+              onSelect={(postId) => navigate(`/post/${postId}`)}
             />
             
             {/* Info overlay */}
