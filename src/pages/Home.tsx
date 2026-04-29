@@ -70,30 +70,46 @@ export function Home() {
           ))}
         </div>
 
-        {/* Category Result Content (Horizontal Scroll) */}
-        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 snap-x">
+        {/* 2. 인기 추천맛집 (2x2 Grid) */}
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h2 className="text-lg font-bold text-white tracking-tight">인기 추천맛집</h2>
+            <p className="text-[11px] text-gray-500 mt-0.5">오늘 가장 많은 좋아요를 받은 가이드의 선택</p>
+          </div>
+          <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400">전체보기</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6">
           {filteredPosts.length > 0 ? (
-            filteredPosts.map((post) => (
-              <Link to={`/post/${post.id}`} key={post.id} className="snap-start flex-none w-[150px] group cursor-pointer">
-                <div className="aspect-square w-full rounded-2xl overflow-hidden mb-2 border border-white/5 relative bg-[#111]">
-                  <img src={post.images[0]} alt={post.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                  <div className="absolute top-2 right-2">
+            filteredPosts.sort((a, b) => b.likes - a.likes).slice(0, 4).map((post) => (
+              <Link to={`/post/${post.id}`} key={post.id} className="group cursor-pointer">
+                <div className="aspect-[4/5] w-full rounded-2xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
+                  <img src={post.images[0]} alt={post.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-2 right-2 flex flex-col gap-1">
                     {post.isPaidByMe && (
-                      <div className="bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[8px] font-bold text-primary-500 border border-primary-500/30">
-                        내돈내산
+                      <div className="bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[8px] font-black text-primary-500 border border-primary-500/30 uppercase">
+                        Verified
                       </div>
                     )}
                   </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                  <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-white">
+                      <Flame className="w-2.5 h-2.5 text-primary-500" />
+                      <span className="text-[10px] font-bold">{post.likes}</span>
+                    </div>
+                    <span className="text-[9px] text-gray-400 font-medium">{post.place.category}</span>
+                  </div>
                 </div>
-                <h4 className="text-white text-[12px] font-bold truncate mb-0.5">{post.place.name}</h4>
+                <h4 className="text-white text-[13px] font-bold truncate mb-0.5 group-hover:text-primary-400 transition-colors">{post.place.name}</h4>
                 <div className="flex items-center gap-1 text-gray-500">
-                  <MapPin className="w-2.5 h-2.5 text-primary-500/70" />
-                  <span className="text-[10px] truncate leading-none">{post.place.address.split(' ')[1]}</span>
+                  <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
+                  <span className="text-[10px] truncate leading-none">{post.place.address.split(' ')[1]} {post.place.address.split(' ')[2]}</span>
                 </div>
               </Link>
             ))
           ) : (
-            <div className="w-full py-10 flex flex-col items-center justify-center text-gray-600 border border-dashed border-white/10 rounded-3xl">
+            <div className="col-span-2 py-10 flex flex-col items-center justify-center text-gray-600 border border-dashed border-white/10 rounded-3xl">
               <UtensilsCrossed className="w-8 h-8 mb-2 opacity-20" />
               <p className="text-sm">해당 카테고리의 맛집이 아직 없습니다.</p>
             </div>
