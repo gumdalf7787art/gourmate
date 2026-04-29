@@ -203,19 +203,19 @@ export function PostDetail() {
             />
           </div>
           
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-2.5">
             {[
               { icon: MapPin, label: '주소', value: post.place.address },
               { icon: Clock, label: '영업시간', value: post.place.openingHours || '정보 없음' },
               { icon: Phone, label: '전화번호', value: post.place.phone || '정보 없음', isLink: true },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-4 p-4 bg-[#111] border border-white/10 rounded-2xl">
-                <div className="w-10 h-10 rounded-xl bg-black/50 flex items-center justify-center shrink-0 border border-white/10">
-                  <item.icon className="w-4 h-4 text-primary-500" />
+              <div key={i} className="flex items-center gap-4 py-2 px-4 bg-[#111] border border-white/10 rounded-xl">
+                <div className="w-8 h-8 rounded-lg bg-black/50 flex items-center justify-center shrink-0 border border-white/10">
+                  <item.icon className="w-3.5 h-3.5 text-primary-500" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] text-gray-500 mb-0.5 font-bold uppercase tracking-widest">{item.label}</span>
-                  <span className={`text-sm text-gray-200 ${item.isLink ? 'underline decoration-primary-500/30 underline-offset-4' : ''}`}>
+                  <span className="text-[9px] text-gray-500 mb-0.5 font-bold uppercase tracking-widest">{item.label}</span>
+                  <span className={`text-[13px] text-gray-200 leading-tight ${item.isLink ? 'underline decoration-primary-500/30 underline-offset-4' : ''}`}>
                     {item.value}
                   </span>
                 </div>
@@ -223,7 +223,7 @@ export function PostDetail() {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-4">
+          <div className="grid grid-cols-2 gap-3 pt-2">
             <button className="flex items-center justify-center gap-2 h-14 bg-primary-500 text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-lg shadow-primary-500/20 active:scale-95 transition-all">
               <Navigation className="w-4 h-4" />
               길찾기
@@ -232,6 +232,24 @@ export function PostDetail() {
               <ExternalLink className="w-4 h-4 text-primary-500" />
               웹사이트
             </button>
+          </div>
+
+          {/* New Detailed Content Section */}
+          <div className="pt-6 space-y-4">
+            <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
+              <Info className="w-3.5 h-3.5 text-primary-500" />
+              상세 내용
+            </h3>
+            <div className="p-6 bg-[#080808] border border-white/10 rounded-[24px] relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Info className="w-12 h-12" />
+              </div>
+              <p className="text-[14px] text-gray-400 leading-relaxed font-light">
+                {post.place.name}은(는) {post.place.category} 전문점으로, 엄선된 식재료와 {post.guide.nickname} 가이드가 보증하는 특별한 레시피로 많은 사랑을 받고 있는 곳입니다. 
+                <br /><br />
+                주요 특징으로는 정갈한 분위기 속에서 즐기는 {post.place.category}의 정수를 맛보실 수 있으며, 방문객들에게 잊지 못할 미식 경험을 선사합니다. 상세한 메뉴 구성과 일자별 특선 요리는 매장 상황에 따라 변동될 수 있으니 방문 전 확인을 권장드립니다.
+              </p>
+            </div>
           </div>
         </section>
       </main>
