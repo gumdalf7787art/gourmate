@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Plus, Heart } from 'lucide-react';
+import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Plus, Heart, Info } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_POSTS, MOCK_COLLECTIONS } from '../data/mock';
+import { TrustScoreModal } from '../components/TrustScoreModal';
 
 const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
 
@@ -9,6 +10,7 @@ export default function GuideProfile() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('전체');
+  const [showTrustModal, setShowTrustModal] = useState(false);
 
   const guide = MOCK_GUIDES.find(g => g.id === id);
   
@@ -34,6 +36,7 @@ export default function GuideProfile() {
 
   return (
     <div className="min-h-screen bg-black text-white pb-32 font-pretendard no-scrollbar">
+      
       {/* Dynamic Header Background */}
       <div className="absolute top-0 left-0 w-full h-[400px] overflow-hidden opacity-30">
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/20 via-black/80 to-black z-10" />
@@ -68,9 +71,15 @@ export default function GuideProfile() {
             <div className="flex-1 pb-1">
               <h1 className="text-3xl font-black tracking-tighter mb-2">{guide.nickname}</h1>
               <div className="flex items-center gap-4">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest opacity-80">신뢰지수</span>
-                  <span className="text-lg font-black leading-none mt-1">{guide.trustScore}%</span>
+                <div 
+                  className="flex flex-col items-center cursor-pointer group"
+                  onClick={() => setShowTrustModal(true)}
+                >
+                  <div className="flex items-center gap-1 mb-1">
+                    <span className="text-[17px] font-black text-primary-500">{guide.trustScore}</span>
+                    <Info className="w-3 h-3 text-gray-600 group-hover:text-primary-500 transition-colors" />
+                  </div>
+                  <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">신뢰지수</span>
                 </div>
                 <div className="w-px h-6 bg-white/10" />
                 <div className="flex flex-col">
@@ -286,6 +295,13 @@ export default function GuideProfile() {
           </div>
         </section>
       </main>
+      {/* Trust Score Detail Modal */}
+      {showTrustModal && (
+        <TrustScoreModal 
+          guide={guide} 
+          onClose={() => setShowTrustModal(false)} 
+        />
+      )}
     </div>
   );
 }

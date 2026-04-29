@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, BadgeCheck, UserPlus, Heart, Users, Star } from 'lucide-react';
-import { MOCK_GUIDES } from '@/data/mock';
+import { ArrowLeft, BadgeCheck, UserPlus, Heart, Users, Star, Info } from 'lucide-react';
+import { MOCK_GUIDES, Guide } from '@/data/mock';
+import { TrustScoreModal } from '@/components/TrustScoreModal';
 
 export function PopularGuides() {
   const navigate = useNavigate();
+  const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
 
   // 신뢰지수 높은 순으로 정렬
   const sortedGuides = [...MOCK_GUIDES].sort((a, b) => b.trustScore - a.trustScore);
@@ -61,9 +64,16 @@ export function PopularGuides() {
                 </div>
                 
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="flex items-center gap-1">
+                  <div 
+                    className="flex items-center gap-1 cursor-pointer hover:text-primary-500 transition-colors group/info"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedGuide(guide);
+                    }}
+                  >
                     <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
-                    <span className="text-[11px] text-gray-300 font-bold">신뢰지수 {guide.trustScore}</span>
+                    <span className="text-[11px] text-gray-300 font-bold group-hover/info:text-primary-500">신뢰지수 {guide.trustScore}</span>
+                    <Info className="w-2.5 h-2.5 text-gray-600 group-hover/info:text-primary-500" />
                   </div>
                   <div className="w-[1px] h-2.5 bg-white/10"></div>
                   <span className="text-[11px] text-gray-500 font-medium">게시물 {Math.floor(Math.random() * 50) + 10}</span>
@@ -95,6 +105,14 @@ export function PopularGuides() {
           ))}
         </div>
       </main>
+
+      {/* Trust Score Detail Modal */}
+      {selectedGuide && (
+        <TrustScoreModal 
+          guide={selectedGuide} 
+          onClose={() => setSelectedGuide(null)} 
+        />
+      )}
     </div>
   );
 }

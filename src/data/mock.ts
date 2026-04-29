@@ -8,6 +8,12 @@ export type Guide = {
   following?: number;
   totalPosts?: number;
   likes?: number;
+  trustMetrics?: {
+    paidRatio: number;      // 내돈내산 비율 (0~100)
+    contentQuality: number; // 콘텐츠 완성도 (0~100)
+    communityScore: number; // 커뮤니티 검증 (0~100)
+    activityIndex: number;  // 활동 지수 (0~100)
+  };
 };
 
 export type Place = {
@@ -56,10 +62,10 @@ export type Post = {
 };
 
 export const MOCK_GUIDES: Guide[] = [
-  { id: 'g1', nickname: '푸디트래블러', profileImageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200', trustScore: 98, bio: '전 세계의 맛을 찾아 떠나는 미식 여행자입니다.', followers: 12400, following: 120, totalPosts: 45 },
-  { id: 'g2', nickname: '미식탐험가', profileImageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', trustScore: 92, bio: '숨겨진 보석 같은 로컬 맛집을 발굴합니다.', followers: 8900, following: 340, totalPosts: 112 },
-  { id: 'g3', nickname: '동네미식가', profileImageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200', trustScore: 88, bio: '일상 속에서 만나는 특별한 한 끼를 소개합니다.', followers: 3200, following: 50, totalPosts: 28 },
-  { id: 'g4', nickname: '카페장인', profileImageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200', trustScore: 95, bio: '분위기 좋은 카페와 디저트를 기록합니다.', followers: 21500, following: 80, totalPosts: 89 },
+  { id: 'g1', nickname: '푸디트래블러', profileImageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200', trustScore: 98, bio: '전 세계의 맛을 찾아 떠나는 미식 여행자입니다.', followers: 12400, following: 120, totalPosts: 45, likes: 12400, trustMetrics: { paidRatio: 98, contentQuality: 95, communityScore: 92, activityIndex: 88 } },
+  { id: 'g2', nickname: '미식탐험가', profileImageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', trustScore: 92, bio: '숨겨진 보석 같은 로컬 맛집을 발굴합니다.', followers: 8900, following: 340, totalPosts: 112, likes: 8900, trustMetrics: { paidRatio: 90, contentQuality: 92, communityScore: 88, activityIndex: 95 } },
+  { id: 'g3', nickname: '동네미식가', profileImageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200', trustScore: 88, bio: '일상 속에서 만나는 특별한 한 끼를 소개합니다.', followers: 3200, following: 180, totalPosts: 28, likes: 8600, trustMetrics: { paidRatio: 85, contentQuality: 88, communityScore: 90, activityIndex: 94 } },
+  { id: 'g4', nickname: '카페장인', profileImageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200', trustScore: 95, bio: '분위기 좋은 카페와 디저트를 기록합니다.', followers: 21500, following: 80, totalPosts: 89, likes: 21500, trustMetrics: { paidRatio: 95, contentQuality: 97, communityScore: 94, activityIndex: 92 } },
 ];
 
 export const MOCK_PLACES: Place[] = [
