@@ -173,21 +173,25 @@ export default function GuidePostList() {
               </div>
             )}
           </div>
+
+          {/* Map View Button (Moved here from floating) */}
+          {filteredPosts.length > 0 && (
+            <div className="mt-12 mb-12">
+              <button 
+                onClick={() => setShowMap(true)}
+                className="w-full py-4 bg-primary-500 rounded-2xl flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(255,107,0,0.3)] active:scale-[0.98] transition-all group"
+              >
+                <MapIcon className="w-5 h-5 text-white" />
+                <span className="text-[15px] font-black text-white">
+                  {activeCategory === '전체' ? '전체' : activeCategory} 맛집 {filteredPosts.length}개 지도로 보기
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </main>
 
-      {/* Floating Map Button */}
-      {filteredPosts.length > 0 && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[60]">
-          <button 
-            onClick={() => setShowMap(true)}
-            className="flex items-center gap-2 px-6 py-3.5 bg-primary-500 text-white rounded-full font-black shadow-[0_10px_30px_rgba(255,82,0,0.4)] active:scale-95 transition-all"
-          >
-            <MapIcon className="w-5 h-5" />
-            <span className="text-sm tracking-tight">지도로 보기</span>
-          </button>
-        </div>
-      )}
+
 
       {/* Map View Modal */}
       {showMap && (
