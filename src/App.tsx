@@ -9,6 +9,7 @@ import GuidePostList from '@/pages/GuidePostList';
 import { PopularGuides } from './pages/PopularGuides';
 import GuideCollectionList from './pages/GuideCollectionList';
 import ThemeDetail from './pages/ThemeDetail';
+import PopularRestaurants from './pages/PopularRestaurants';
 import { BottomNav } from '@/components/BottomNav';
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -32,6 +33,7 @@ function App() {
           <Route path="/guide/:id/themes" element={<GuideCollectionList />} />
           <Route path="/popular-guides" element={<PopularGuides />} />
           <Route path="/theme/:id" element={<ThemeDetail />} />
+          <Route path="/popular-restaurants" element={<PopularRestaurants />} />
           <Route path="/search" element={<GeneralSearch />} />
           <Route path="/register-place" element={<RegisterPlace />} />
           <Route path="/map" element={<div className="p-8 pb-24 text-center text-white">지도 페이지 준비중</div>} />

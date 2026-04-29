@@ -89,7 +89,7 @@ export function Home() {
             <h2 className="text-lg font-bold text-white tracking-tight">인기 추천맛집</h2>
             <p className="text-[11px] text-gray-500 mt-0.5">오늘 가장 많은 좋아요를 받은 가이드의 선택</p>
           </div>
-          <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400">전체보기</span>
+          <Link to="/popular-restaurants" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
         </div>
 
         <div className="grid grid-cols-2 gap-x-4 gap-y-6">
