@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Filter, Search, GpsFixed } from 'lucide-react';
+import { ChevronLeft, Filter, Search, LocateFixed } from 'lucide-react';
 import { MOCK_GUIDES, MOCK_POSTS } from '@/data/mock';
 import { KakaoMap } from '@/components/KakaoMap';
 
@@ -88,7 +88,7 @@ export default function GlobalMap() {
         {/* Floating Controls */}
         <div className="absolute bottom-28 right-5 z-20 flex flex-col gap-3">
           <button className="w-12 h-12 bg-white text-black rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-all">
-            <GpsFixed className="w-6 h-6" />
+            <LocateFixed className="w-6 h-6" />
           </button>
         </div>
 
