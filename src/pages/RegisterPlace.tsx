@@ -1,12 +1,16 @@
 import { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, MapPin, Tag, Image as ImageIcon, Video, X, Plus } from 'lucide-react';
+import { 
+  ArrowLeft, CheckCircle2, MapPin, Tag, Image as ImageIcon, 
+  Video, X, Plus, Type, Minus, Utensils, Lightbulb 
+} from 'lucide-react';
 import { KakaoMap } from '@/components/KakaoMap';
 
 export function RegisterPlace() {
   const navigate = useNavigate();
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const place = location.state?.place;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -14,6 +18,32 @@ export function RegisterPlace() {
   const [content, setContent] = useState('');
   const [selectedTag, setSelectedTag] = useState(place?.category_group_name || '음식점');
   const [mediaFiles, setMediaFiles] = useState<{ file: File; preview: string; type: 'image' | 'video' }[]>([]);
+
+  // 텍스트 삽입 유틸리티 (커서 위치에 삽입)
+  const insertText = (before: string, after: string = '') => {
+    if (!textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const currentText = textarea.value;
+    
+    const newText = 
+      currentText.substring(0, start) + 
+      before + 
+      currentText.substring(start, end) + 
+      after + 
+      currentText.substring(end);
+    
+    setContent(newText);
+    
+    // 포커스 유지 및 커서 위치 조정
+    setTimeout(() => {
+      textarea.focus();
+      const newCursorPos = start + before.length;
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+    }, 0);
+  };
 
   // 이미지 리사이징 유틸리티
   const resizeImage = (file: File): Promise<File> => {
@@ -198,12 +228,45 @@ export function RegisterPlace() {
 
           {/* Detailed Content Input */}
           <div>
-            <h3 className="text-sm font-bold text-white mb-4">상세한 후기를 들려주세요 (블로그 스타일)</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-white">상세한 후기를 들려주세요</h3>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => insertText('\n### ', '')}
+                  className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
+                  title="소제목"
+                >
+                  <Type className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={() => insertText('\n---\n', '')}
+                  className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
+                  title="구분선"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={() => insertText('\n📍 추천 메뉴: ', '')}
+                  className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
+                  title="추천 메뉴"
+                >
+                  <Utensils className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={() => insertText('\n💡 꿀팁: ', '')}
+                  className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
+                  title="꿀팁"
+                >
+                  <Lightbulb className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
             <textarea
+              ref={textareaRef}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="이곳의 분위기, 추천 메뉴, 꿀팁 등 자세한 이야기를 들려주세요..."
-              className="w-full h-64 bg-[#141414] border border-white/10 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all leading-relaxed"
+              className="w-full h-80 bg-[#141414] border border-white/10 rounded-2xl p-5 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all leading-relaxed font-serif text-lg shadow-inner"
             ></textarea>
           </div>
 
