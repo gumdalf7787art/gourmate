@@ -14,11 +14,31 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Disable default touch highlighting */
+    -webkit-tap-highlight-color: transparent;
+  }
+  
   body {
     @apply bg-black text-gray-50 antialiased font-sans;
-    /* 추가적인 고급스러운 웹폰트 적용 혹은 스무딩 최적화 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    
+    /* Smooth inertia scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    
+    /* Optimize touch interactions by disabling double-tap-to-zoom delay */
+    touch-action: manipulation;
+    
+    /* Better hardware acceleration for scrolling */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Improve scrolling performance for all scrollable containers */
+  * {
+    -webkit-overflow-scrolling: touch;
   }
 }
 
