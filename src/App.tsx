@@ -24,6 +24,7 @@ import { Notifications } from '@/pages/Notifications';
 import { MyThemes } from '@/pages/MyThemes';
 import { ThemeEditor } from '@/pages/ThemeEditor';
 import { Analytics } from '@/pages/Analytics';
+import { AllComments } from '@/pages/AllComments';
 import { BottomNav } from '@/components/BottomNav';
 
 // 똑똑한 스크롤 관리 컴포넌트
@@ -81,6 +82,7 @@ function App() {
           <Route path="/my/themes/create" element={<ThemeEditor />} />
           <Route path="/my/themes/edit/:id" element={<ThemeEditor />} />
           <Route path="/my/analytics" element={<Analytics />} />
+          <Route path="/my/analytics/comments" element={<AllComments />} />
         </Routes>
       </Layout>
     </BrowserRouter>

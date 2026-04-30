@@ -241,7 +241,10 @@ export function Analytics() {
               <MessageCircle className="w-4 h-4" />
               최근 달린 댓글
             </h2>
-            <button className="text-[11px] font-bold text-gray-400 hover:text-white flex items-center">
+            <button 
+              onClick={() => navigate('/my/analytics/comments')}
+              className="text-[11px] font-bold text-gray-400 hover:text-white flex items-center"
+            >
               전체보기 <ChevronRight className="w-3 h-3" />
             </button>
           </div>
