@@ -57,28 +57,29 @@ export function AdminDashboard() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {kpis.map((kpi, idx) => (
-            <div key={idx} className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 relative overflow-hidden group hover:border-primary-500/30 transition-all duration-500">
+            <div key={idx} className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-4 sm:p-6 relative overflow-hidden group hover:border-primary-500/30 transition-all duration-500 aspect-square flex flex-col justify-center items-center text-center">
               {/* Background Glow */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-primary-500/10 transition-colors"></div>
               
-              <div className="relative z-10 flex flex-col h-full justify-between">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-[#111] border border-white/10 flex items-center justify-center text-gray-400 group-hover:text-primary-500 group-hover:border-primary-500/30 transition-all">
+              <div className="relative z-10 flex flex-col h-full w-full justify-between items-center">
+                <div className="flex items-start justify-between w-full mb-2">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#111] border border-white/10 flex items-center justify-center text-gray-400 group-hover:text-primary-500 group-hover:border-primary-500/30 transition-all">
                     {kpi.icon}
                   </div>
-                  <div className={`flex items-center gap-1 text-[11px] font-black px-2 py-1 rounded-md ${kpi.isPositive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                    {kpi.isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                  <div className={`flex items-center gap-1 text-[9px] sm:text-[11px] font-black px-1.5 sm:py-1 rounded-md ${kpi.isPositive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                    {kpi.isPositive ? <ArrowUpRight className="w-2.5 h-2.5 sm:w-3 h-3" /> : <ArrowDownRight className="w-2.5 h-2.5 sm:w-3 h-3" />}
                     {kpi.change}
                   </div>
                 </div>
-                <div>
-                  <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1">{kpi.label}</h3>
-                  <div className="text-3xl font-black text-white tracking-tighter">
+                <div className="flex flex-col items-center">
+                  <h3 className="text-[9px] sm:text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1">{kpi.label}</h3>
+                  <div className="text-xl sm:text-3xl font-black text-white tracking-tighter">
                     {kpi.value}
                   </div>
                 </div>
+                <div className="w-full h-1"></div> {/* Spacer to balance items-center */}
               </div>
             </div>
           ))}
