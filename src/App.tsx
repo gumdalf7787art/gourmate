@@ -27,6 +27,9 @@ import { Analytics } from '@/pages/Analytics';
 import { AllComments } from '@/pages/AllComments';
 import { Notice } from '@/pages/Notice';
 import { CustomerCenter } from '@/pages/CustomerCenter';
+import { AdminDashboard } from '@/pages/AdminDashboard';
+import { AdminReports } from '@/pages/AdminReports';
+import { AdminUsers, AdminPosts } from '@/pages/AdminUsers';
 import { BottomNav } from '@/components/BottomNav';
 
 // 똑똑한 스크롤 관리 컴포넌트
@@ -87,6 +90,10 @@ function App() {
           <Route path="/my/analytics/comments" element={<AllComments />} />
           <Route path="/my/notice" element={<Notice />} />
           <Route path="/my/support" element={<CustomerCenter />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/posts" element={<AdminPosts />} />
         </Routes>
       </Layout>
     </BrowserRouter>
