@@ -41,6 +41,7 @@ export function Home() {
             <h1 className="text-2xl font-black tracking-tighter">
               <span className="text-white">GOUR</span>
               <span className="text-primary-500">MATE.</span>
+              <span className="text-[10px] text-gray-600 ml-2">v1.0.2</span>
             </h1>
           </div>
         </div>
