@@ -122,19 +122,19 @@ export function AdminDashboard() {
               </div>
             </div>
 
-            {/* Chart Container (Refined to match user analytics style) */}
-            <div className="flex-1 bg-[#111]/30 border border-white/5 rounded-2xl p-5 h-[280px] flex items-end gap-2 relative mt-4">
+            {/* Chart Container (Fixed height guaranteed) */}
+            <div className="bg-[#111]/30 border border-white/5 rounded-2xl p-6 relative mt-4 min-h-[320px] w-full overflow-hidden">
               {/* Y-axis labels */}
-              <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col justify-between text-[10px] text-gray-600 font-bold pb-10 pt-8 text-right pr-3 border-r border-white/5">
+              <div className="absolute left-6 top-8 bottom-12 w-12 flex flex-col justify-between text-[10px] text-gray-600 font-bold text-right pr-3 border-r border-white/5 z-0">
                 <span>{formatValue(maxVal)}</span>
                 <span>{formatValue(maxVal / 2)}</span>
                 <span>0</span>
               </div>
 
-              {/* Bars Area */}
-              <div className="flex-1 h-full pl-12 flex items-end justify-between gap-1 sm:gap-3 pb-8 relative pt-8">
+              {/* Bars Area Area */}
+              <div className="absolute left-20 right-6 top-8 bottom-12 flex items-end justify-between gap-2 sm:gap-4 z-10">
                 {currentData.map((val, idx) => {
-                  const heightPercentage = Math.max((val / maxVal) * 100, 3);
+                  const heightPercentage = (val / maxVal) * 100;
                   const labels_ko = {
                     daily: ['월', '화', '수', '목', '금', '토', '일'],
                     weekly: ['1주', '2주', '3주', '4주', '5주'],
@@ -144,26 +144,28 @@ export function AdminDashboard() {
                   const currentLabels_ko = labels_ko[chartPeriod];
 
                   return (
-                    <div key={idx} className="relative flex flex-col items-center flex-1 h-full justify-end group min-w-0">
+                    <div key={idx} className="relative flex flex-col items-center flex-1 h-full justify-end group">
                       {/* Top Value Label */}
-                      <span 
-                        className="text-[9px] font-black text-gray-400 mb-1 absolute transition-all duration-500 group-hover:text-primary-500 group-hover:scale-110" 
-                        style={{ bottom: `${heightPercentage}%` }}
+                      <div 
+                        className="absolute w-full text-center transition-all duration-300 group-hover:scale-110 z-20" 
+                        style={{ bottom: `calc(${heightPercentage}% + 4px)` }}
                       >
-                        {formatValue(val)}
-                      </span>
+                        <span className="text-[9px] font-black text-gray-400 group-hover:text-primary-500 whitespace-nowrap">
+                          {formatValue(val)}
+                        </span>
+                      </div>
                       
                       {/* The Bar with Gradient */}
                       <div 
-                        className="w-full max-w-[28px] bg-gradient-to-t from-primary-600 to-primary-400 rounded-t-sm shadow-[0_0_15px_rgba(249,115,22,0.2)] transition-all duration-500 ease-out group-hover:brightness-125 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.4)]"
-                        style={{ height: `${heightPercentage}%` }}
+                        className="w-full max-w-[32px] bg-gradient-to-t from-primary-600 to-primary-400 rounded-t-sm shadow-[0_0_15px_rgba(249,115,22,0.2)] transition-all duration-500 ease-out group-hover:brightness-125 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] relative"
+                        style={{ height: `${Math.max(heightPercentage, 2)}%` }}
                       >
                         <div className="absolute top-0 inset-x-0 h-0.5 bg-white/20 rounded-t-full"></div>
-                      </div>
-
-                      {/* Tooltip on Hover */}
-                      <div className="absolute -top-10 bg-white text-black text-[10px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none shadow-2xl whitespace-nowrap">
-                        {val.toLocaleString()} 명
+                        
+                        {/* Tooltip on Hover */}
+                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-30 pointer-events-none shadow-2xl whitespace-nowrap">
+                          {val.toLocaleString()} 명
+                        </div>
                       </div>
 
                       {/* X-Axis Label */}
