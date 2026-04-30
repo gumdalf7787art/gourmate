@@ -27,7 +27,7 @@ export function MyPage() {
       title: '콘텐츠 관리',
       items: [
         { icon: <FileText className="w-5 h-5" />, label: '나의 포스팅 관리', desc: '작성한 포스팅 조회/수정/삭제', link: '/my/posts' },
-        { icon: <FolderPlus className="w-5 h-5" />, label: '나의 테마 관리', desc: '나만의 맛집 지도 만들기', link: '#' },
+        { icon: <FolderPlus className="w-5 h-5" />, label: '나의 테마 관리', desc: '나만의 맛집 지도 만들기', link: '/my/themes' },
         { icon: <BarChart2 className="w-5 h-5" />, label: '접속 및 통계 관리', desc: '조회수 및 댓글 확인', link: '#' },
       ]
     },

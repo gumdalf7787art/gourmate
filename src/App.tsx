@@ -21,6 +21,8 @@ import { MyPosts } from '@/pages/MyPosts';
 import { EditPost } from '@/pages/EditPost';
 import { FollowingList } from '@/pages/FollowingList';
 import { Notifications } from '@/pages/Notifications';
+import { MyThemes } from '@/pages/MyThemes';
+import { ThemeEditor } from '@/pages/ThemeEditor';
 import { BottomNav } from '@/components/BottomNav';
 
 // 똑똑한 스크롤 관리 컴포넌트
@@ -74,6 +76,9 @@ function App() {
           <Route path="/my/posts/edit/:id" element={<EditPost />} />
           <Route path="/my/following" element={<FollowingList />} />
           <Route path="/my/notifications" element={<Notifications />} />
+          <Route path="/my/themes" element={<MyThemes />} />
+          <Route path="/my/themes/create" element={<ThemeEditor />} />
+          <Route path="/my/themes/edit/:id" element={<ThemeEditor />} />
         </Routes>
       </Layout>
     </BrowserRouter>
