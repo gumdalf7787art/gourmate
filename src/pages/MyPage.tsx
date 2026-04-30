@@ -1,16 +1,20 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Settings, Users, Bell, Heart, 
   FileText, FolderPlus, BarChart2, 
   HelpCircle, Megaphone, LogOut, UserX, ChevronRight 
 } from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function MyPage() {
-  // Mock User Data
-  const user = {
-    nickname: '고독한 미식가',
-    profileImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-    email: 'gourmate@example.com'
+  const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    if (window.confirm('로그아웃 하시겠습니까?')) {
+      logout();
+      navigate('/login');
+    }
   };
 
   const menuGroups = [
@@ -36,11 +40,13 @@ export function MyPage() {
       items: [
         { icon: <Megaphone className="w-5 h-5" />, label: '공지사항', desc: 'GOURMATE의 새로운 소식', link: '/my/notice' },
         { icon: <HelpCircle className="w-5 h-5" />, label: '고객센터', desc: '자주 묻는 질문 및 문의', link: '/my/support' },
-        { icon: <LogOut className="w-5 h-5" />, label: '로그아웃', link: '#' },
+        { icon: <LogOut className="w-5 h-5" />, label: '로그아웃', link: '#', onClick: handleLogout },
         { icon: <UserX className="w-5 h-5 text-red-500" />, label: '회원탈퇴', link: '#', textClass: 'text-red-500' },
       ]
     }
   ];
+
+  if (!user) return null;
 
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
@@ -52,7 +58,11 @@ export function MyPage() {
       {/* Profile Section */}
       <section className="px-5 py-8 flex items-center gap-4 border-b border-white/5 bg-[#0a0a0a]">
         <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary-500 p-0.5">
-          <img src={user.profileImage} alt="Profile" className="w-full h-full rounded-full object-cover" />
+          <img 
+            src={user.profileImageUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'} 
+            alt="Profile" 
+            className="w-full h-full rounded-full object-cover" 
+          />
         </div>
         <div className="flex flex-col">
           <h2 className="text-xl font-bold text-white">{user.nickname}</h2>
@@ -70,6 +80,7 @@ export function MyPage() {
                 <li key={itemIdx}>
                   <Link 
                     to={item.link} 
+                    onClick={item.onClick}
                     className="flex items-center justify-between px-5 py-3.5 hover:bg-white/5 transition-colors group"
                   >
                     <div className="flex items-center gap-4">
