@@ -18,6 +18,7 @@ import { Login } from '@/pages/Login';
 import { MyPage } from '@/pages/MyPage';
 import { ProfileSettings } from '@/pages/ProfileSettings';
 import { MyPosts } from '@/pages/MyPosts';
+import { EditPost } from '@/pages/EditPost';
 import { FollowingList } from '@/pages/FollowingList';
 import { Notifications } from '@/pages/Notifications';
 import { BottomNav } from '@/components/BottomNav';
@@ -70,6 +71,7 @@ function App() {
           <Route path="/my" element={<MyPage />} />
           <Route path="/my/settings" element={<ProfileSettings />} />
           <Route path="/my/posts" element={<MyPosts />} />
+          <Route path="/my/posts/edit/:id" element={<EditPost />} />
           <Route path="/my/following" element={<FollowingList />} />
           <Route path="/my/notifications" element={<Notifications />} />
         </Routes>

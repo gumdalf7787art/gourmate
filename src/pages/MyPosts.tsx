@@ -17,8 +17,7 @@ export function MyPosts() {
   };
 
   const handleEdit = (id: string) => {
-    // 임시로 수정 알림
-    alert(`포스트 ID ${id} 수정 화면으로 이동합니다.`);
+    navigate(`/my/posts/edit/${id}`);
   };
 
   // 검색 필터링 로직
