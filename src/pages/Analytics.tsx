@@ -146,6 +146,10 @@ export function Analytics() {
                 const heightPercentage = Math.max((val / maxTrendValue) * 100, 2);
                 return (
                   <div key={idx} className="relative flex flex-col items-center flex-1 h-full justify-end group">
+                    {/* 상단 숫자 표시 */}
+                    <span className="text-[8px] font-black text-gray-400 mb-1 absolute" style={{ bottom: `${heightPercentage}%` }}>
+                      {val >= 1000 ? `${(val / 1000).toFixed(1)}k` : val}
+                    </span>
                     <div 
                       className="w-full bg-gradient-to-t from-primary-600 to-primary-400 rounded-t-sm shadow-[0_0_10px_rgba(249,115,22,0.3)] transition-all duration-500 ease-out group-hover:brightness-125"
                       style={{ height: `${heightPercentage}%` }}
