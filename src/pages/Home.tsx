@@ -56,7 +56,7 @@ export function Home() {
           <div
             className="block w-full pl-11 pr-4 py-3.5 bg-[#111] border border-white/30 rounded-2xl leading-5 text-gray-500 sm:text-sm shadow-inner select-none cursor-pointer hover:bg-[#1a1a1a] transition-all"
           >
-            어떤 맛집을 찾으시나요?
+            SEARCH 맛집 찾기 v1.0.3
           </div>
         </div>
       </header>
