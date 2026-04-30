@@ -23,10 +23,10 @@ export function AdminDashboard() {
 
   // 차트 모의 데이터 (기간에 따라 다른 모양을 보여주기 위함)
   const chartData = {
-    daily: [30, 45, 25, 60, 75, 40, 90], // 월~일
-    weekly: [40, 50, 65, 80, 95], // 1주~5주
-    monthly: [30, 45, 60, 50, 80, 100, 90, 120, 110, 140, 130, 160], // 1월~12월
-    yearly: [50, 80, 120] // 2024~2026
+    daily: [1250, 1420, 980, 2100, 2850, 4200, 3800], // 월~일
+    weekly: [18500, 21000, 19500, 24000, 28500], // 1주~5주
+    monthly: [45000, 52000, 61000, 58000, 72000, 85000, 92000, 105000, 98000, 112000, 125000, 142000], // 1월~12월
+    yearly: [850000, 1240000, 1580000] // 2024~2026
   };
   
   const labels = {
@@ -39,6 +39,13 @@ export function AdminDashboard() {
   const currentData = chartData[chartPeriod];
   const currentLabels = labels[chartPeriod];
   const maxVal = Math.max(...currentData);
+
+  // 숫자를 K 단위로 포맷팅
+  const formatValue = (val: number) => {
+    if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
+    if (val >= 1000) return (val / 1000).toFixed(1) + 'K';
+    return val.toString();
+  };
 
   return (
     <AdminLayout>
@@ -116,9 +123,9 @@ export function AdminDashboard() {
             </div>
 
             {/* Custom CSS Chart */}
-            <div className="flex-1 flex items-end justify-between gap-2 h-64 pt-6 border-b border-white/10 pb-2 relative">
+            <div className="flex-1 flex items-end justify-between gap-2 h-72 pt-10 border-b border-white/10 pb-2 relative">
               {/* Y-axis guidelines */}
-              <div className="absolute inset-x-0 bottom-2 top-6 flex flex-col justify-between pointer-events-none">
+              <div className="absolute inset-x-0 bottom-2 top-10 flex flex-col justify-between pointer-events-none">
                 {[100, 75, 50, 25, 0].map(pct => (
                   <div key={pct} className="w-full border-t border-white/[0.03] relative">
                     <span className="absolute -left-2 -top-2 -translate-x-full text-[9px] text-gray-600 font-bold">{pct === 0 ? '0' : ''}</span>
@@ -137,11 +144,17 @@ export function AdminDashboard() {
                 const currentLabels_ko = labels_ko[chartPeriod];
 
                 return (
-                  <div key={idx} className="flex-1 flex flex-col items-center gap-3 group relative z-10 h-full justify-end">
-                    {/* Tooltip */}
-                    <div className="absolute -top-8 bg-white text-black text-[10px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none shadow-xl">
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 group relative z-10 h-full justify-end">
+                    {/* Value Label on Top */}
+                    <span className="text-[9px] font-black text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1">
+                      {formatValue(val)}
+                    </span>
+                    
+                    {/* Tooltip (redundant with label above, but keeping for interaction) */}
+                    <div className="absolute -top-12 bg-white text-black text-[10px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none shadow-xl">
                       {val.toLocaleString()} 명
                     </div>
+                    
                     {/* Bar */}
                     <div 
                       className="w-full max-w-[40px] bg-white/5 group-hover:bg-primary-500/80 rounded-t-sm transition-all duration-500 relative overflow-hidden"
