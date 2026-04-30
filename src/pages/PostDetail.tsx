@@ -14,7 +14,9 @@ import {
   Star,
   Flame,
   User,
-  Utensils
+  Utensils,
+  MoreVertical,
+  AlertTriangle
 } from 'lucide-react';
 import { MOCK_POSTS } from '@/data/mock';
 import { useState, useEffect } from 'react';
@@ -27,6 +29,7 @@ export function PostDetail() {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   
   const post = MOCK_POSTS.find(p => p.id === id);
 
@@ -74,13 +77,45 @@ export function PostDetail() {
           </h2>
         )}
 
-        <button 
-          className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
-            scrolled ? 'bg-transparent border-transparent text-white' : 'bg-black/40 backdrop-blur-md border-white/10 text-white'
-          } active:scale-95`}
-        >
-          <Share2 className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
+              scrolled ? 'bg-transparent border-transparent text-white' : 'bg-black/40 backdrop-blur-md border-white/10 text-white'
+            } active:scale-95`}
+          >
+            <Share2 className="w-5 h-5" />
+          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowMoreMenu(!showMoreMenu)}
+              className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
+                scrolled ? 'bg-transparent border-transparent text-white' : 'bg-black/40 backdrop-blur-md border-white/10 text-white'
+              } active:scale-95`}
+            >
+              <MoreVertical className="w-5 h-5" />
+            </button>
+            
+            {showMoreMenu && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setShowMoreMenu(false)} />
+                <div className="absolute right-0 mt-2 w-36 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-20 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                  <button 
+                    onClick={() => {
+                      setShowMoreMenu(false);
+                      if (window.confirm('이 포스팅을 신고하시겠습니까?')) {
+                        alert('신고가 접수되었습니다. 검토 후 조치하겠습니다.');
+                      }
+                    }}
+                    className="w-full px-4 py-3 flex items-center gap-2 text-sm text-red-500 hover:bg-red-500/10 transition-colors text-left font-bold"
+                  >
+                    <AlertTriangle className="w-4 h-4" />
+                    신고하기
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </header>
 
       {/* Hero Image Gallery */}
