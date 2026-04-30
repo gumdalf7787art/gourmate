@@ -91,23 +91,27 @@ export function AdminDashboard() {
           <div className="lg:col-span-2 bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
               <div>
-                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">Traffic Overview</h3>
-                <p className="text-[11px] text-gray-500 font-medium">기간별 접속자 트렌드 (Unique Visitors)</p>
+                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">접속자 현황</h3>
+                <p className="text-[11px] text-gray-500 font-medium">기간별 접속자 트렌드 (순 방문자 수)</p>
               </div>
               
               {/* Chart Period Selector */}
               <div className="flex bg-[#111] border border-white/5 rounded-lg p-1">
-                {(['daily', 'weekly', 'monthly', 'yearly'] as const).map(period => (
-                  <button
-                    key={period}
-                    onClick={() => setChartPeriod(period)}
-                    className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${
-                      chartPeriod === period ? 'bg-primary-500 text-white shadow-md' : 'text-gray-500 hover:text-gray-300'
-                    }`}
-                  >
-                    {period}
-                  </button>
-                ))}
+                {(['일별', '주별', '월별', '연별'] as const).map((period, idx) => {
+                  const periodKeys: ('daily' | 'weekly' | 'monthly' | 'yearly')[] = ['daily', 'weekly', 'monthly', 'yearly'];
+                  const key = periodKeys[idx];
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setChartPeriod(key)}
+                      className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${
+                        chartPeriod === key ? 'bg-primary-500 text-white shadow-md' : 'text-gray-500 hover:text-gray-300'
+                      }`}
+                    >
+                      {period}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -124,6 +128,14 @@ export function AdminDashboard() {
 
               {currentData.map((val, idx) => {
                 const heightPct = (val / maxVal) * 100;
+                const labels_ko = {
+                  daily: ['월', '화', '수', '목', '금', '토', '일'],
+                  weekly: ['1주', '2주', '3주', '4주', '5주'],
+                  monthly: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+                  yearly: ['2024년', '2025년', '2026년']
+                };
+                const currentLabels_ko = labels_ko[chartPeriod];
+
                 return (
                   <div key={idx} className="flex-1 flex flex-col items-center gap-3 group relative z-10 h-full justify-end">
                     {/* Tooltip */}
@@ -139,7 +151,7 @@ export function AdminDashboard() {
                       <div className="absolute inset-0 bg-gradient-to-t from-transparent to-primary-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
                     {/* Label */}
-                    <span className="text-[10px] font-bold text-gray-500 uppercase">{currentLabels[idx]}</span>
+                    <span className="text-[10px] font-bold text-gray-500 uppercase">{currentLabels_ko[idx]}</span>
                   </div>
                 );
               })}
@@ -149,13 +161,13 @@ export function AdminDashboard() {
           {/* Activity Feed / Top Performers */}
           <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 flex flex-col">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-sm font-black text-white uppercase tracking-widest">Trending Now</h3>
-              <button className="text-[10px] font-bold text-primary-500 hover:text-primary-400">View All</button>
+              <h3 className="text-sm font-black text-white uppercase tracking-widest">현재 인기 급상승</h3>
+              <button className="text-[10px] font-bold text-primary-500 hover:text-primary-400">전체보기</button>
             </div>
 
             <div className="space-y-6 flex-1">
               <div>
-                <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-3 block border-b border-white/5 pb-2">Top Guides</span>
+                <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-3 block border-b border-white/5 pb-2">인기 가이드</span>
                 <div className="space-y-3 mt-3">
                   {['맛잘알가이드', '고독한미식가', '성수동주민'].map((name, i) => (
                     <div key={i} className="flex items-center justify-between group">
@@ -172,13 +184,13 @@ export function AdminDashboard() {
               </div>
 
               <div>
-                <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-3 block border-b border-white/5 pb-2">Hot Themes</span>
+                <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-3 block border-b border-white/5 pb-2">인기 테마</span>
                 <div className="space-y-3 mt-3">
                   {['2026 서울 미슐랭 투어', '비오는 날 생각나는 전집', '연남동 데이트 코스'].map((theme, i) => (
                     <div key={i} className="flex items-center justify-between group cursor-pointer">
                       <div className="flex flex-col">
                         <span className="text-[12px] font-bold text-gray-300 group-hover:text-white transition-colors truncate max-w-[150px]">{theme}</span>
-                        <span className="text-[9px] text-gray-600 font-bold">120K Views</span>
+                        <span className="text-[9px] text-gray-600 font-bold">12만 조회수</span>
                       </div>
                       <ArrowUpRight className="w-3 h-3 text-gray-600 group-hover:text-primary-500 transition-colors" />
                     </div>
