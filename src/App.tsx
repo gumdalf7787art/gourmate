@@ -13,6 +13,13 @@ import ThemeDetail from './pages/ThemeDetail';
 import PopularRestaurants from './pages/PopularRestaurants';
 import GlobalMap from './pages/GlobalMap';
 import Wishlist from './pages/Wishlist';
+import { Signup } from '@/pages/Signup';
+import { Login } from '@/pages/Login';
+import { MyPage } from '@/pages/MyPage';
+import { ProfileSettings } from '@/pages/ProfileSettings';
+import { MyPosts } from '@/pages/MyPosts';
+import { FollowingList } from '@/pages/FollowingList';
+import { Notifications } from '@/pages/Notifications';
 import { BottomNav } from '@/components/BottomNav';
 
 // 똑똑한 스크롤 관리 컴포넌트
@@ -58,7 +65,13 @@ function App() {
           <Route path="/map" element={<GlobalMap />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/write" element={<SearchPlace />} />
-          <Route path="/my" element={<div className="p-8 pb-24 text-center text-white">마이 페이지 준비중</div>} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/my" element={<MyPage />} />
+          <Route path="/my/settings" element={<ProfileSettings />} />
+          <Route path="/my/posts" element={<MyPosts />} />
+          <Route path="/my/following" element={<FollowingList />} />
+          <Route path="/my/notifications" element={<Notifications />} />
         </Routes>
       </Layout>
     </BrowserRouter>

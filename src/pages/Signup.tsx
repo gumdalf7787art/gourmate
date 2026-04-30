@@ -1,0 +1,125 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
+
+export function Signup() {
+  const navigate = useNavigate();
+  const [email1, setEmail1] = useState('');
+  const [email2, setEmail2] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [nickname, setNickname] = useState('');
+
+  // 비밀번호 유효성 검사 (영문, 숫자 포함 8자 이상)
+  const isPasswordValid = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(password);
+
+  return (
+    <div className="flex flex-col min-h-screen bg-black pb-24">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-black/70 backdrop-blur-2xl px-5 py-4 border-b border-white/5 flex items-center justify-between">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-white/70 hover:text-white transition-colors">
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <h1 className="text-lg font-bold text-white">회원가입</h1>
+        <div className="w-10"></div> {/* 여백 보정용 */}
+      </header>
+
+      <div className="px-5 py-8 flex flex-col gap-8">
+        
+        {/* SNS Login */}
+        <section>
+          <h2 className="text-sm font-bold text-white mb-4">SNS 계정으로 간편 가입</h2>
+          <div className="flex flex-col gap-3">
+            <button className="w-full py-3.5 bg-[#FEE500] text-[#191919] font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#FEE500]/90 transition-colors">
+              카카오톡으로 시작하기
+            </button>
+            <button className="w-full py-3.5 bg-[#03C75A] text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#03C75A]/90 transition-colors">
+              네이버로 시작하기
+            </button>
+            <button className="w-full py-3.5 bg-white text-black font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors">
+              구글로 시작하기
+            </button>
+          </div>
+        </section>
+
+        <div className="flex items-center gap-4 py-4">
+          <div className="h-[1px] flex-1 bg-white/10"></div>
+          <span className="text-xs text-gray-500 font-medium">또는 이메일로 가입</span>
+          <div className="h-[1px] flex-1 bg-white/10"></div>
+        </div>
+
+        {/* Email Signup */}
+        <section className="flex flex-col gap-6">
+          
+          {/* Email */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-bold text-white">이메일 (아이디)</label>
+            <input 
+              type="email" 
+              value={email1}
+              onChange={(e) => setEmail1(e.target.value)}
+              placeholder="이메일을 입력해주세요" 
+              className="w-full px-4 py-3.5 bg-[#111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors"
+            />
+            <input 
+              type="email" 
+              value={email2}
+              onChange={(e) => setEmail2(e.target.value)}
+              placeholder="이메일을 한번 더 입력해주세요" 
+              className="w-full px-4 py-3.5 bg-[#111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors mt-2"
+            />
+            {email2 && (
+              <p className={`text-xs mt-1 ${email1 === email2 ? 'text-green-500' : 'text-red-500'}`}>
+                {email1 === email2 ? '아이디 동일함.' : '동일하지 않음.'}
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-bold text-white">비밀번호</label>
+            <input 
+              type="password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="비밀번호를 입력해주세요" 
+              className="w-full px-4 py-3.5 bg-[#111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors"
+            />
+            <p className={`text-xs mt-1 ${isPasswordValid ? 'text-green-500' : 'text-gray-500'}`}>
+              영문, 숫자, 8자
+            </p>
+            
+            <input 
+              type="password" 
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              placeholder="비밀번호를 한번 더 입력해주세요" 
+              className="w-full px-4 py-3.5 bg-[#111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors mt-2"
+            />
+            {passwordConfirm && (
+              <p className={`text-[10px] mt-1 ${password === passwordConfirm ? 'text-green-500 text-xs' : 'text-red-500'}`}>
+                {password === passwordConfirm ? '비밀번호 일치.' : '비밀번호 불일치.'}
+              </p>
+            )}
+          </div>
+
+          {/* Nickname */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-bold text-white">닉네임</label>
+            <input 
+              type="text" 
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              placeholder="사용하실 닉네임을 입력해주세요" 
+              className="w-full px-4 py-3.5 bg-[#111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors"
+            />
+          </div>
+
+          <button className="w-full py-4 mt-6 bg-primary-500 text-white font-black rounded-xl hover:bg-primary-600 transition-colors shadow-lg shadow-primary-500/20">
+            가입하기
+          </button>
+        </section>
+      </div>
+    </div>
+  );
+}
