@@ -11,6 +11,7 @@ export interface Guide {
   trustScore: number;
   isOfficial?: boolean;
   followers?: number;
+  likes?: number;
   trustMetrics?: {
     paidRatio: number;
     contentQuality: number;
@@ -26,6 +27,17 @@ export interface Place {
   category: string;
   lat?: number;
   lng?: number;
+  latitude: number;
+  longitude: number;
+  phone: string;
+  openingHours: string;
+}
+
+export interface MenuItem {
+  name: string;
+  price: string | number;
+  description?: string;
+  isSignature?: boolean;
 }
 
 export interface Post {
@@ -35,8 +47,12 @@ export interface Post {
   content: string;
   images: string[];
   likes: number;
+  bookmarks: number;
+  rating: number;
   tags?: string[];
-  createdAt?: string;
+  menuItems: MenuItem[];
+  createdAt: string;
+  isTop20?: boolean;
 }
 
 export interface Collection {

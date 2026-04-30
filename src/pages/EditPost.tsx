@@ -24,7 +24,7 @@ export function EditPost() {
   const [representativeIndex, setRepresentativeIndex] = useState<number | null>(0);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
-  const [menuItems, setMenuItems] = useState<{ name: string; price: string; isSignature?: boolean }[]>([]);
+  const [menuItems, setMenuItems] = useState<{ name: string; price: string | number; isSignature?: boolean }[]>([]);
 
   useEffect(() => {
     const foundPost = MOCK_POSTS.find(p => p.id === id);

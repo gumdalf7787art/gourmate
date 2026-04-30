@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronDown, ChevronUp, Mail, HelpCircle, MessageSquare, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp, Mail, HelpCircle, MessageSquare } from 'lucide-react';
 
 interface FAQItem {
   id: number;

@@ -1,5 +1,5 @@
 import { AdminLayout } from '@/components/AdminLayout';
-import { Search, FileText, Map, Filter, MoreVertical, ExternalLink, Star } from 'lucide-react';
+import { Search, Filter, MoreVertical, ExternalLink, Star } from 'lucide-react';
 import { MOCK_POSTS } from '@/data/mock';
 import { useNavigate } from 'react-router-dom';
 

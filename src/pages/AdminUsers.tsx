@@ -1,5 +1,5 @@
 import { AdminLayout } from '@/components/AdminLayout';
-import { Search, UserCheck, UserMinus, Shield, Filter, Calendar, ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
+import { Search, UserMinus, Shield, Filter, Calendar, ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react';
 import { MOCK_POSTS } from '@/data/mock';
 import { useState } from 'react';
 
@@ -105,7 +105,7 @@ export function AdminUsers() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {uniqueGuides.map((guide, idx) => (
+                {uniqueGuides.map((guide) => (
                   <tr key={guide.id} className="hover:bg-white/[0.02] transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">

@@ -5,7 +5,6 @@ import {
   FileText, 
   Megaphone,
   LifeBuoy,
-  Settings,
   ArrowLeft,
   Bell,
   Menu,

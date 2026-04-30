@@ -37,7 +37,6 @@ export function AdminDashboard() {
   };
 
   const currentData = chartData[chartPeriod];
-  const currentLabels = labels[chartPeriod];
   const maxVal = Math.max(...currentData);
 
   // 숫자를 K 단위로 포맷팅
