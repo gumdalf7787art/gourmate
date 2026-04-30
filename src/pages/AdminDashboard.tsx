@@ -144,27 +144,26 @@ export function AdminDashboard() {
                 const currentLabels_ko = labels_ko[chartPeriod];
 
                 return (
-                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 group relative z-10 h-full justify-end">
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 group relative z-10 h-full justify-end min-w-0">
                     {/* Value Label on Top */}
-                    <span className="text-[9px] font-black text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1">
+                    <span className="text-[9px] font-black text-primary-500 opacity-0 group-hover:opacity-100 transition-opacity mb-1 whitespace-nowrap">
                       {formatValue(val)}
                     </span>
                     
-                    {/* Tooltip (redundant with label above, but keeping for interaction) */}
-                    <div className="absolute -top-12 bg-white text-black text-[10px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none shadow-xl">
-                      {val.toLocaleString()} 명
-                    </div>
-                    
                     {/* Bar */}
-                    <div 
-                      className="w-full max-w-[40px] bg-white/5 group-hover:bg-primary-500/80 rounded-t-sm transition-all duration-500 relative overflow-hidden"
-                      style={{ height: `${heightPct}%` }}
-                    >
-                      <div className="absolute top-0 inset-x-0 h-1 bg-white/20 group-hover:bg-white/40"></div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-transparent to-primary-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="w-full flex justify-center flex-1 items-end min-h-0">
+                      <div 
+                        className="w-full max-w-[32px] bg-white/[0.08] border border-white/5 group-hover:bg-primary-500 group-hover:border-primary-500/50 rounded-t-md transition-all duration-500 relative shadow-lg"
+                        style={{ height: `${Math.max(heightPct, 5)}%` }}
+                      >
+                        {/* Glow effect on hover */}
+                        <div className="absolute inset-0 bg-primary-500/20 blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="absolute top-0 inset-x-0 h-0.5 bg-white/20"></div>
+                      </div>
                     </div>
+
                     {/* Label */}
-                    <span className="text-[10px] font-bold text-gray-500 uppercase">{currentLabels_ko[idx]}</span>
+                    <span className="text-[10px] font-bold text-gray-500 mt-1 whitespace-nowrap">{currentLabels_ko[idx]}</span>
                   </div>
                 );
               })}
