@@ -87,8 +87,8 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* KPI Cards (Fixed 2x2 Grid) */}
+        <div className="grid grid-cols-2 gap-6 max-w-4xl">
           {kpis.map((kpi, idx) => (
             <div key={idx} className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-4 sm:p-6 relative overflow-hidden group hover:border-primary-500/30 transition-all duration-500 aspect-square flex flex-col justify-center items-center text-center">
               {/* Background Glow */}

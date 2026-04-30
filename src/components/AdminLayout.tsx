@@ -152,8 +152,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-4 sm:p-8 overflow-x-hidden relative">
-          <div className="max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-4 sm:p-10 overflow-x-hidden relative">
+          <div className="w-full">
             {children}
           </div>
         </main>

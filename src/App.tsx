@@ -50,6 +50,13 @@ function ScrollToTop() {
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith('/admin');
+
+  if (isAdmin) {
+    return <div className="w-full min-h-screen bg-black">{children}</div>;
+  }
+
   return (
     <div className="mx-auto max-w-[640px] w-full min-h-screen bg-black border-x border-white/10 relative shadow-2xl">
       {children}
