@@ -19,17 +19,38 @@ export function AdminUsers() {
       };
     });
 
+  const handleDownloadUsers = () => {
+    const BOM = '\uFEFF';
+    let csvContent = BOM + "사용자ID,닉네임,가입일,포스팅 수,테마 수,신뢰 지수,상태\n";
+
+    uniqueGuides.forEach(guide => {
+      csvContent += `${guide.id},${guide.nickname},${guide.joinDate},${guide.postCount},${guide.themeCount},${guide.trustScore},${guide.status === 'Active' ? '활성' : '정지'}\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `gourmate_users_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-6 pb-10">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/5 pb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tighter mb-1">USER MANAGEMENT</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tighter mb-1">회원 관리</h1>
             <p className="text-gray-500 text-sm font-medium">전체 회원 목록 조회 및 가이드 등급/권한을 관리합니다.</p>
           </div>
           <div className="flex items-center gap-2">
-             <button className="px-4 py-2 bg-primary-500 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary-600 transition-colors shadow-lg shadow-primary-500/20">
-              Export CSV
+             <button 
+               onClick={handleDownloadUsers}
+               className="px-4 py-2 bg-primary-500 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary-600 transition-colors shadow-lg shadow-primary-500/20"
+             >
+              회원 명단 다운로드
             </button>
           </div>
         </div>
@@ -41,7 +62,7 @@ export function AdminUsers() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input 
                 type="text" 
-                placeholder="Search by nickname, email..."
+                placeholder="닉네임, 이메일 검색..."
                 className="w-full bg-[#111] border border-white/10 rounded-xl py-2 pl-9 pr-4 text-sm text-white focus:outline-none focus:border-primary-500/50 transition-colors"
               />
             </div>
@@ -107,8 +128,8 @@ export function AdminUsers() {
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex flex-col items-center gap-1">
-                        <span className="text-xs font-black text-white">{guide.postCount} <span className="text-[9px] text-gray-600 font-medium ml-0.5">Posts</span></span>
-                        <span className="text-xs font-black text-white">{guide.themeCount} <span className="text-[9px] text-gray-600 font-medium ml-0.5">Themes</span></span>
+                        <span className="text-xs font-black text-white">{guide.postCount} <span className="text-[9px] text-gray-600 font-medium ml-0.5">포스팅</span></span>
+                        <span className="text-xs font-black text-white">{guide.themeCount} <span className="text-[9px] text-gray-600 font-medium ml-0.5">테마</span></span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -124,7 +145,7 @@ export function AdminUsers() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="px-2.5 py-1 bg-green-500/10 text-green-500 text-[9px] font-black rounded-md border border-green-500/20 uppercase tracking-widest">
-                        {guide.status}
+                        {guide.status === 'Active' ? '활성' : '정지'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -148,7 +169,7 @@ export function AdminUsers() {
 
           {/* Pagination */}
           <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between bg-[#111]/30">
-            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Showing {uniqueGuides.length} of 12,482 Users</span>
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{uniqueGuides.length} / 12,482 명의 사용자 표시 중</span>
             <div className="flex gap-1.5">
               <button className="p-2 bg-[#111] border border-white/5 rounded-lg text-gray-600 cursor-not-allowed">
                 <ChevronLeft className="w-4 h-4" />
