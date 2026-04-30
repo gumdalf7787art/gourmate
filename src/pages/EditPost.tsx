@@ -174,14 +174,17 @@ export function EditPost() {
       <main className="flex-1">
         {/* Map View */}
         <section className="h-[240px] w-full relative bg-[#111]">
-          <KakaoMap 
-            places={[{
-              id: place.id,
-              lat: place.latitude,
-              lng: place.longitude,
-              name: place.name
-            }]} 
-          />
+          {place && (
+            <KakaoMap 
+              key={place.id}
+              places={[{
+                id: place.id,
+                lat: Number(place.latitude),
+                lng: Number(place.longitude),
+                name: place.name
+              }]} 
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none"></div>
         </section>
 
