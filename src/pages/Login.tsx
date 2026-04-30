@@ -97,7 +97,7 @@ export function Login() {
           {/* Links */}
           <div className="flex items-center justify-center gap-4 text-xs font-medium text-gray-400 mt-2">
             <Link to="/signup" className="hover:text-white transition-colors">
-              회원이 아니면 회원가입
+              회원이 아니면 <span className="font-bold text-white ml-1">회원가입</span>
             </Link>
             <div className="w-[1px] h-3 bg-white/20"></div>
             <Link to="/find-password" className="hover:text-white transition-colors">
