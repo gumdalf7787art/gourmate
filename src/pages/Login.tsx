@@ -1,16 +1,28 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
+import { authService } from '@/services/authService';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function Login() {
   const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 로그인 처리 로직
-    console.log('Login attempt:', { email, password });
+    setLoading(true);
+    try {
+      const response = await authService.login({ email, password });
+      setUser(response.user);
+      navigate('/');
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -73,8 +85,12 @@ export function Login() {
               />
             </div>
 
-            <button type="submit" className="w-full py-4 mt-2 bg-primary-500 text-white font-black rounded-xl hover:bg-primary-600 transition-colors shadow-lg shadow-primary-500/20">
-              로그인
+            <button 
+              type="submit" 
+              disabled={loading}
+              className={`w-full py-4 mt-2 ${loading ? 'bg-gray-600' : 'bg-primary-500 hover:bg-primary-600'} text-white font-black rounded-xl transition-colors shadow-lg shadow-primary-500/20`}
+            >
+              {loading ? '로그인 중...' : '로그인'}
             </button>
           </form>
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
+import { authService } from '@/services/authService';
 
 export function Signup() {
   const navigate = useNavigate();
@@ -9,9 +10,44 @@ export function Signup() {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [nickname, setNickname] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // 비밀번호 유효성 검사 (영문, 숫자 포함 8자 이상)
   const isPasswordValid = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(password);
+
+  const handleSignup = async () => {
+    if (!email1 || email1 !== email2) {
+      alert('이메일 주소를 확인해주세요.');
+      return;
+    }
+    if (!isPasswordValid) {
+      alert('비밀번호는 영문, 숫자를 포함하여 8자 이상이어야 합니다.');
+      return;
+    }
+    if (password !== passwordConfirm) {
+      alert('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+    if (!nickname) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await authService.signup({
+        email: email1,
+        password,
+        nickname
+      });
+      alert('회원가입이 완료되었습니다! 로그인해주세요.');
+      navigate('/login');
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
@@ -115,8 +151,12 @@ export function Signup() {
             />
           </div>
 
-          <button className="w-full py-4 mt-6 bg-primary-500 text-white font-black rounded-xl hover:bg-primary-600 transition-colors shadow-lg shadow-primary-500/20">
-            가입하기
+          <button 
+            onClick={handleSignup}
+            disabled={loading}
+            className={`w-full py-4 mt-6 ${loading ? 'bg-gray-600' : 'bg-primary-500 hover:bg-primary-600'} text-white font-black rounded-xl transition-colors shadow-lg shadow-primary-500/20`}
+          >
+            {loading ? '가입 중...' : '가입하기'}
           </button>
         </section>
       </div>
