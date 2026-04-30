@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Settings, Users, Bell, Heart, 
@@ -45,6 +46,12 @@ export function MyPage() {
       ]
     }
   ];
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login', { replace: true });
+    }
+  }, [user, navigate]);
 
   if (!user) return null;
 
