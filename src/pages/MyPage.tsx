@@ -34,7 +34,7 @@ export function MyPage() {
     {
       title: '고객 지원 및 기타',
       items: [
-        { icon: <Megaphone className="w-5 h-5" />, label: '공지사항', desc: 'GOURMATE의 새로운 소식', link: '#' },
+        { icon: <Megaphone className="w-5 h-5" />, label: '공지사항', desc: 'GOURMATE의 새로운 소식', link: '/my/notice' },
         { icon: <HelpCircle className="w-5 h-5" />, label: '고객센터', desc: '자주 묻는 질문 및 문의', link: '#' },
         { icon: <LogOut className="w-5 h-5" />, label: '로그아웃', link: '#' },
         { icon: <UserX className="w-5 h-5 text-red-500" />, label: '회원탈퇴', link: '#', textClass: 'text-red-500' },
