@@ -122,50 +122,58 @@ export function AdminDashboard() {
               </div>
             </div>
 
-            {/* Custom CSS Chart */}
-            <div className="flex-1 flex items-end justify-between gap-2 h-72 pt-10 border-b border-white/10 pb-2 relative">
-              {/* Y-axis guidelines */}
-              <div className="absolute inset-x-0 bottom-2 top-10 flex flex-col justify-between pointer-events-none">
-                {[100, 75, 50, 25, 0].map(pct => (
-                  <div key={pct} className="w-full border-t border-white/[0.03] relative">
-                    <span className="absolute -left-2 -top-2 -translate-x-full text-[9px] text-gray-600 font-bold">{pct === 0 ? '0' : ''}</span>
-                  </div>
-                ))}
+            {/* Chart Container (Refined to match user analytics style) */}
+            <div className="flex-1 bg-[#111]/30 border border-white/5 rounded-2xl p-5 h-[280px] flex items-end gap-2 relative mt-4">
+              {/* Y-axis labels */}
+              <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col justify-between text-[10px] text-gray-600 font-bold pb-10 pt-8 text-right pr-3 border-r border-white/5">
+                <span>{formatValue(maxVal)}</span>
+                <span>{formatValue(maxVal / 2)}</span>
+                <span>0</span>
               </div>
 
-              {currentData.map((val, idx) => {
-                const heightPct = (val / maxVal) * 100;
-                const labels_ko = {
-                  daily: ['월', '화', '수', '목', '금', '토', '일'],
-                  weekly: ['1주', '2주', '3주', '4주', '5주'],
-                  monthly: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
-                  yearly: ['2024년', '2025년', '2026년']
-                };
-                const currentLabels_ko = labels_ko[chartPeriod];
+              {/* Bars Area */}
+              <div className="flex-1 h-full pl-12 flex items-end justify-between gap-1 sm:gap-3 pb-8 relative pt-8">
+                {currentData.map((val, idx) => {
+                  const heightPercentage = Math.max((val / maxVal) * 100, 3);
+                  const labels_ko = {
+                    daily: ['월', '화', '수', '목', '금', '토', '일'],
+                    weekly: ['1주', '2주', '3주', '4주', '5주'],
+                    monthly: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+                    yearly: ['24년', '25년', '26년']
+                  };
+                  const currentLabels_ko = labels_ko[chartPeriod];
 
-                return (
-                  <div key={idx} className="flex-1 flex flex-col items-center group relative z-10 h-full min-w-0">
-                    <div className="flex-1 w-full flex flex-col justify-end items-center mb-2">
-                      {/* Value Label (Visible on hover) */}
-                      <span className="text-[9px] font-black text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1 whitespace-nowrap">
+                  return (
+                    <div key={idx} className="relative flex flex-col items-center flex-1 h-full justify-end group min-w-0">
+                      {/* Top Value Label */}
+                      <span 
+                        className="text-[9px] font-black text-gray-400 mb-1 absolute transition-all duration-500 group-hover:text-primary-500 group-hover:scale-110" 
+                        style={{ bottom: `${heightPercentage}%` }}
+                      >
                         {formatValue(val)}
                       </span>
                       
-                      {/* The Bar */}
+                      {/* The Bar with Gradient */}
                       <div 
-                        className="w-full max-w-[24px] sm:max-w-[32px] bg-primary-500/30 border border-primary-500/20 group-hover:bg-primary-500 group-hover:border-primary-500/50 rounded-t-md transition-all duration-300 relative shadow-[0_0_15px_rgba(255,107,0,0.1)] group-hover:shadow-[0_0_20px_rgba(255,107,0,0.3)]"
-                        style={{ height: `${Math.max(heightPct, 4)}%` }}
+                        className="w-full max-w-[28px] bg-gradient-to-t from-primary-600 to-primary-400 rounded-t-sm shadow-[0_0_15px_rgba(249,115,22,0.2)] transition-all duration-500 ease-out group-hover:brightness-125 group-hover:shadow-[0_0_20px_rgba(249,115,22,0.4)]"
+                        style={{ height: `${heightPercentage}%` }}
                       >
-                        {/* Top highlight line */}
-                        <div className="absolute top-0 inset-x-0 h-0.5 bg-white/30 rounded-t-full"></div>
+                        <div className="absolute top-0 inset-x-0 h-0.5 bg-white/20 rounded-t-full"></div>
+                      </div>
+
+                      {/* Tooltip on Hover */}
+                      <div className="absolute -top-10 bg-white text-black text-[10px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none shadow-2xl whitespace-nowrap">
+                        {val.toLocaleString()} 명
+                      </div>
+
+                      {/* X-Axis Label */}
+                      <div className="absolute -bottom-7 left-0 right-0 text-center">
+                        <span className="text-[10px] font-bold text-gray-500 whitespace-nowrap">{currentLabels_ko[idx]}</span>
                       </div>
                     </div>
-
-                    {/* X-Axis Label */}
-                    <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 whitespace-nowrap">{currentLabels_ko[idx]}</span>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
 
