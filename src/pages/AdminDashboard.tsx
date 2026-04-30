@@ -144,26 +144,25 @@ export function AdminDashboard() {
                 const currentLabels_ko = labels_ko[chartPeriod];
 
                 return (
-                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 group relative z-10 h-full justify-end min-w-0">
-                    {/* Value Label on Top */}
-                    <span className="text-[9px] font-black text-primary-500 opacity-0 group-hover:opacity-100 transition-opacity mb-1 whitespace-nowrap">
-                      {formatValue(val)}
-                    </span>
-                    
-                    {/* Bar */}
-                    <div className="w-full flex justify-center flex-1 items-end min-h-0">
+                  <div key={idx} className="flex-1 flex flex-col items-center group relative z-10 h-full min-w-0">
+                    <div className="flex-1 w-full flex flex-col justify-end items-center mb-2">
+                      {/* Value Label (Visible on hover) */}
+                      <span className="text-[9px] font-black text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1 whitespace-nowrap">
+                        {formatValue(val)}
+                      </span>
+                      
+                      {/* The Bar */}
                       <div 
-                        className="w-full max-w-[32px] bg-white/[0.08] border border-white/5 group-hover:bg-primary-500 group-hover:border-primary-500/50 rounded-t-md transition-all duration-500 relative shadow-lg"
-                        style={{ height: `${Math.max(heightPct, 5)}%` }}
+                        className="w-full max-w-[24px] sm:max-w-[32px] bg-primary-500/30 border border-primary-500/20 group-hover:bg-primary-500 group-hover:border-primary-500/50 rounded-t-md transition-all duration-300 relative shadow-[0_0_15px_rgba(255,107,0,0.1)] group-hover:shadow-[0_0_20px_rgba(255,107,0,0.3)]"
+                        style={{ height: `${Math.max(heightPct, 4)}%` }}
                       >
-                        {/* Glow effect on hover */}
-                        <div className="absolute inset-0 bg-primary-500/20 blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div className="absolute top-0 inset-x-0 h-0.5 bg-white/20"></div>
+                        {/* Top highlight line */}
+                        <div className="absolute top-0 inset-x-0 h-0.5 bg-white/30 rounded-t-full"></div>
                       </div>
                     </div>
 
-                    {/* Label */}
-                    <span className="text-[10px] font-bold text-gray-500 mt-1 whitespace-nowrap">{currentLabels_ko[idx]}</span>
+                    {/* X-Axis Label */}
+                    <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 whitespace-nowrap">{currentLabels_ko[idx]}</span>
                   </div>
                 );
               })}
