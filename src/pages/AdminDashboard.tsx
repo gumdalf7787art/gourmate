@@ -47,6 +47,30 @@ export function AdminDashboard() {
     return val.toString();
   };
 
+  const handleDownloadData = () => {
+    // CSV Header (Excel compatibility with BOM)
+    const BOM = '\uFEFF';
+    let csvContent = BOM + "카테고리,기간(레이블),접속자 수\n";
+
+    // Add all chart data
+    Object.entries(chartData).forEach(([period, values]) => {
+      const periodName = period === 'daily' ? '일별' : period === 'weekly' ? '주별' : period === 'monthly' ? '월별' : '연별';
+      values.forEach((val, idx) => {
+        const label = labels[period as keyof typeof labels][idx];
+        csvContent += `접속자현황,${periodName}(${label}),${val}\n`;
+      });
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `gourmate_traffic_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-8 pb-10">
@@ -97,28 +121,48 @@ export function AdminDashboard() {
           {/* Main Chart */}
           <div className="lg:col-span-2 bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-              <div>
-                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">접속자 현황</h3>
-                <p className="text-[11px] text-gray-500 font-medium">기간별 접속자 트렌드 (순 방문자 수)</p>
+              <div className="flex items-center justify-between w-full sm:w-auto">
+                <div>
+                  <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">접속자 현황</h3>
+                  <p className="text-[11px] text-gray-500 font-medium">기간별 접속자 트렌드 (순 방문자 수)</p>
+                </div>
+                {/* Download Button Mobile Only inside this div for better layout */}
+                <button 
+                  onClick={handleDownloadData}
+                  className="sm:hidden p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-all"
+                  title="데이터 다운받기"
+                >
+                  <TrendingUp className="w-4 h-4 rotate-180" />
+                </button>
               </div>
               
-              {/* Chart Period Selector */}
-              <div className="flex bg-[#111] border border-white/5 rounded-lg p-1">
-                {(['일별', '주별', '월별', '연별'] as const).map((period, idx) => {
-                  const periodKeys: ('daily' | 'weekly' | 'monthly' | 'yearly')[] = ['daily', 'weekly', 'monthly', 'yearly'];
-                  const key = periodKeys[idx];
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => setChartPeriod(key)}
-                      className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${
-                        chartPeriod === key ? 'bg-primary-500 text-white shadow-md' : 'text-gray-500 hover:text-gray-300'
-                      }`}
-                    >
-                      {period}
-                    </button>
-                  );
-                })}
+              <div className="flex items-center gap-3">
+                {/* Chart Period Selector */}
+                <div className="flex bg-[#111] border border-white/5 rounded-lg p-1">
+                  {(['일별', '주별', '월별', '연별'] as const).map((period, idx) => {
+                    const periodKeys: ('daily' | 'weekly' | 'monthly' | 'yearly')[] = ['daily', 'weekly', 'monthly', 'yearly'];
+                    const key = periodKeys[idx];
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => setChartPeriod(key)}
+                        className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-wider transition-all ${
+                          chartPeriod === key ? 'bg-primary-500 text-white shadow-md' : 'text-gray-500 hover:text-gray-300'
+                        }`}
+                      >
+                        {period}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Download Button Desktop */}
+                <button 
+                  onClick={handleDownloadData}
+                  className="hidden sm:flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-[10px] font-black text-gray-400 hover:text-white transition-all uppercase tracking-widest"
+                >
+                  데이터 다운받기
+                </button>
               </div>
             </div>
 
