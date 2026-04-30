@@ -1,14 +1,17 @@
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  AlertTriangle, 
   Users, 
   FileText, 
-  ArrowLeft,
+  Megaphone,
+  LifeBuoy,
   Settings,
+  ArrowLeft,
   Bell,
   Menu,
-  X
+  X,
+  Search,
+  Activity
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -20,99 +23,146 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const menuItems = [
-    { icon: <LayoutDashboard className="w-5 h-5" />, label: '대시보드', path: '/admin' },
-    { icon: <AlertTriangle className="w-5 h-5" />, label: '신고 관리', path: '/admin/reports' },
-    { icon: <Users className="w-5 h-5" />, label: '사용자 관리', path: '/admin/users' },
-    { icon: <FileText className="w-5 h-5" />, label: '포스팅 관리', path: '/admin/posts' },
+  const menuGroups = [
+    {
+      title: 'OVERVIEW',
+      items: [
+        { icon: <LayoutDashboard className="w-4 h-4" />, label: '대시보드', path: '/admin' },
+      ]
+    },
+    {
+      title: 'MANAGEMENT',
+      items: [
+        { icon: <Users className="w-4 h-4" />, label: '회원 관리', path: '/admin/users' },
+        { icon: <FileText className="w-4 h-4" />, label: '콘텐츠 관리', path: '/admin/posts' },
+      ]
+    },
+    {
+      title: 'OPERATIONS',
+      items: [
+        { icon: <Megaphone className="w-4 h-4" />, label: '알림/캠페인', path: '/admin/campaigns' },
+        { icon: <LifeBuoy className="w-4 h-4" />, label: '고객 지원', path: '/admin/reports' },
+      ]
+    }
   ];
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="flex min-h-screen bg-[#050505] text-gray-200">
-      {/* Sidebar - Desktop */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#0f0f0f] border-r border-white/5 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex flex-col h-full">
-          <div className="p-6 flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
-                <Settings className="w-5 h-5 text-white" />
+    <div className="flex min-h-screen bg-[#030303] text-gray-200 font-sans selection:bg-primary-500/30">
+      {/* Sidebar */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#0a0a0a] border-r border-white/5 transform transition-transform duration-500 ease-in-out lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex flex-col h-full relative overflow-hidden">
+          {/* Decorative Gradient */}
+          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-primary-500/10 to-transparent pointer-events-none"></div>
+
+          <div className="p-6 flex items-center justify-between relative z-10">
+            <Link to="/admin" className="flex items-center gap-3 group">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center shadow-lg shadow-primary-500/20 group-hover:scale-105 transition-transform">
+                <Activity className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-black text-white tracking-tighter uppercase">Admin</span>
+              <div className="flex flex-col">
+                <span className="text-[16px] font-black text-white tracking-tighter leading-none">GOURMATE</span>
+                <span className="text-[9px] text-primary-500 font-bold uppercase tracking-widest mt-0.5">Workspace</span>
+              </div>
             </Link>
-            <button onClick={toggleSidebar} className="lg:hidden p-2 text-gray-400 hover:text-white">
-              <X className="w-6 h-6" />
+            <button onClick={toggleSidebar} className="lg:hidden p-2 text-gray-500 hover:text-white">
+              <X className="w-5 h-5" />
             </button>
           </div>
 
-          <nav className="flex-1 px-4 py-4 space-y-1">
-            {menuItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setIsSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
-                  location.pathname === item.path
-                    ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20'
-                    : 'text-gray-500 hover:bg-white/5 hover:text-gray-200'
-                }`}
-              >
-                {item.icon}
-                {item.label}
-              </Link>
+          <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto no-scrollbar relative z-10">
+            {menuGroups.map((group, idx) => (
+              <div key={idx} className="space-y-2">
+                <h3 className="px-3 text-[10px] font-black text-gray-600 uppercase tracking-widest">{group.title}</h3>
+                <div className="space-y-1">
+                  {group.items.map((item) => {
+                    const isActive = location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path));
+                    return (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setIsSidebarOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 relative group overflow-hidden ${
+                          isActive
+                            ? 'text-white bg-white/5'
+                            : 'text-gray-500 hover:text-gray-200 hover:bg-white/[0.02]'
+                        }`}
+                      >
+                        {isActive && (
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-primary-500 rounded-r-full shadow-[0_0_10px_rgba(255,107,0,0.5)]"></div>
+                        )}
+                        <div className={`transition-colors duration-300 ${isActive ? 'text-primary-500' : 'group-hover:text-gray-400'}`}>
+                          {item.icon}
+                        </div>
+                        <span className="relative z-10">{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
             ))}
           </nav>
 
-          <div className="p-4 border-t border-white/5">
-            <Link to="/my" className="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-white transition-colors text-sm font-bold">
+          <div className="p-4 border-t border-white/5 relative z-10 bg-[#0a0a0a]">
+            <Link to="/my" className="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-white transition-colors text-xs font-bold rounded-xl hover:bg-white/5">
               <ArrowLeft className="w-4 h-4" />
-              마이페이지로 돌아가기
+              돌아가기
             </Link>
           </div>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:pl-64">
-        {/* Header - Mobile & Desktop Top Bar */}
-        <header className="sticky top-0 z-40 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5 px-4 h-16 flex items-center justify-between">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col lg:pl-64 w-full">
+        {/* Top Header */}
+        <header className="sticky top-0 z-40 bg-[#030303]/80 backdrop-blur-2xl border-b border-white/5 px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button onClick={toggleSidebar} className="lg:hidden p-2 text-gray-400 hover:text-white">
-              <Menu className="w-6 h-6" />
+            <button onClick={toggleSidebar} className="lg:hidden p-2 -ml-2 text-gray-400 hover:text-white">
+              <Menu className="w-5 h-5" />
             </button>
-            <h2 className="text-sm font-black text-white uppercase tracking-widest hidden sm:block">
-              {menuItems.find(item => item.path === location.pathname)?.label || 'Admin Portal'}
-            </h2>
+            
+            {/* Global Search (Mock) */}
+            <div className="hidden md:flex items-center gap-2 bg-[#111] border border-white/10 rounded-full px-4 py-1.5 focus-within:border-primary-500/50 focus-within:bg-[#1a1a1a] transition-colors w-64">
+              <Search className="w-4 h-4 text-gray-500" />
+              <input 
+                type="text" 
+                placeholder="Search anything (Press '/')" 
+                className="bg-transparent border-none outline-none text-xs text-white placeholder-gray-600 w-full font-medium"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button className="p-2 text-gray-400 hover:text-white relative">
+          <div className="flex items-center gap-5">
+            <button className="relative text-gray-400 hover:text-white transition-colors">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-primary-500 rounded-full border border-[#050505]"></span>
+              <span className="absolute 0 right-0 w-2 h-2 bg-primary-500 rounded-full border-2 border-[#030303]"></span>
             </button>
-            <div className="flex items-center gap-3 pl-4 border-l border-white/10">
-              <div className="text-right hidden sm:block">
-                <p className="text-xs font-bold text-white leading-none">Super Admin</p>
-                <p className="text-[10px] text-gray-500 mt-1">goodduck2@naver.com</p>
-              </div>
-              <div className="w-8 h-8 rounded-full bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-primary-500 font-black text-xs">
+            <div className="w-[1px] h-6 bg-white/10"></div>
+            <div className="flex items-center gap-3 cursor-pointer group">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-white/10 flex items-center justify-center text-white font-black text-xs group-hover:border-primary-500/50 transition-colors">
                 A
+              </div>
+              <div className="hidden sm:flex flex-col">
+                <span className="text-xs font-bold text-white leading-tight">Admin User</span>
+                <span className="text-[10px] text-gray-500">Super Administrator</span>
               </div>
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
-          {children}
+        <main className="flex-1 p-4 sm:p-8 overflow-x-hidden relative">
+          <div className="max-w-7xl mx-auto w-full">
+            {children}
+          </div>
         </main>
       </div>
 
-      {/* Overlay - Mobile */}
+      {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity"
+          className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm lg:hidden animate-in fade-in duration-300"
           onClick={toggleSidebar}
         />
       )}

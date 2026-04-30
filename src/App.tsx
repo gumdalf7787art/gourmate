@@ -29,7 +29,9 @@ import { Notice } from '@/pages/Notice';
 import { CustomerCenter } from '@/pages/CustomerCenter';
 import { AdminDashboard } from '@/pages/AdminDashboard';
 import { AdminReports } from '@/pages/AdminReports';
-import { AdminUsers, AdminPosts } from '@/pages/AdminUsers';
+import { AdminUsers } from '@/pages/AdminUsers';
+import { AdminPosts } from '@/pages/AdminPosts';
+import { AdminCampaigns } from '@/pages/AdminCampaigns';
 import { BottomNav } from '@/components/BottomNav';
 
 // 똑똑한 스크롤 관리 컴포넌트
@@ -94,6 +96,7 @@ function App() {
           <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/posts" element={<AdminPosts />} />
+          <Route path="/admin/campaigns" element={<AdminCampaigns />} />
         </Routes>
       </Layout>
     </BrowserRouter>
