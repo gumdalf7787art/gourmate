@@ -52,7 +52,7 @@ export function Signup() {
 
   /** Kakao signup handler **/
   const handleKakaoLogin = () => {
-    const KAKAO_REST_API_KEY = 'b5cf4e214dfb0563cfc62dcfbe89eae5';
+    const KAKAO_REST_API_KEY = '03c326b5ab2b8bb5dd969576ab56fe92';
     const REDIRECT_URI = `${window.location.origin}/auth/kakao/callback`;
     const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
     window.location.href = kakaoURL;
