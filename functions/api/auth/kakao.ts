@@ -1,7 +1,7 @@
 /** Kakao Auth API - Redelployed to apply KAKAO_REST_API_KEY **/
 export const onRequestPost: PagesFunction<{ DB: D1Database; KAKAO_REST_API_KEY: string }> = async (context) => {
   try {
-    const { DB, KAKAO_REST_API_KEY } = context.env;
+    const { DB, KAKAO_REST_API_KEY, KAKAO_CLIENT_SECRET } = context.env;
     const { code, redirectUri } = await context.request.json() as { code: string; redirectUri: string };
 
     if (!code) {
@@ -15,6 +15,7 @@ export const onRequestPost: PagesFunction<{ DB: D1Database; KAKAO_REST_API_KEY: 
       body: new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: KAKAO_REST_API_KEY,
+        client_secret: KAKAO_CLIENT_SECRET || '',
         redirect_uri: redirectUri,
         code: code,
       }),
