@@ -49,6 +49,13 @@ export function Signup() {
     }
   };
 
+  const handleKakaoLogin = () => {
+    const KAKAO_REST_API_KEY = 'b5cf4e214dfb0563cfc62dcfbe89eae5';
+    const REDIRECT_URI = `${window.location.origin}/auth/kakao/callback`;
+    const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+    window.location.href = kakaoURL;
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
       {/* Header */}
@@ -68,7 +75,10 @@ export function Signup() {
           <div className="flex justify-center gap-6">
             {/* Kakao */}
             <div className="flex flex-col items-center gap-2">
-              <button className="w-14 h-14 bg-[#FEE500] rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-yellow-500/10">
+              <button 
+                onClick={handleKakaoLogin}
+                className="w-14 h-14 bg-[#FEE500] rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-yellow-500/10"
+              >
                 <span className="text-[#191919] font-black text-[11px]">카카오</span>
               </button>
               <div className="flex flex-col items-center leading-tight">
