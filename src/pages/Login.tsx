@@ -41,6 +41,13 @@ export function Login() {
     window.location.href = naverURL;
   };
 
+  const handleGoogleLogin = () => {
+    const GOOGLE_CLIENT_ID = '438715980569-qt98r95qlutqo6hc79a3n7s51i0l1ppl.apps.googleusercontent.com';
+    const REDIRECT_URI = `${window.location.origin}/auth/google/callback`;
+    const googleURL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=email profile openid&access_type=offline`;
+    window.location.href = googleURL;
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
       {/* Header */}
@@ -86,7 +93,10 @@ export function Login() {
             </div>
             {/* Google */}
             <div className="flex flex-col items-center gap-2">
-              <button className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-white/5">
+              <button 
+                onClick={handleGoogleLogin}
+                className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-white/5"
+              >
                 <span className="text-black font-black text-[11px]">구글</span>
               </button>
               <div className="flex flex-col items-center leading-tight">

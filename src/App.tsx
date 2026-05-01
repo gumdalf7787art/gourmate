@@ -29,6 +29,7 @@ import { Notice } from '@/pages/Notice';
 import { CustomerCenter } from '@/pages/CustomerCenter';
 import { KakaoCallback } from '@/pages/KakaoCallback';
 import { NaverCallback } from '@/pages/auth/NaverCallback';
+import { GoogleCallback } from '@/pages/auth/GoogleCallback';
 import { AdminDashboard } from '@/pages/AdminDashboard';
 import { AdminReports } from '@/pages/AdminReports';
 import { AdminUsers } from '@/pages/AdminUsers';
@@ -90,6 +91,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/auth/kakao/callback" element={<KakaoCallback />} />
           <Route path="/auth/naver/callback" element={<NaverCallback />} />
+          <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route path="/my" element={<MyPage />} />
           <Route path="/my/settings" element={<ProfileSettings />} />
           <Route path="/my/posts" element={<MyPosts />} />
