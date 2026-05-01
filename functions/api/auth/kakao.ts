@@ -1,3 +1,4 @@
+/** Kakao Auth API - Redelployed to apply KAKAO_REST_API_KEY **/
 export const onRequestPost: PagesFunction<{ DB: D1Database; KAKAO_REST_API_KEY: string }> = async (context) => {
   try {
     const { DB, KAKAO_REST_API_KEY } = context.env;
