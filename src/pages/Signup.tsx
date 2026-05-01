@@ -49,6 +49,8 @@ export function Signup() {
     }
   };
 
+
+  /** Kakao signup handler **/
   const handleKakaoLogin = () => {
     const KAKAO_REST_API_KEY = 'b5cf4e214dfb0563cfc62dcfbe89eae5';
     const REDIRECT_URI = `${window.location.origin}/auth/kakao/callback`;
