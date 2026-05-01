@@ -1,10 +1,12 @@
 import { Home, Map as MapIcon, PlusSquare, User, Heart, LogIn } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useNotificationStore } from '@/store/useNotificationStore';
 import clsx from 'clsx';
 
 export function BottomNav() {
   const user = useAuthStore((state) => state.user);
+  const unreadCount = useNotificationStore((state) => state.unreadCount);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 max-w-[640px] mx-auto bg-black/80 backdrop-blur-xl border-t border-white/10 pb-safe z-[90]">
@@ -73,11 +75,18 @@ export function BottomNav() {
           )}>
             {({ isActive }) => (
               <>
-                {user ? (
-                  <User className="w-[22px] h-[22px]" strokeWidth={isActive ? 2.5 : 1.5} />
-                ) : (
-                  <LogIn className="w-[22px] h-[22px]" strokeWidth={isActive ? 2.5 : 1.5} />
-                )}
+                <div className="relative">
+                  {user ? (
+                    <User className="w-[22px] h-[22px]" strokeWidth={isActive ? 2.5 : 1.5} />
+                  ) : (
+                    <LogIn className="w-[22px] h-[22px]" strokeWidth={isActive ? 2.5 : 1.5} />
+                  )}
+                  {user && unreadCount > 0 && (
+                    <div className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-black animate-pulse">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </div>
+                  )}
+                </div>
                 <span className="text-[10px] font-bold">{user ? '마이' : '로그인'}</span>
               </>
             )}

@@ -40,17 +40,38 @@ export function Login() {
         
         {/* SNS Login */}
         <section>
-          <h2 className="text-sm font-bold text-white mb-4">SNS 계정으로 간편 로그인</h2>
-          <div className="flex flex-col gap-3">
-            <button className="w-full py-3.5 bg-[#FEE500] text-[#191919] font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#FEE500]/90 transition-colors">
-              카카오톡으로 로그인
-            </button>
-            <button className="w-full py-3.5 bg-[#03C75A] text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#03C75A]/90 transition-colors">
-              네이버로 로그인
-            </button>
-            <button className="w-full py-3.5 bg-white text-black font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors">
-              구글로 로그인
-            </button>
+          <h2 className="text-[11px] font-black text-gray-500 mb-5 uppercase tracking-widest text-center">SNS 계정으로 간편 로그인</h2>
+          <div className="flex justify-center gap-6">
+            {/* Kakao */}
+            <div className="flex flex-col items-center gap-2">
+              <button className="w-14 h-14 bg-[#FEE500] rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-yellow-500/10">
+                <span className="text-[#191919] font-black text-[11px]">카카오</span>
+              </button>
+              <div className="flex flex-col items-center leading-tight">
+                <span className="text-[10px] text-gray-400 font-bold">카카오톡</span>
+                <span className="text-[10px] text-gray-500">로그인</span>
+              </div>
+            </div>
+            {/* Naver */}
+            <div className="flex flex-col items-center gap-2">
+              <button className="w-14 h-14 bg-[#03C75A] rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-green-500/10">
+                <span className="text-white font-black text-[11px]">네이버</span>
+              </button>
+              <div className="flex flex-col items-center leading-tight">
+                <span className="text-[10px] text-gray-400 font-bold">네이버</span>
+                <span className="text-[10px] text-gray-500">로그인</span>
+              </div>
+            </div>
+            {/* Google */}
+            <div className="flex flex-col items-center gap-2">
+              <button className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-white/5">
+                <span className="text-black font-black text-[11px]">구글</span>
+              </button>
+              <div className="flex flex-col items-center leading-tight">
+                <span className="text-[10px] text-gray-400 font-bold">구글</span>
+                <span className="text-[10px] text-gray-500">로그인</span>
+              </div>
+            </div>
           </div>
         </section>
 

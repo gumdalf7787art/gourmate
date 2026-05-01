@@ -64,17 +64,38 @@ export function Signup() {
         
         {/* SNS Login */}
         <section>
-          <h2 className="text-sm font-bold text-white mb-4">SNS 계정으로 간편 가입</h2>
-          <div className="flex flex-col gap-3">
-            <button className="w-full py-3.5 bg-[#FEE500] text-[#191919] font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#FEE500]/90 transition-colors">
-              카카오톡으로 시작하기
-            </button>
-            <button className="w-full py-3.5 bg-[#03C75A] text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#03C75A]/90 transition-colors">
-              네이버로 시작하기
-            </button>
-            <button className="w-full py-3.5 bg-white text-black font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors">
-              구글로 시작하기
-            </button>
+          <h2 className="text-[11px] font-black text-gray-500 mb-5 uppercase tracking-widest text-center">SNS 계정으로 간편 가입</h2>
+          <div className="flex justify-center gap-6">
+            {/* Kakao */}
+            <div className="flex flex-col items-center gap-2">
+              <button className="w-14 h-14 bg-[#FEE500] rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-yellow-500/10">
+                <span className="text-[#191919] font-black text-[11px]">카카오</span>
+              </button>
+              <div className="flex flex-col items-center leading-tight">
+                <span className="text-[10px] text-gray-400 font-bold">카카오톡</span>
+                <span className="text-[10px] text-gray-500">가입하기</span>
+              </div>
+            </div>
+            {/* Naver */}
+            <div className="flex flex-col items-center gap-2">
+              <button className="w-14 h-14 bg-[#03C75A] rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-green-500/10">
+                <span className="text-white font-black text-[11px]">네이버</span>
+              </button>
+              <div className="flex flex-col items-center leading-tight">
+                <span className="text-[10px] text-gray-400 font-bold">네이버</span>
+                <span className="text-[10px] text-gray-500">가입하기</span>
+              </div>
+            </div>
+            {/* Google */}
+            <div className="flex flex-col items-center gap-2">
+              <button className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-white/5">
+                <span className="text-black font-black text-[11px]">구글</span>
+              </button>
+              <div className="flex flex-col items-center leading-tight">
+                <span className="text-[10px] text-gray-400 font-bold">구글</span>
+                <span className="text-[10px] text-gray-500">가입하기</span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -97,6 +118,12 @@ export function Signup() {
               placeholder="이메일을 입력해주세요" 
               className="w-full px-4 py-3.5 bg-[#111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors"
             />
+            {email1 && (
+              <p className={`text-[10px] mt-1 ${/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email1) ? 'text-green-500' : 'text-red-500'}`}>
+                {/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email1) ? '이메일 형식이 맞습니다.' : '이메일 형식이 아닙니다.'}
+              </p>
+            )}
+            
             <input 
               type="email" 
               value={email2}
@@ -105,7 +132,7 @@ export function Signup() {
               className="w-full px-4 py-3.5 bg-[#111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors mt-2"
             />
             {email2 && (
-              <p className={`text-xs mt-1 ${email1 === email2 ? 'text-green-500' : 'text-red-500'}`}>
+              <p className={`text-[10px] mt-1 ${email1 === email2 ? 'text-green-500' : 'text-red-500'}`}>
                 {email1 === email2 ? '아이디 동일함.' : '동일하지 않음.'}
               </p>
             )}

@@ -36,12 +36,14 @@ export function Home() {
       {/* 1. Header & Search Bar */}
       <header className="sticky top-0 z-40 bg-black/70 backdrop-blur-2xl px-5 pt-6 pb-4 border-b border-white/5">
         <div className="flex items-center mb-4">
-          <div className="flex items-center gap-2">
+          <div 
+            onClick={() => navigate('/')} 
+            className="flex items-center gap-2 cursor-pointer active:scale-95 transition-transform"
+          >
             <img src="/logo.png" alt="Gourmate Logo" className="w-8 h-8 object-contain" />
             <h1 className="text-2xl font-black tracking-tighter">
               <span className="text-white">GOUR</span>
-              <span className="text-primary-500">MATE.</span>
-              <span className="text-[10px] text-gray-600 ml-2">v1.0.2</span>
+              <span className="text-primary-500">MATE</span>
             </h1>
           </div>
         </div>
@@ -56,7 +58,7 @@ export function Home() {
           <div
             className="block w-full pl-11 pr-4 py-3.5 bg-[#111] border border-white/30 rounded-2xl leading-5 text-gray-500 sm:text-sm shadow-inner select-none cursor-pointer hover:bg-[#1a1a1a] transition-all"
           >
-            SEARCH 맛집 찾기 v1.0.3
+            맛집 찾기
           </div>
         </div>
       </header>

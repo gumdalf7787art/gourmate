@@ -14,4 +14,18 @@ export const authService = {
       body: JSON.stringify(data),
     });
   },
+
+  async updateSettings(data: any) {
+    return apiFetch('/user/settings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async verifyPassword(data: any) {
+    return apiFetch('/user/verify-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
 };

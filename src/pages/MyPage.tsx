@@ -6,9 +6,11 @@ import {
   HelpCircle, Megaphone, LogOut, UserX, ChevronRight 
 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useNotificationStore } from '@/store/useNotificationStore';
 
 export function MyPage() {
   const { user, logout } = useAuthStore();
+  const unreadCount = useNotificationStore((state) => state.unreadCount);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -58,17 +60,35 @@ export function MyPage() {
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-black/70 backdrop-blur-2xl px-5 py-4 border-b border-white/5">
-        <h1 className="text-xl font-black text-white tracking-tight">마이페이지</h1>
+      <header className="sticky top-0 z-40 bg-black/70 backdrop-blur-2xl px-5 py-4 border-b border-white/5 flex items-center justify-between">
+        <div 
+          onClick={() => navigate('/')} 
+          className="flex items-center gap-2 cursor-pointer active:scale-95 transition-transform"
+        >
+          <img src="/logo.png" alt="Gourmate Logo" className="w-6 h-6 object-contain" />
+          <h1 className="text-lg font-black tracking-tighter">
+            <span className="text-white">GOUR</span>
+            <span className="text-primary-500">MATE</span>
+          </h1>
+        </div>
+        <button onClick={() => navigate('/my/notifications')} className="relative p-2 text-white/70 hover:text-white transition-colors">
+          <Bell className="w-6 h-6" />
+          {unreadCount > 0 && (
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-500 rounded-full border border-black animate-pulse"></span>
+          )}
+        </button>
       </header>
 
       {/* Profile Section */}
       <section className="px-5 py-8 flex items-center gap-4 border-b border-white/5 bg-[#0a0a0a]">
         <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary-500 p-0.5">
           <img 
-            src={user.profileImageUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'} 
+            src={user.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname)}&background=333&color=fff`} 
             alt="Profile" 
             className="w-full h-full rounded-full object-cover" 
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname)}&background=333&color=fff`;
+            }}
           />
         </div>
         <div className="flex flex-col">
