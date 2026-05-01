@@ -1,0 +1,66 @@
+import { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthStore } from '@/store/useAuthStore';
+
+export function NaverCallback() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const setUser = useAuthStore((state) => state.setUser);
+
+  useEffect(() => {
+    const handleCallback = async () => {
+      const searchParams = new URLSearchParams(location.search);
+      const code = searchParams.get('code');
+      const state = searchParams.get('state');
+      const storedState = localStorage.getItem('naver_auth_state');
+
+      if (!code || !state) {
+        alert('네이버 로그인에 실패했습니다. (인증 코드 없음)');
+        navigate('/login');
+        return;
+      }
+
+      // CSRF 방지를 위해 state 값 검증
+      if (state !== storedState) {
+        alert('보안 검증에 실패했습니다. 다시 시도해주세요.');
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/auth/naver', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, state }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          setUser(data.user);
+          navigate('/');
+        } else {
+          alert(data.error || '로그인 처리 중 오류가 발생했습니다.');
+          navigate('/login');
+        }
+      } catch (err) {
+        console.error('Naver login error:', err);
+        alert('서버와 통신 중 오류가 발생했습니다.');
+        navigate('/login');
+      } finally {
+        localStorage.removeItem('naver_auth_state');
+      }
+    };
+
+    handleCallback();
+  }, [location, navigate, setUser]);
+
+  return (
+    <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-4 border-[#03C75A] border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-white font-medium">네이버 로그인 처리 중...</p>
+      </div>
+    </div>
+  );
+}

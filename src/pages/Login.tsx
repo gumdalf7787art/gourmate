@@ -32,6 +32,15 @@ export function Login() {
     window.location.href = kakaoURL;
   };
 
+  const handleNaverLogin = () => {
+    const NAVER_CLIENT_ID = 'PSvrhEu3rRnoRkbu0Swg';
+    const REDIRECT_URI = `${window.location.origin}/auth/naver/callback`;
+    const state = Math.random().toString(36).substring(7);
+    localStorage.setItem('naver_auth_state', state);
+    const naverURL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&state=${state}`;
+    window.location.href = naverURL;
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
       {/* Header */}
@@ -64,7 +73,10 @@ export function Login() {
             </div>
             {/* Naver */}
             <div className="flex flex-col items-center gap-2">
-              <button className="w-14 h-14 bg-[#03C75A] rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-green-500/10">
+              <button 
+                onClick={handleNaverLogin}
+                className="w-14 h-14 bg-[#03C75A] rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-green-500/10"
+              >
                 <span className="text-white font-black text-[11px]">네이버</span>
               </button>
               <div className="flex flex-col items-center leading-tight">
