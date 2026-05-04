@@ -24,6 +24,18 @@ export function RegisterPlace() {
   const [tagInput, setTagInput] = useState('');
   const [menuItems, setMenuItems] = useState<{ name: string; price: string; isSignature: boolean }[]>([]);
 
+  // 스토리 에디터 관련 상태
+  const [editorMode, setEditorMode] = useState<'simple' | 'story'>('simple');
+  type StoryBlock = {
+    id: string;
+    type: 'text' | 'image';
+    value: string;
+    file?: File;
+  };
+  const [storyBlocks, setStoryBlocks] = useState<StoryBlock[]>([
+    { id: Math.random().toString(36).substr(2, 9), type: 'text', value: '' }
+  ]);
+
   // 텍스트 삽입 유틸리티 (커서 위치에 삽입)
   const insertText = (before: string, after: string = '') => {
     if (!textareaRef.current) return;
@@ -122,6 +134,42 @@ export function RegisterPlace() {
     });
   };
 
+  // 스토리 블록 관리 함수
+  const addStoryBlock = (type: 'text' | 'image', index?: number) => {
+    const newBlock: StoryBlock = {
+      id: Math.random().toString(36).substr(2, 9),
+      type,
+      value: ''
+    };
+    
+    setStoryBlocks(prev => {
+      const newBlocks = [...prev];
+      if (typeof index === 'number') {
+        newBlocks.splice(index + 1, 0, newBlock);
+      } else {
+        newBlocks.push(newBlock);
+      }
+      return newBlocks;
+    });
+  };
+
+  const updateStoryBlock = (id: string, value: string, file?: File) => {
+    setStoryBlocks(prev => prev.map(block => 
+      block.id === id ? { ...block, value, file } : block
+    ));
+  };
+
+  const removeStoryBlock = (id: string) => {
+    if (storyBlocks.length <= 1) return; // 최소 하나는 유지
+    setStoryBlocks(prev => prev.filter(block => block.id !== id));
+  };
+
+  const handleStoryImageUpload = async (id: string, file: File) => {
+    const resized = await resizeImage(file);
+    const preview = URL.createObjectURL(resized);
+    updateStoryBlock(id, preview, resized);
+  };
+
   const CUSTOM_TAGS = ['한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비', '배달맛집', '기타'];
 
   if (!place) {
@@ -144,16 +192,14 @@ export function RegisterPlace() {
       tag: selectedTag,
       rating: rating,
       short_review: review,
-      detailed_content: content,
-      media_count: mediaFiles.length,
-      representative_media: representativeIndex !== null ? mediaFiles[representativeIndex].file.name : '없음',
+      editor_mode: editorMode,
+      detailed_content: editorMode === 'simple' ? content : 'Story Mode Content',
+      story_blocks: editorMode === 'story' ? storyBlocks.map(b => ({
+        type: b.type,
+        content: b.type === 'text' ? b.value : (b.file?.name || 'Image')
+      })) : [],
+      media_count: editorMode === 'simple' ? mediaFiles.length : storyBlocks.filter(b => b.type === 'image').length,
       menu_items: menuItems,
-      media_info: mediaFiles.map((m, i) => ({ 
-        name: m.file.name, 
-        size: m.file.size, 
-        type: m.type,
-        is_representative: i === representativeIndex 
-      })),
       tags: tags
     });
 
@@ -439,132 +485,228 @@ export function RegisterPlace() {
             ></textarea>
           </div>
 
-          {/* Detailed Content Input */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-white">상세한 후기를 들려주세요</h3>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => insertText('\n### ', '')}
-                  className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
-                  title="소제목"
-                >
-                  <Type className="w-4 h-4" />
-                </button>
-                <button 
-                  onClick={() => insertText('\n---\n', '')}
-                  className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
-                  title="구분선"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <button 
-                  onClick={() => insertText('\n📍 추천 메뉴: ', '')}
-                  className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
-                  title="추천 메뉴"
-                >
-                  <Utensils className="w-4 h-4" />
-                </button>
-                <button 
-                  onClick={() => insertText('\n💡 꿀팁: ', '')}
-                  className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
-                  title="꿀팁"
-                >
-                  <Lightbulb className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-            <textarea
-              ref={textareaRef}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="이곳의 분위기, 추천 메뉴, 꿀팁 등 자세한 이야기를 들려주세요..."
-              className="w-full h-80 bg-[#141414] border border-white/30 rounded-2xl p-5 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all leading-relaxed text-[16px] shadow-inner"
-            ></textarea>
-          </div>
-
-          {/* Media Upload Section */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-white">사진 및 동영상 첨부</h3>
-              <span className="text-xs text-gray-500">{mediaFiles.length}개 선택됨</span>
-            </div>
-            
-            <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar">
-              {/* Upload Button */}
+          {/* Editor Mode Tabs */}
+          <div className="pt-4">
+            <div className="flex items-center gap-2 mb-6 p-1 bg-[#111] rounded-2xl border border-white/5">
               <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex-shrink-0 w-32 h-32 bg-[#141414] border-2 border-dashed border-white/30 rounded-2xl flex flex-col items-center justify-center gap-2 hover:border-primary-500/50 hover:bg-primary-500/5 transition-all snap-start"
+                onClick={() => setEditorMode('simple')}
+                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
+                  editorMode === 'simple'
+                    ? 'bg-white/10 text-white shadow-xl'
+                    : 'text-gray-500 hover:text-gray-300'
+                }`}
               >
-                <div className="p-2 bg-white/5 rounded-full">
-                  <Plus className="w-6 h-6 text-gray-400" />
-                </div>
-                <span className="text-[10px] font-bold text-gray-500">추가하기</span>
+                간편 작성
               </button>
-
-              {/* Media Previews */}
-              {mediaFiles.map((media, index) => (
-                <div 
-                  key={index} 
-                  onClick={() => setRepresentativeIndex(index)}
-                  className={`flex-shrink-0 w-32 h-32 relative rounded-2xl overflow-hidden snap-start group border-2 transition-all cursor-pointer ${
-                    representativeIndex === index ? 'border-primary-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]' : 'border-white/30'
-                  }`}
-                >
-                  {media.type === 'image' ? (
-                    <img src={media.preview} alt="preview" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full relative">
-                      <video src={media.preview} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                        <Video className="w-8 h-8 text-white/70" />
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Representative Badge */}
-                  {representativeIndex === index && (
-                    <div className="absolute top-2 left-2 px-2 py-1 bg-primary-500 text-white text-[10px] font-black rounded-md shadow-lg z-10">
-                      대표사진
-                    </div>
-                  )}
-
-                  {/* Remove Button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeMedia(index);
-                      if (representativeIndex === index) setRepresentativeIndex(null);
-                    }}
-                    className="absolute top-1.5 right-1.5 p-1.5 bg-black/60 backdrop-blur-md rounded-full text-white hover:bg-red-500 transition-colors shadow-lg border border-white/10 z-20"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-
-                  {/* Media Type Icon */}
-                  <div className="absolute bottom-1.5 right-1.5 p-1 bg-black/40 backdrop-blur-md rounded-md z-10">
-                    {media.type === 'image' ? (
-                      <ImageIcon className="w-3 h-3 text-white/80" />
-                    ) : (
-                      <Video className="w-3 h-3 text-white/80" />
-                    )}
-                  </div>
-                </div>
-              ))}
+              <button
+                onClick={() => setEditorMode('story')}
+                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
+                  editorMode === 'story'
+                    ? 'bg-white/10 text-white shadow-xl'
+                    : 'text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                스토리 작성 (블로그형)
+              </button>
             </div>
-            
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              multiple
-              accept="image/*,video/*"
-              className="hidden"
-            />
-            <p className="mt-3 text-[11px] text-gray-500 leading-relaxed px-1">
-              * 사진은 자동으로 최적화되어 업로드됩니다.<br/>
-              * 여러 장의 사진과 동영상을 선택하여 가로로 넘겨볼 수 있습니다.
-            </p>
+
+            {editorMode === 'simple' ? (
+              <div className="space-y-8">
+                {/* Simple Mode Editor */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold text-white">상세한 후기를 들려주세요</h3>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => insertText('\n### ', '')}
+                        className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
+                        title="소제목"
+                      >
+                        <Type className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => insertText('\n---\n', '')}
+                        className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
+                        title="구분선"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => insertText('\n📍 추천 메뉴: ', '')}
+                        className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-primary-500 hover:border-primary-500/50 transition-all"
+                        title="추천 메뉴"
+                      >
+                        <Utensils className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <textarea
+                    ref={textareaRef}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="이곳의 분위기, 추천 메뉴, 꿀팁 등 자세한 이야기를 들려주세요..."
+                    className="w-full h-80 bg-[#141414] border border-white/30 rounded-2xl p-5 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all leading-relaxed text-[16px] shadow-inner"
+                  ></textarea>
+                </div>
+
+                {/* Media Upload Section (Simple Mode) */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold text-white">사진 및 동영상 첨부</h3>
+                    <span className="text-xs text-gray-500">{mediaFiles.length}개 선택됨</span>
+                  </div>
+                  
+                  <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar">
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex-shrink-0 w-32 h-32 bg-[#141414] border-2 border-dashed border-white/30 rounded-2xl flex flex-col items-center justify-center gap-2 hover:border-primary-500/50 hover:bg-primary-500/5 transition-all snap-start"
+                    >
+                      <div className="p-2 bg-white/5 rounded-full">
+                        <Plus className="w-6 h-6 text-gray-400" />
+                      </div>
+                      <span className="text-[10px] font-bold text-gray-500">추가하기</span>
+                    </button>
+
+                    {mediaFiles.map((media, index) => (
+                      <div 
+                        key={index} 
+                        onClick={() => setRepresentativeIndex(index)}
+                        className={`flex-shrink-0 w-32 h-32 relative rounded-2xl overflow-hidden snap-start group border-2 transition-all cursor-pointer ${
+                          representativeIndex === index ? 'border-primary-500 shadow-[0_0_15px_rgba(249,115,22,0.4)]' : 'border-white/30'
+                        }`}
+                      >
+                        {media.type === 'image' ? (
+                          <img src={media.preview} alt="preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full relative">
+                            <video src={media.preview} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                              <Video className="w-8 h-8 text-white/70" />
+                            </div>
+                          </div>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeMedia(index);
+                            if (representativeIndex === index) setRepresentativeIndex(null);
+                          }}
+                          className="absolute top-1.5 right-1.5 p-1.5 bg-black/60 backdrop-blur-md rounded-full text-white hover:bg-red-500 transition-colors shadow-lg border border-white/10 z-20"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    multiple
+                    accept="image/*,video/*"
+                    className="hidden"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6 pb-10">
+                {/* Story Mode Editor */}
+                {storyBlocks.map((block, index) => (
+                  <div key={block.id} className="relative group">
+                    {block.type === 'text' ? (
+                      <div className="relative">
+                        <textarea
+                          value={block.value}
+                          onChange={(e) => updateStoryBlock(block.id, e.target.value)}
+                          placeholder="이곳에 글을 작성하세요..."
+                          className="w-full bg-transparent border-none p-0 text-white text-[16px] leading-relaxed focus:ring-0 resize-none min-h-[40px] placeholder-gray-700"
+                          style={{ height: 'auto' }}
+                          onInput={(e) => {
+                            const target = e.target as HTMLTextAreaElement;
+                            target.style.height = 'auto';
+                            target.style.height = `${target.scrollHeight}px`;
+                          }}
+                        />
+                        {storyBlocks.length > 1 && (
+                          <button 
+                            onClick={() => removeStoryBlock(block.id)}
+                            className="absolute -right-2 -top-2 p-1.5 bg-red-500/20 text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-[#111] aspect-video flex items-center justify-center">
+                        {block.value ? (
+                          <img src={block.value} className="w-full h-full object-cover" alt="story" />
+                        ) : (
+                          <button 
+                            onClick={() => {
+                              const input = document.createElement('input');
+                              input.type = 'file';
+                              input.accept = 'image/*';
+                              input.onchange = (e) => {
+                                const file = (e.target as HTMLInputElement).files?.[0];
+                                if (file) handleStoryImageUpload(block.id, file);
+                              };
+                              input.click();
+                            }}
+                            className="flex flex-col items-center gap-2 text-gray-500 hover:text-primary-500 transition-colors"
+                          >
+                            <ImageIcon className="w-8 h-8" />
+                            <span className="text-xs font-bold">사진 업로드</span>
+                          </button>
+                        )}
+                        <button 
+                          onClick={() => removeStoryBlock(block.id)}
+                          className="absolute right-3 top-3 p-2 bg-black/60 backdrop-blur-md text-white rounded-full hover:bg-red-500 transition-all shadow-xl"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Add Block Controls (Bottom of each block) */}
+                    <div className="flex justify-center gap-4 mt-6 opacity-0 group-hover:opacity-100 transition-all">
+                      <button 
+                        onClick={() => addStoryBlock('text', index)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+                      >
+                        <Plus className="w-3 h-3 text-primary-500" /> 글 추가
+                      </button>
+                      <button 
+                        onClick={() => addStoryBlock('image', index)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+                      >
+                        <ImageIcon className="w-3 h-3 text-primary-500" /> 사진 추가
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Final Add Block Button (If list is empty or for extra) */}
+                <div className="pt-6 border-t border-white/5 flex flex-col items-center gap-4">
+                   <p className="text-[11px] text-gray-600 font-medium">스토리 블록을 추가하여 후기를 구성해보세요</p>
+                   <div className="flex gap-4">
+                    <button 
+                      onClick={() => addStoryBlock('text')}
+                      className="p-4 bg-[#111] border border-white/10 rounded-2xl flex flex-col items-center gap-2 hover:border-primary-500/50 transition-all w-24"
+                    >
+                      <Type className="w-6 h-6 text-primary-500" />
+                      <span className="text-[10px] text-gray-400 font-bold">글 추가</span>
+                    </button>
+                    <button 
+                      onClick={() => addStoryBlock('image')}
+                      className="p-4 bg-[#111] border border-white/10 rounded-2xl flex flex-col items-center gap-2 hover:border-primary-500/50 transition-all w-24"
+                    >
+                      <ImageIcon className="w-6 h-6 text-primary-500" />
+                      <span className="text-[10px] text-gray-400 font-bold">사진 추가</span>
+                    </button>
+                   </div>
+                </div>
+              </div>
+            )}
           </div>
           {/* Submit Button at the end of the flow */}
           <div className="pt-10 pb-20">
