@@ -5,12 +5,13 @@ import { MOCK_POSTS, MOCK_COLLECTIONS } from '@/data/mock';
 
 export function Home() {
   const navigate = useNavigate();
-  const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
+  const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비', '배달맛집', '기타'];
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
   const CATEGORY_ICONS: { [key: string]: string } = {
     '전체': '🍽️', '한식': '🍚', '일식': '🍣', '중식': '🥡', 
-    '양식': '🍝', '카페': '☕', '파인다이닝': '🥂', '가성비': '💰'
+    '양식': '🍝', '카페': '☕', '파인다이닝': '🥂', '가성비': '💰',
+    '배달맛집': '🛵', '기타': '🍴'
   };
 
   // 필터링된 포스트 데이터
@@ -65,7 +66,7 @@ export function Home() {
 
       {/* 2. Compact 2-Row Category Grid */}
       <section className="px-5 py-4">
-        <div className="grid grid-cols-4 gap-2 mb-5">
+        <div className="grid grid-cols-5 gap-2 mb-5">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
