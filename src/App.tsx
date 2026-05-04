@@ -36,6 +36,7 @@ import { AdminUsers } from '@/pages/AdminUsers';
 import { AdminPosts } from '@/pages/AdminPosts';
 import { AdminCampaigns } from '@/pages/AdminCampaigns';
 import { BottomNav } from '@/components/BottomNav';
+import { Sidebar } from '@/components/Sidebar';
 
 // 똑똑한 스크롤 관리 컴포넌트
 function ScrollToTop() {
@@ -61,9 +62,20 @@ function Layout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="mx-auto max-w-[640px] w-full min-h-screen bg-black border-x border-white/10 relative shadow-2xl">
-      {children}
-      <BottomNav />
+    <div className="bg-black min-h-screen">
+      {/* PC 전용 사이드바 */}
+      <Sidebar />
+      
+      <div className="lg:pl-[260px] flex justify-center">
+        <main className="w-full max-w-[640px] lg:max-w-[1024px] min-h-screen bg-black border-x border-white/5 relative shadow-2xl">
+          {children}
+          
+          {/* 모바일에서만 하단바 노출 */}
+          <div className="lg:hidden">
+            <BottomNav />
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

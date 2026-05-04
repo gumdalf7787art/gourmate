@@ -66,7 +66,7 @@ export function Home() {
 
       {/* 2. Compact 2-Row Category Grid */}
       <section className="px-5 py-4">
-        <div className="grid grid-cols-5 gap-2 mb-5">
+        <div className="grid grid-cols-5 lg:grid-cols-10 gap-2 mb-5">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
@@ -96,7 +96,7 @@ export function Home() {
           <Link to="/popular-restaurants" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
           {filteredPosts.length > 0 ? (
             filteredPosts.sort((a, b) => b.likes - a.likes).slice(0, 4).map((post) => (
               <Link to={`/post/${post.id}`} key={post.id} className="group cursor-pointer">
@@ -239,7 +239,7 @@ export function Home() {
           <p className="text-sm text-gray-500">지금 가이드들이 가장 많이 추천하는 곳</p>
         </div>
         
-        <div className="flex flex-col gap-10 px-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-12 px-5">
           {MOCK_POSTS.map((post) => (
             <article key={post.id} className="flex flex-col relative group">
               {/* Guide Info */}

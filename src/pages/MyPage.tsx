@@ -98,9 +98,9 @@ export function MyPage() {
       </section>
 
       {/* Menus */}
-      <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {menuGroups.map((group, idx) => (
-          <section key={idx} className="bg-[#0f0f0f] border-b border-white/5 py-4">
+          <section key={idx} className="bg-[#0f0f0f] lg:rounded-3xl lg:m-2 border-b lg:border border-white/5 py-4">
             <h3 className="px-5 text-[11px] font-bold text-primary-500 mb-2 uppercase tracking-wider">{group.title}</h3>
             <ul className="flex flex-col">
               {group.items.map((item, itemIdx) => (
