@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, CheckCircle2, MapPin, Tag, Image as ImageIcon, 
-  Video, X, Plus, Type, Minus, Utensils, Lightbulb, Star, Hash 
+  Video, X, Plus, Type, Minus, Utensils, Star, Hash 
 } from 'lucide-react';
 import { KakaoMap } from '@/components/KakaoMap';
 
