@@ -49,5 +49,16 @@ export const postService = {
     return apiFetch(`/posts/detail?id=${id}`, {
       method: 'DELETE',
     });
+  },
+
+  async getReviews(postId: string) {
+    return apiFetch(`/posts/reviews?postId=${postId}`);
+  },
+
+  async addReview(data: { post_id: string; user_id: string; content: string; parent_id?: string }) {
+    return apiFetch('/posts/reviews', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
   }
 };

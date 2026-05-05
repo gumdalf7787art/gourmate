@@ -14,21 +14,52 @@ import {
   Star,
   Flame,
   Utensils,
-  LayoutGrid
+  LayoutGrid,
+  Send,
+  CornerDownRight
 } from 'lucide-react';
 import { postService } from '@/services/postService';
 import { KakaoMap } from '@/components/KakaoMap';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
   const [post, setPost] = useState<any>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [newReview, setNewReview] = useState('');
+  const [replyTo, setReplyTo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const imageContainerRef = useRef<HTMLDivElement>(null);
+
+  const fetchPost = async () => {
+    if (!id) return;
+    setIsLoading(true);
+    try {
+      const [postRes, reviewsRes] = await Promise.all([
+        postService.getPost(id),
+        postService.getReviews(id)
+      ]);
+      
+      const postData = postRes.data || postRes;
+      if (postData && postData.id) {
+        setPost(postData);
+      }
+
+      if (reviewsRes.success) {
+        setReviews(reviewsRes.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch post or reviews:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleNextImage = () => {
     if (!post?.images || currentImageIndex >= post.images.length - 1) return;
@@ -54,29 +85,40 @@ export function PostDetail() {
     }
   };
 
+  const handleReviewSubmit = async (parentId?: string) => {
+    if (!user) {
+      alert('로그인이 필요한 기능입니다.');
+      navigate('/login');
+      return;
+    }
+    if (!newReview.trim()) return;
+
+    try {
+      const res = await postService.addReview({
+        post_id: id!,
+        user_id: user.id,
+        content: newReview,
+        parent_id: parentId
+      });
+
+      if (res.success) {
+        setNewReview('');
+        setReplyTo(null);
+        // 리뷰 다시 불러오기
+        const reviewsRes = await postService.getReviews(id!);
+        if (reviewsRes.success) setReviews(reviewsRes.data);
+      }
+    } catch (err) {
+      alert('리뷰 등록 중 오류가 발생했습니다.');
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     const handleScroll = () => {
       setScrolled(window.scrollY > 100);
     };
     window.addEventListener('scroll', handleScroll);
-    
-    const fetchPost = async () => {
-      if (!id) return;
-      setIsLoading(true);
-      try {
-        const response = await postService.getPost(id);
-        const data = response.data || response;
-        if (data && data.id) {
-          setPost(data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch post:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
     fetchPost();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [id]);
@@ -397,20 +439,153 @@ export function PostDetail() {
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
               <MessageCircle className="w-3.5 h-3.5 text-primary-500" />
-              리뷰
+              리뷰 {reviews.filter(r => !r.parent_id).length}
             </h3>
-            <button 
-              onClick={() => alert('리뷰 기능은 준비 중입니다!')}
-              className="px-4 py-2 bg-primary-500/10 border border-primary-500/30 rounded-xl text-[11px] font-black text-primary-500 hover:bg-primary-500 hover:text-white transition-all active:scale-95"
-            >
-              리뷰 작성하기
-            </button>
           </div>
 
-          <div className="flex flex-col items-center justify-center py-12 bg-[#111] border border-white/5 border-dashed rounded-[32px]">
-            <MessageCircle className="w-8 h-8 text-gray-700 mb-3" />
-            <p className="text-sm font-bold text-gray-500">아직 등록된 리뷰가 없습니다.</p>
-            <p className="text-xs text-gray-600 mt-1">첫 번째 리뷰를 남겨보세요!</p>
+          {/* Review Input */}
+          <div className="mb-10 bg-[#111] border border-white/10 rounded-3xl p-5 focus-within:border-primary-500/50 transition-all shadow-2xl">
+            <div className="flex gap-4">
+              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+                {user?.profileImageUrl ? (
+                  <img src={user.profileImageUrl} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <MessageCircle className="w-5 h-5 text-gray-600" />
+                )}
+              </div>
+              <div className="flex-1">
+                <textarea
+                  value={replyTo ? '' : newReview}
+                  onChange={(e) => !replyTo && setNewReview(e.target.value)}
+                  placeholder={user ? "맛있게 드셨나요? 후기를 남겨주세요." : "로그인 후 리뷰를 남길 수 있습니다."}
+                  readOnly={!user || !!replyTo}
+                  className="w-full bg-transparent border-none p-0 text-[14px] text-white placeholder-gray-600 focus:ring-0 resize-none min-h-[40px]"
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = 'auto';
+                    target.style.height = `${target.scrollHeight}px`;
+                  }}
+                />
+                {!replyTo && newReview.trim() && (
+                  <div className="flex justify-end mt-4 animate-in fade-in slide-in-from-top-2">
+                    <button 
+                      onClick={() => handleReviewSubmit()}
+                      className="w-10 h-10 bg-primary-500 text-white rounded-xl flex items-center justify-center shadow-lg active:scale-95 transition-all"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            {reviews.filter(r => !r.parent_id).length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 bg-[#111] border border-white/5 border-dashed rounded-[32px]">
+                <MessageCircle className="w-8 h-8 text-gray-700 mb-3" />
+                <p className="text-sm font-bold text-gray-500">아직 등록된 리뷰가 없습니다.</p>
+                <p className="text-xs text-gray-600 mt-1">첫 번째 리뷰를 남겨보세요!</p>
+              </div>
+            ) : (
+              reviews.filter(r => !r.parent_id).map((review: any) => (
+                <div key={review.id} className="space-y-4">
+                  {/* Top Level Review */}
+                  <div className="p-6 bg-[#111] border border-white/10 rounded-2xl shadow-xl">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-primary-500/10 border border-primary-500/20 flex items-center justify-center overflow-hidden">
+                          {review.profile_image_url ? (
+                            <img src={review.profile_image_url} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-[10px] text-primary-500 font-black">{review.nickname[0]}</span>
+                          )}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[12px] font-bold text-gray-200">{review.nickname}</span>
+                          <span className="text-[9px] text-gray-600 font-medium">
+                            {new Date(review.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* 가이드(작성자)만 답글 달기 버튼 노출 */}
+                      {user?.id === post.guide.id && (
+                        <button 
+                          onClick={() => setReplyTo(replyTo === review.id ? null : review.id)}
+                          className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border transition-all ${
+                            replyTo === review.id ? 'bg-primary-500 border-primary-500 text-white' : 'bg-white/5 border-white/10 text-gray-500 hover:text-white'
+                          }`}
+                        >
+                          답글 달기
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-[14px] text-gray-300 leading-relaxed font-light">
+                      {review.content}
+                    </p>
+
+                    {/* Reply Input (when active) */}
+                    {replyTo === review.id && (
+                      <div className="mt-6 pl-4 border-l-2 border-primary-500/30 animate-in slide-in-from-left-2">
+                        <div className="flex gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center shrink-0 overflow-hidden">
+                            {user?.profileImageUrl ? <img src={user.profileImageUrl} alt="" className="w-full h-full object-cover" /> : <CornerDownRight className="w-4 h-4 text-white" />}
+                          </div>
+                          <div className="flex-1">
+                            <textarea
+                              value={newReview}
+                              onChange={(e) => setNewReview(e.target.value)}
+                              placeholder="가이드님의 답글을 남겨주세요."
+                              className="w-full bg-transparent border-none p-0 text-[14px] text-white placeholder-gray-600 focus:ring-0 resize-none min-h-[32px]"
+                              autoFocus
+                            />
+                            {newReview.trim() && (
+                              <div className="flex justify-end mt-2">
+                                <button 
+                                  onClick={() => handleReviewSubmit(review.id)}
+                                  className="px-4 py-2 bg-primary-500 text-white rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg active:scale-95"
+                                >
+                                  답글 등록
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Nested Replies */}
+                  {reviews.filter(r => r.parent_id === review.id).map((reply: any) => (
+                    <div key={reply.id} className="pl-8 flex gap-3 animate-in fade-in slide-in-from-left-4">
+                      <CornerDownRight className="w-4 h-4 text-gray-700 mt-2 shrink-0" />
+                      <div className="flex-1 p-5 bg-[#0a0a0a] border border-white/5 rounded-2xl shadow-lg relative">
+                        <div className="absolute -top-2 left-6 px-1.5 py-0.5 bg-primary-500 text-white text-[8px] font-black rounded uppercase tracking-tighter">
+                          Guide Reply
+                        </div>
+                        <div className="flex items-center gap-2 mb-3 mt-1">
+                          <div className="w-6 h-6 rounded-full bg-primary-500/20 border border-primary-500/30 flex items-center justify-center overflow-hidden">
+                            {reply.profile_image_url ? (
+                              <img src={reply.profile_image_url} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="text-[9px] text-primary-500 font-black">{reply.nickname[0]}</span>
+                            )}
+                          </div>
+                          <span className="text-[11px] font-bold text-gray-300">{reply.nickname}</span>
+                          <span className="text-[9px] text-gray-700 font-medium ml-auto">
+                            {new Date(reply.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="text-[13px] text-gray-400 leading-relaxed font-light italic">
+                          {reply.content}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))
+            )}
           </div>
         </section>
       </main>
