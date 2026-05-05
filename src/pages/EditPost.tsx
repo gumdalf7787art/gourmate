@@ -42,12 +42,12 @@ export function EditPost() {
             setMediaFiles(foundPost.images.map((img: string) => ({ preview: img, type: 'image' })));
           }
         } else {
-          alert('포스트를 찾을 수 없습니다.');
+          alert('포스트 데이터가 비어 있습니다.');
           navigate(-1);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to fetch post:', error);
-        alert('포스트를 불러오는 중 오류가 발생했습니다.');
+        alert(`포스트를 불러오는 중 오류가 발생했습니다: ${error.message}`);
         navigate(-1);
       }
     };

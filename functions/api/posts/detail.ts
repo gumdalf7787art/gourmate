@@ -15,7 +15,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         u.profile_image_url as guide_profile_image,
         u.trust_score as guide_trust_score
       FROM posts p
-      JOIN users u ON p.guide_id = u.id
+      LEFT JOIN users u ON p.guide_id = u.id
       WHERE p.id = ?
     `).bind(id).first();
 
