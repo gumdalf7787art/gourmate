@@ -1,13 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, Edit2, Trash2, Heart, MessageCircle, Search, X } from 'lucide-react';
-import { MOCK_POSTS } from '@/data/mock';
+import { ChevronLeft, Edit2, Trash2, Heart, MessageCircle, Search, X, Loader2 } from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
+import { postService } from '@/services/postService';
 
 export function MyPosts() {
   const navigate = useNavigate();
-  // 임의로 5개의 포스트를 내 포스트로 가정
-  const [myPosts, setMyPosts] = useState(MOCK_POSTS.slice(0, 5));
+  const user = useAuthStore((state) => state.user);
+  const [myPosts, setMyPosts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const fetchMyPosts = async () => {
+      if (!user) return;
+      try {
+        const data = await postService.getUserPosts(user.id);
+        setMyPosts(data);
+      } catch (err) {
+        console.error('Failed to fetch my posts:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchMyPosts();
+  }, [user]);
 
   const handleDelete = (id: string) => {
     if(window.confirm('정말 이 포스팅을 삭제하시겠습니까?')) {
@@ -62,7 +79,12 @@ export function MyPosts() {
       </div>
 
       <div className="px-5 py-6 flex flex-col gap-4">
-        {filteredPosts.length > 0 ? (
+        {isLoading ? (
+          <div className="py-20 flex flex-col items-center justify-center text-gray-500">
+            <Loader2 className="w-8 h-8 mb-3 animate-spin text-primary-500" />
+            <p className="text-sm">포스팅을 불러오는 중입니다...</p>
+          </div>
+        ) : filteredPosts.length > 0 ? (
           filteredPosts.map(post => (
             <div key={post.id} className="bg-[#111] border border-white/10 rounded-2xl p-4 flex flex-col gap-4 group hover:border-white/20 transition-colors">
               <div className="flex items-start gap-4">

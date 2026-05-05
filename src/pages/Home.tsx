@@ -1,12 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, MapPin, BadgeCheck, Flame, UtensilsCrossed, Heart } from 'lucide-react';
 import { MOCK_POSTS, MOCK_COLLECTIONS } from '@/data/mock';
+import { postService } from '@/services/postService';
 
 export function Home() {
   const navigate = useNavigate();
   const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비', '배달맛집', '기타'];
   const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [realPosts, setRealPosts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const data = await postService.getPosts();
+        setRealPosts(data);
+      } catch (err) {
+        console.error('Failed to fetch posts:', err);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  const allPosts = [...realPosts, ...MOCK_POSTS];
 
   const CATEGORY_ICONS: { [key: string]: string } = {
     '전체': '🍽️', '한식': '🍚', '일식': '🍣', '중식': '🥡', 
@@ -16,8 +32,8 @@ export function Home() {
 
   // 필터링된 포스트 데이터
   const filteredPosts = selectedCategory === '전체' 
-    ? MOCK_POSTS
-    : MOCK_POSTS.filter(post => {
+    ? allPosts
+    : allPosts.filter(post => {
         if (selectedCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place.category === '파인다이닝';
         if (selectedCategory === '가성비') return post.tags?.includes('가성비');
         return post.place.category === selectedCategory;
@@ -199,7 +215,7 @@ export function Home() {
         </div>
 
         <div className="flex flex-col gap-3 px-5">
-          {MOCK_POSTS.slice(0, 3).map((post) => (
+          {allPosts.slice(0, 3).map((post) => (
             <div key={post.guide.id} className="flex items-center justify-between p-4 bg-[#0f0f0f] border border-white/30 rounded-2xl group hover:border-white/40 transition-all shadow-xl">
               <Link to={`/guide/${post.guide.id}`} className="flex items-center gap-3 flex-1">
                 <div className="relative">
@@ -240,7 +256,7 @@ export function Home() {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-12 px-5">
-          {MOCK_POSTS.map((post) => (
+          {allPosts.map((post) => (
             <article key={post.id} className="flex flex-col relative group">
               {/* Guide Info */}
               <div className="flex items-center justify-between mb-4">

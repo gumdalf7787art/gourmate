@@ -5,6 +5,9 @@ import {
   Video, X, Plus, Type, Minus, Utensils, Star, Hash 
 } from 'lucide-react';
 import { KakaoMap } from '@/components/KakaoMap';
+import { uploadService } from '@/services/uploadService';
+import { postService } from '@/services/postService';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function RegisterPlace() {
   const navigate = useNavigate();
@@ -13,12 +16,14 @@ export function RegisterPlace() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const place = location.state?.place;
 
+  const user = useAuthStore((state) => state.user);
   const [isLoading, setIsLoading] = useState(false);
   const [review, setReview] = useState('');
   const [content, setContent] = useState('');
   const [rating, setRating] = useState(0);
   const [selectedTag, setSelectedTag] = useState(place?.category_group_name || '음식점');
   const [mediaFiles, setMediaFiles] = useState<{ file: File; preview: string; type: 'image' | 'video' }[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const [representativeIndex, setRepresentativeIndex] = useState<number | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
@@ -99,13 +104,9 @@ export function RegisterPlace() {
     });
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    const newFiles = Array.from(files);
+  const processFiles = async (files: File[]) => {
     const processedFiles = await Promise.all(
-      newFiles.map(async (file) => {
+      files.map(async (file) => {
         const type = file.type.startsWith('video/') ? 'video' : 'image';
         let finalFile = file;
         
@@ -122,7 +123,34 @@ export function RegisterPlace() {
     );
 
     setMediaFiles((prev) => [...prev, ...processedFiles]);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    await processFiles(Array.from(files));
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      await processFiles(Array.from(files));
+    }
   };
 
   const removeMedia = (index: number) => {
@@ -183,32 +211,63 @@ export function RegisterPlace() {
     );
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
     setIsLoading(true);
     
-    // 등록 데이터 요약 (디버깅용)
-    console.log('등록 시도 데이터:', {
-      place_name: place.place_name,
-      tag: selectedTag,
-      rating: rating,
-      short_review: review,
-      editor_mode: editorMode,
-      detailed_content: editorMode === 'simple' ? content : 'Story Mode Content',
-      story_blocks: editorMode === 'story' ? storyBlocks.map(b => ({
-        type: b.type,
-        content: b.type === 'text' ? b.value : (b.file?.name || 'Image')
-      })) : [],
-      media_count: editorMode === 'simple' ? mediaFiles.length : storyBlocks.filter(b => b.type === 'image').length,
-      menu_items: menuItems,
-      tags: tags
-    });
+    try {
+      // 1. 이미지 업로드
+      const imageUrls: string[] = [];
+      
+      if (editorMode === 'simple') {
+        for (const media of mediaFiles) {
+          const res = await uploadService.uploadImage(media.file);
+          if (res.success) {
+            imageUrls.push(res.url);
+          }
+        }
+      } else {
+        for (const block of storyBlocks) {
+          if (block.type === 'image' && block.file) {
+            const res = await uploadService.uploadImage(block.file);
+            if (res.success) {
+              imageUrls.push(res.url);
+              // 스토리 블록의 preview를 실제 URL로 교체 (필요한 경우)
+            }
+          }
+        }
+      }
 
-    // 실제로는 여기에 서버 API 호출 로직이 들어갑니다.
-    setTimeout(() => {
+      // 2. 포스트 데이터 생성
+      const postData = {
+        guide_id: user.id,
+        restaurant_name: place.place_name,
+        address: place.road_address_name || place.address_name,
+        category: selectedTag,
+        content: editorMode === 'simple' 
+          ? (content || review) 
+          : storyBlocks.map(b => b.type === 'text' ? b.value : `[이미지]`).join('\n'),
+        rating: rating,
+        images: imageUrls,
+        tags: tags
+      };
+
+      // 3. API 호출
+      await postService.createPost(postData);
+
       setIsLoading(false);
       alert('맛집 등록이 완료되었습니다!\n상세 글과 미디어가 성공적으로 업로드되었습니다.');
       navigate('/');
-    }, 1500);
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      setIsLoading(false);
+      alert('등록 중 오류가 발생했습니다: ' + (err.message || '알 수 없는 오류'));
+    }
   };
 
   return (
@@ -556,10 +615,19 @@ export function RegisterPlace() {
                     <span className="text-xs text-gray-500">{mediaFiles.length}개 선택됨</span>
                   </div>
                   
-                  <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar">
+                  <div 
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    className={`flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar transition-all duration-300 rounded-2xl ${
+                      isDragging ? 'bg-primary-500/10 ring-2 ring-primary-500 ring-dashed p-4' : ''
+                    }`}
+                  >
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="flex-shrink-0 w-32 h-32 bg-[#141414] border-2 border-dashed border-white/30 rounded-2xl flex flex-col items-center justify-center gap-2 hover:border-primary-500/50 hover:bg-primary-500/5 transition-all snap-start"
+                      className={`flex-shrink-0 w-32 h-32 bg-[#141414] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-2 hover:border-primary-500/50 hover:bg-primary-500/5 transition-all snap-start ${
+                        isDragging ? 'border-primary-500 bg-primary-500/5' : 'border-white/30'
+                      }`}
                     >
                       <div className="p-2 bg-white/5 rounded-full">
                         <Plus className="w-6 h-6 text-gray-400" />
