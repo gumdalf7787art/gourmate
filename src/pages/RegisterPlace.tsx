@@ -24,6 +24,7 @@ export function RegisterPlace() {
   const [selectedTag, setSelectedTag] = useState(place?.category_group_name || '음식점');
   const [mediaFiles, setMediaFiles] = useState<{ file: File; preview: string; type: 'image' | 'video' }[]>([]);
   const [isDragging, setIsDragging] = useState(false);
+  const dragCounter = useRef(0);
   const [representativeIndex, setRepresentativeIndex] = useState<number | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
@@ -133,18 +134,29 @@ export function RegisterPlace() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounter.current++;
+    setIsDragging(true);
+  };
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragging(false);
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setIsDragging(false);
+    }
   };
 
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
+    dragCounter.current = 0;
     setIsDragging(false);
     
     const files = e.dataTransfer.files;
@@ -194,6 +206,7 @@ export function RegisterPlace() {
 
   const handleStoryDrop = async (e: React.DragEvent, blockId: string) => {
     e.preventDefault();
+    dragCounter.current = 0;
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith('image/')) {
@@ -625,6 +638,7 @@ export function RegisterPlace() {
                   </div>
                   
                   <div 
+                    onDragEnter={handleDragEnter}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
@@ -715,6 +729,7 @@ export function RegisterPlace() {
                       </div>
                     ) : (
                       <div 
+                        onDragEnter={handleDragEnter}
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                         onDrop={(e) => handleStoryDrop(e, block.id)}
