@@ -15,18 +15,22 @@ export default function GuideProfile() {
   const [activeCategory, setActiveCategory] = useState('전체');
   const [showTrustModal, setShowTrustModal] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGuideData = async () => {
       if (!id) return;
       setIsLoading(true);
+      setError(null);
       try {
         const res = await postService.getGuideProfile(id);
         if (res.success) {
           setGuide(res.data);
+        } else {
+          setError(res.error || '가이드 정보를 불러오지 못했습니다.');
         }
-      } catch (err) {
-        console.error('Failed to fetch guide profile:', err);
+      } catch (err: any) {
+        setError(err.message || '네트워크 오류가 발생했습니다.');
       } finally {
         setIsLoading(false);
       }
@@ -60,11 +64,22 @@ export default function GuideProfile() {
     );
   }
 
-  if (!guide) {
+  if (error || !guide) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-gray-500 bg-black">
-        <p>가이드를 찾을 수 없습니다.</p>
-        <button onClick={() => navigate(-1)} className="mt-4 text-primary-500 font-bold">뒤로 가기</button>
+      <div className="flex flex-col items-center justify-center min-h-screen px-10 text-center bg-black">
+        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-6">
+          <Info className="w-8 h-8 text-gray-600" />
+        </div>
+        <h2 className="text-xl font-bold text-white mb-2">가이드를 찾을 수 없습니다</h2>
+        <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+          {error || '해당 가이드의 정보를 불러오는 중 문제가 발생했습니다.\nID가 올바른지 확인해 주세요.'}
+        </p>
+        <button 
+          onClick={() => navigate(-1)} 
+          className="px-8 py-3 bg-white text-black font-black rounded-2xl active:scale-95 transition-all shadow-xl"
+        >
+          뒤로 가기
+        </button>
       </div>
     );
   }
