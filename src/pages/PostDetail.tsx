@@ -106,7 +106,7 @@ export function PostDetail() {
       {/* Hero Image Gallery (Left Column on PC) */}
       <section className="relative w-full lg:w-1/2 lg:sticky lg:top-10 lg:h-[calc(100vh-80px)] aspect-[4/3] lg:aspect-auto bg-[#111] overflow-hidden lg:rounded-3xl lg:ml-5">
         <div className="w-full h-full overflow-x-auto lg:overflow-hidden snap-x snap-mandatory flex no-scrollbar lg:flex-col">
-          {post.images.map((img, idx) => (
+          {post.images.map((img: string, idx: number) => (
             <div key={idx} className="flex-none w-full h-full lg:h-full snap-start">
               <img 
                 src={img} 
@@ -123,7 +123,7 @@ export function PostDetail() {
         {/* Pagination Dots (Mobile Only) */}
         {post.images.length > 1 && (
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 lg:hidden">
-            {post.images.map((_, i) => (
+            {post.images.map((_: any, i: number) => (
               <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-primary-500 w-4' : 'bg-white/30'}`} />
             ))}
           </div>
@@ -151,7 +151,7 @@ export function PostDetail() {
 
           {/* Keywords/Tags */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {post.tags?.map((tag, idx) => (
+            {post.tags?.map((tag: string, idx: number) => (
               <span key={idx} className="text-[11px] text-primary-500 font-bold px-2.5 py-1.5 bg-primary-500/5 rounded-xl border border-primary-500/20">
                 #{tag}
               </span>
@@ -252,7 +252,7 @@ export function PostDetail() {
               { icon: MapPin, label: '주소', value: post.place.address, copy: true },
               { icon: Phone, label: '전화번호', value: post.place.phone || '등록된 번호가 없습니다.', copy: !!post.place.phone },
               { icon: Clock, label: '영업시간', value: post.place.openingHours || '11:00 AM - 10:00 PM (확인 필요)' },
-            ].map((item, i) => (
+            ].map((item: any, i: number) => (
               <div key={i} className="flex items-center gap-4 py-3 px-4 bg-[#111] border border-white/10 rounded-2xl group transition-all hover:border-primary-500/30">
                 <div className="w-10 h-10 rounded-xl bg-black/50 flex items-center justify-center shrink-0 border border-white/5">
                   <item.icon className="w-4 h-4 text-primary-500" />
@@ -312,7 +312,7 @@ export function PostDetail() {
               {[
                 { name: '미식가S', date: '2026.04.25', rating: 5, content: '진짜 여기는 인생 맛집이에요! 분위기도 너무 좋고 음식 하나하나 정성이 느껴집니다.' },
                 { name: '초코바닐라', date: '2026.04.22', rating: 4, content: '웨이팅이 조금 있었지만 기다린 보람이 있네요. 깔끔하고 맛있습니다.' },
-              ].map((review, idx) => (
+              ].map((review: any, idx: number) => (
                 <div key={idx} className="p-5 bg-[#111] border border-white/10 rounded-2xl">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
