@@ -1,21 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, BadgeCheck, UserPlus, Heart, Users, Star, Info, Map as MapIcon, X } from 'lucide-react';
-import { MOCK_GUIDES, MOCK_POSTS } from '@/data/mock';
-import type { Guide } from '@/data/mock';
+import { postService } from '@/services/postService';
 import { TrustScoreModal } from '@/components/TrustScoreModal';
 import { KakaoMap } from '@/components/KakaoMap';
 
 export function PopularGuides() {
   const navigate = useNavigate();
-  const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
+  const [selectedGuide, setSelectedGuide] = useState<any>(null);
   const [showMap, setShowMap] = useState(false);
+  const [guides, setGuides] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 인기 가이드들의 맛집 포스트들 (Top 20 기준)
-  const popularPlaces = MOCK_POSTS.filter(post => post.isTop20);
+  useEffect(() => {
+    const fetchGuides = async () => {
+      setIsLoading(true);
+      try {
+        const res = await postService.search(''); // 빈 검색어로 전체 가이드 요청
+        if (res.success) {
+          setGuides(res.data.guides);
+        }
+      } catch (err) {
+        console.error('Failed to fetch guides:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchGuides();
+  }, []);
 
   // 신뢰지수 높은 순으로 정렬
-  const sortedGuides = [...MOCK_GUIDES].sort((a, b) => b.trustScore - a.trustScore);
+  const sortedGuides = [...guides].sort((a, b) => (b.trustScore || 0) - (a.trustScore || 0));
+  
+  // 가이드들의 모든 포스트 (지도로 보기용)
+  // 현재는 검색 API에서 포스트도 가져오므로 이를 활용하거나 추후 보강
+  const popularPlaces: any[] = []; 
 
   return (
     <div className="flex flex-col min-h-screen bg-black pb-20">
@@ -39,13 +58,18 @@ export function PopularGuides() {
           <p className="text-gray-500 text-sm font-medium">실제 방문 경험과 신뢰도 높은 리뷰를 제공하는 가이드들입니다.</p>
         </div>
 
-        <div className="grid gap-4">
-          {sortedGuides.map((guide) => (
-            <div 
-              key={guide.id}
-              onClick={() => navigate(`/guide/${guide.id}`)}
-              className="bg-[#111] border border-white/10 rounded-3xl p-5 flex items-center gap-4 active:scale-[0.98] transition-all cursor-pointer group hover:border-primary-500/30"
-            >
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {sortedGuides.map((guide: any) => (
+              <div 
+                key={guide.id}
+                onClick={() => navigate(`/guide/${guide.id}`)}
+                className="bg-[#111] border border-white/10 rounded-3xl p-5 flex items-center gap-4 active:scale-[0.98] transition-all cursor-pointer group hover:border-primary-500/30"
+              >
               {/* Profile Image */}
               <div className="relative flex-shrink-0">
                 <img 
