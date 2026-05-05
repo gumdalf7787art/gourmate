@@ -733,33 +733,40 @@ export function RegisterPlace() {
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                         onDrop={(e) => handleStoryDrop(e, block.id)}
-                        className={`relative rounded-2xl overflow-hidden border transition-all duration-300 bg-[#111] aspect-video flex items-center justify-center ${
-                          isDragging ? 'border-primary-500 bg-primary-500/10 ring-2 ring-primary-500 ring-dashed' : 'border-white/10'
+                        onClick={() => {
+                          if (!block.value) {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.onchange = (e) => {
+                              const file = (e.target as HTMLInputElement).files?.[0];
+                              if (file) handleStoryImageUpload(block.id, file);
+                            };
+                            input.click();
+                          }
+                        }}
+                        className={`relative rounded-2xl overflow-hidden border transition-all duration-300 bg-[#111] aspect-video flex items-center justify-center cursor-pointer ${
+                          isDragging ? 'border-primary-500 bg-primary-500/10 ring-2 ring-primary-500/50 ring-offset-0' : 'border-dashed border-white/20 hover:border-primary-500/50 hover:bg-primary-500/5'
                         }`}
                       >
                         {block.value ? (
                           <img src={block.value} className="w-full h-full object-cover" alt="story" />
                         ) : (
-                          <button 
-                            onClick={() => {
-                              const input = document.createElement('input');
-                              input.type = 'file';
-                              input.accept = 'image/*';
-                              input.onchange = (e) => {
-                                const file = (e.target as HTMLInputElement).files?.[0];
-                                if (file) handleStoryImageUpload(block.id, file);
-                              };
-                              input.click();
-                            }}
-                            className="flex flex-col items-center gap-2 text-gray-500 hover:text-primary-500 transition-colors"
-                          >
-                            <ImageIcon className="w-8 h-8" />
-                            <span className="text-xs font-bold">사진 업로드</span>
-                          </button>
+                          <div className="flex flex-col items-center gap-3 pointer-events-none select-none">
+                            <div className={`p-4 rounded-full transition-colors ${isDragging ? 'bg-primary-500/20' : 'bg-white/5'}`}>
+                              <ImageIcon className={`w-10 h-10 transition-colors ${isDragging ? 'text-primary-500' : 'text-gray-500'}`} />
+                            </div>
+                            <div className="text-center">
+                              <p className={`text-sm font-bold mb-1 transition-colors ${isDragging ? 'text-primary-500' : 'text-gray-400'}`}>
+                                {isDragging ? '여기에 놓으세요!' : '사진 업로드'}
+                              </p>
+                              <p className="text-[11px] text-gray-600">클릭하거나 드래그하여 사진을 추가하세요</p>
+                            </div>
+                          </div>
                         )}
                         <button 
-                          onClick={() => removeStoryBlock(block.id)}
-                          className="absolute right-3 top-3 p-2 bg-black/60 backdrop-blur-md text-white rounded-full hover:bg-red-500 transition-all shadow-xl"
+                          onClick={(e) => { e.stopPropagation(); removeStoryBlock(block.id); }}
+                          className="absolute right-3 top-3 p-2 bg-black/60 backdrop-blur-md text-white rounded-full hover:bg-red-500 transition-all shadow-xl z-10"
                         >
                           <X className="w-4 h-4" />
                         </button>
