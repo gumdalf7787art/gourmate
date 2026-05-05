@@ -76,7 +76,7 @@ export function PostDetail() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-black pb-24 lg:pb-0 lg:pt-10">
+    <div className="flex flex-col min-h-screen bg-black pb-24 lg:pb-12 lg:items-center">
       {/* Top Navigation Bar (Mobile Only) */}
       <header className={`fixed top-0 z-50 w-full max-w-[640px] lg:hidden px-5 py-4 flex items-center justify-between transition-all duration-300 ${
         scrolled ? 'bg-black/80 backdrop-blur-2xl border-b border-white/5 py-3' : 'bg-transparent'
@@ -104,7 +104,7 @@ export function PostDetail() {
       </header>
 
       {/* Hero Image Gallery (Left Column on PC) */}
-      <section className="relative w-full lg:w-1/2 lg:sticky lg:top-10 lg:h-[calc(100vh-80px)] aspect-[4/3] lg:aspect-auto bg-[#111] overflow-hidden lg:rounded-3xl lg:ml-5">
+      <section className="relative w-full max-w-[640px] aspect-[4/3] bg-[#111] overflow-hidden lg:rounded-3xl lg:mt-10">
         <div className="w-full h-full overflow-x-auto lg:overflow-hidden snap-x snap-mandatory flex no-scrollbar lg:flex-col">
           {post.images.map((img: string, idx: number) => (
             <div key={idx} className="flex-none w-full h-full lg:h-full snap-start">
@@ -131,7 +131,7 @@ export function PostDetail() {
       </section>
 
       {/* Content Area (Right Column on PC) */}
-      <main className="flex-1 px-6 lg:px-10 -mt-8 lg:mt-0 relative z-30 rounded-t-[32px] lg:rounded-none bg-black border-t lg:border-t-0 border-white/10">
+      <main className="w-full max-w-[640px] px-6 lg:px-10 -mt-8 relative z-30 rounded-t-[32px] bg-black border-t border-white/10 lg:border-t-0">
         
         {/* Place Basic Info */}
         <div className="pt-10 lg:pt-0 pb-6 border-b border-white/5">
