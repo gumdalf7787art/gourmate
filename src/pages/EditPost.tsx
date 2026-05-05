@@ -48,8 +48,9 @@ export function EditPost() {
       setIsLoading(true);
       try {
         const response = await postService.getPost(id);
-        if (response.success && response.data) {
-          const foundPost = response.data;
+        const foundPost = response.data || response; // success/data 래퍼가 있거나 없는 경우 모두 대응
+        
+        if (foundPost && (foundPost.id || foundPost.restaurant_name)) {
           setPost(foundPost);
           setReview(foundPost.review || '');
           setContent(foundPost.content || '');
