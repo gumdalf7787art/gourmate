@@ -131,7 +131,7 @@ export function Home() {
                 
                 {/* Keywords/Tags */}
                 <div className="flex flex-wrap gap-1 mb-2">
-                  {post.tags?.slice(0, 3).map((tag, idx) => (
+                  {post.tags?.slice(0, 3).map((tag: string, idx: number) => (
                     <span key={idx} className="text-[9px] text-primary-500/80 font-medium">#{tag}</span>
                   ))}
                 </div>
@@ -282,7 +282,7 @@ export function Home() {
                 
                 {/* Horizontal Image Slider */}
                 <div className="flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar">
-                  {post.images.map((img, idx) => (
+                  {post.images.map((img: string, idx: number) => (
                     <div key={idx} className="flex-none w-full h-full snap-start">
                       <img 
                         src={img} 
@@ -327,7 +327,7 @@ export function Home() {
               <div className="px-1">
                 {/* Keywords/Tags */}
                 <div className="flex flex-wrap gap-1.5 mb-3">
-                  {post.tags?.map((tag, idx) => (
+                  {post.tags?.map((tag: string, idx: number) => (
                     <span key={idx} className="text-[11px] text-primary-500 font-bold px-2 py-1 bg-primary-500/5 rounded-lg border border-primary-500/10">
                       #{tag}
                     </span>
