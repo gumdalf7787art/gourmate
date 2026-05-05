@@ -26,10 +26,16 @@ export function MyPosts() {
     fetchMyPosts();
   }, [user]);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if(window.confirm('정말 이 포스팅을 삭제하시겠습니까?')) {
-      setMyPosts(prev => prev.filter(p => p.id !== id));
-      alert('삭제되었습니다.');
+      try {
+        await postService.deletePost(id);
+        setMyPosts(prev => prev.filter(p => p.id !== id));
+        alert('삭제되었습니다.');
+      } catch (error) {
+        console.error('Failed to delete post:', error);
+        alert('삭제 중 오류가 발생했습니다.');
+      }
     }
   };
 

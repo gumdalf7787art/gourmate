@@ -5,7 +5,7 @@ import {
   Video, X, Plus, Type, Minus, Utensils, Lightbulb, Star, Hash 
 } from 'lucide-react';
 import { KakaoMap } from '@/components/KakaoMap';
-import { MOCK_POSTS } from '@/data/mock';
+import { postService } from '@/services/postService';
 
 export function EditPost() {
   const navigate = useNavigate();
@@ -27,21 +27,32 @@ export function EditPost() {
   const [menuItems, setMenuItems] = useState<{ name: string; price: string | number; isSignature?: boolean }[]>([]);
 
   useEffect(() => {
-    const foundPost = MOCK_POSTS.find(p => p.id === id);
-    if (foundPost) {
-      setPost(foundPost);
-      setContent(foundPost.content);
-      setRating(foundPost.rating || 0);
-      setSelectedTag(foundPost.place.category || '음식점');
-      setTags(foundPost.tags || []);
-      setMenuItems(foundPost.menuItems || []);
-      if (foundPost.images) {
-        setMediaFiles(foundPost.images.map(img => ({ preview: img, type: 'image' })));
+    const fetchPost = async () => {
+      if (!id) return;
+      try {
+        const foundPost = await postService.getPost(id);
+        if (foundPost) {
+          setPost(foundPost);
+          setContent(foundPost.content);
+          setRating(foundPost.rating || 0);
+          setSelectedTag(foundPost.place.category || '음식점');
+          setTags(foundPost.tags || []);
+          setMenuItems(foundPost.menuItems || []);
+          if (foundPost.images) {
+            setMediaFiles(foundPost.images.map((img: string) => ({ preview: img, type: 'image' })));
+          }
+        } else {
+          alert('포스트를 찾을 수 없습니다.');
+          navigate(-1);
+        }
+      } catch (error) {
+        console.error('Failed to fetch post:', error);
+        alert('포스트를 불러오는 중 오류가 발생했습니다.');
+        navigate(-1);
       }
-    } else {
-      alert('포스트를 찾을 수 없습니다.');
-      navigate(-1);
-    }
+    };
+
+    fetchPost();
   }, [id, navigate]);
 
   // 텍스트 삽입 유틸리티 (커서 위치에 삽입)
@@ -152,13 +163,29 @@ export function EditPost() {
 
   const place = post.place;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!id) return;
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      // 새로운 이미지가 있다면 업로드 (추후 구현)
+      
+      const updateData = {
+        content,
+        rating,
+        tags,
+        category: selectedTag,
+        // images: imageUrls
+      };
+
+      await postService.updatePost(id, updateData);
       alert('포스팅 수정이 완료되었습니다!');
-      navigate(-1);
-    }, 1000);
+      navigate('/my/posts');
+    } catch (error) {
+      console.error('Failed to update post:', error);
+      alert('수정 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

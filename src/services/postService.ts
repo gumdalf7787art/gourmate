@@ -25,5 +25,22 @@ export const postService = {
 
   async getUserPosts(userId: string) {
     return apiFetch(`/posts/user?userId=${userId}`);
+  },
+
+  async getPost(id: string) {
+    return apiFetch(`/posts/detail?id=${id}`);
+  },
+
+  async updatePost(id: string, data: Partial<PostData>) {
+    return apiFetch(`/posts/detail?id=${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async deletePost(id: string) {
+    return apiFetch(`/posts/detail?id=${id}`, {
+      method: 'DELETE',
+    });
   }
 };
