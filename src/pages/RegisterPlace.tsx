@@ -192,6 +192,15 @@ export function RegisterPlace() {
     setStoryBlocks(prev => prev.filter(block => block.id !== id));
   };
 
+  const handleStoryDrop = async (e: React.DragEvent, blockId: string) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      await handleStoryImageUpload(blockId, file);
+    }
+  };
+
   const handleStoryImageUpload = async (id: string, file: File) => {
     const resized = await resizeImage(file);
     const preview = URL.createObjectURL(resized);
@@ -705,7 +714,14 @@ export function RegisterPlace() {
                         )}
                       </div>
                     ) : (
-                      <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-[#111] aspect-video flex items-center justify-center">
+                      <div 
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleStoryDrop(e, block.id)}
+                        className={`relative rounded-2xl overflow-hidden border transition-all duration-300 bg-[#111] aspect-video flex items-center justify-center ${
+                          isDragging ? 'border-primary-500 bg-primary-500/10 ring-2 ring-primary-500 ring-dashed' : 'border-white/10'
+                        }`}
+                      >
                         {block.value ? (
                           <img src={block.value} className="w-full h-full object-cover" alt="story" />
                         ) : (
