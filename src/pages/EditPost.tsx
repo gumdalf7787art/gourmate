@@ -56,7 +56,7 @@ export function EditPost() {
           setReview(foundPost.review || '');
           setContent(foundPost.content || '');
           setRating(foundPost.rating || 0);
-          setSelectedTag(foundPost.category || '음식점');
+          setSelectedTag(foundPost.category || foundPost.place?.category || '음식점');
           setTags(foundPost.tags || []);
           setMenuItems(foundPost.menu_items || []);
           setEditorMode(foundPost.editor_mode || 'simple');
