@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, CheckCircle2, MapPin, Tag, Image as ImageIcon, 
-  Video, X, Plus, Type, Minus, Utensils, Star, 
-  Hash, Lightbulb 
+  ArrowLeft, CheckCircle2, MapPin, Image as ImageIcon, 
+  X, Plus, Type, Star 
 } from 'lucide-react';
 import { postService } from '@/services/postService';
 import { uploadService } from '@/services/uploadService';
@@ -27,7 +26,6 @@ export function EditPost() {
   const [rating, setRating] = useState(0);
   const [selectedTag, setSelectedTag] = useState('');
   const [mediaFiles, setMediaFiles] = useState<{ file?: File; preview: string; type: 'image' | 'video' }[]>([]);
-  const [representativeIndex, setRepresentativeIndex] = useState<number | null>(0);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [menuItems, setMenuItems] = useState<{ name: string; price: string; isSignature: boolean }[]>([]);
@@ -70,9 +68,8 @@ export function EditPost() {
           if (foundPost.images && foundPost.images.length > 0) {
             setMediaFiles(foundPost.images.map((url: string) => ({
               preview: url,
-              type: 'image'
+              type: 'image' as const
             })));
-            setRepresentativeIndex(0);
           }
         } else {
           alert('포스트를 찾을 수 없습니다.');
@@ -121,20 +118,6 @@ export function EditPost() {
     });
   };
 
-  const insertText = (before: string, after: string = '') => {
-    if (!textareaRef.current) return;
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const currentText = textarea.value;
-    const newText = currentText.substring(0, start) + before + currentText.substring(start, end) + after + currentText.substring(end);
-    setContent(newText);
-    setTimeout(() => {
-      textarea.focus();
-      const newCursorPos = start + before.length;
-      textarea.setSelectionRange(newCursorPos, newCursorPos);
-    }, 0);
-  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
