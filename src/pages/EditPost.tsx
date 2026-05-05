@@ -49,6 +49,7 @@ export function EditPost() {
       try {
         const response = await postService.getPost(id);
         const foundPost = response.data || response; // success/data 래퍼가 있거나 없는 경우 모두 대응
+        console.log('Fetched Post Data:', foundPost);
         
         if (foundPost && (foundPost.id || foundPost.restaurant_name)) {
           setPost(foundPost);

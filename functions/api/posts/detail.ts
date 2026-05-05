@@ -4,13 +4,23 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
     const url = new URL(context.request.url);
     const id = url.searchParams.get('id');
 
+    // DB 스키마 보정 (컬럼 누락 대비)
+    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude'];
+    for (const col of columns) {
+      try {
+        await DB.prepare(`ALTER TABLE posts ADD COLUMN ${col} TEXT`).run();
+      } catch (e) {}
+    }
+
     if (!id) {
       return new Response(JSON.stringify({ error: '포스트 ID가 필요합니다.' }), { status: 400 });
     }
 
     const post = await DB.prepare(`
       SELECT 
-        p.*, 
+        p.id, p.guide_id, p.restaurant_name, p.address, p.category, 
+        p.content, p.review, p.rating, p.images, p.tags, 
+        p.editor_mode, p.story_blocks, p.menu_items, p.likes, p.created_at,
         u.nickname as guide_nickname, 
         u.profile_image_url as guide_profile_image,
         u.trust_score as guide_trust_score
