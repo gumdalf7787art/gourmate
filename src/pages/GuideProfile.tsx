@@ -50,16 +50,18 @@ export function GuideProfile() {
   const filteredPosts = useMemo(() => {
     if (activeCategory === '전체') return guidePosts;
     return guidePosts.filter((post: any) => {
-      if (activeCategory === '가성비') return post.tags?.includes('가성비');
-      if (activeCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place?.category === '파인다이닝';
-      return post.place?.category === activeCategory;
+      const category = post.place?.category || '';
+      if (activeCategory === '가성비') return (post.tags || []).includes('가성비');
+      if (activeCategory === '파인다이닝') return (post.tags || []).includes('파인다이닝') || category === '파인다이닝';
+      return category === activeCategory;
     });
   }, [guidePosts, activeCategory]);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
+        <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-sm font-bold animate-pulse">가이드 프로필을 불러오는 중...</p>
       </div>
     );
   }

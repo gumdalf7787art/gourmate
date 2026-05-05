@@ -4,29 +4,47 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
     const url = new URL(context.request.url);
     const keyword = url.searchParams.get('q') || '';
 
-    if (!keyword) {
-      return new Response(JSON.stringify({ posts: [], guides: [] }), { status: 200 });
+    // 로그용 데이터 (개발자 도구에서 확인 가능)
+    const debugInfo = {
+      receivedKeyword: keyword,
+      timestamp: new Date().toISOString()
+    };
+
+    if (!keyword.trim()) {
+      return new Response(JSON.stringify({ 
+        success: true, 
+        data: { posts: [], guides: [] },
+        _debug: debugInfo
+      }), { 
+        headers: { 'Content-Type': 'application/json' } 
+      });
     }
 
-    const searchKeyword = `%${keyword}%`;
+    const searchKeyword = `%${keyword.trim()}%`;
 
-    // 1. 포스트 검색 (식당명, 카테고리, 내용)
+    // 1. 포스트 검색 (식당명, 카테고리, 내용) - COALESCE로 NULL 처리
     const { results: posts } = await DB.prepare(`
       SELECT 
         p.id, p.restaurant_name, p.address, p.category, p.content, p.rating, p.images, p.likes,
         u.nickname as guide_nickname, u.profile_image_url as guide_profile_image
       FROM posts p
       JOIN users u ON p.guide_id = u.id
-      WHERE p.restaurant_name LIKE ? OR p.category LIKE ? OR p.content LIKE ? OR u.nickname LIKE ?
+      WHERE 
+        COALESCE(p.restaurant_name, '') LIKE ? OR 
+        COALESCE(p.category, '') LIKE ? OR 
+        COALESCE(p.content, '') LIKE ? OR 
+        COALESCE(u.nickname, '') LIKE ?
       ORDER BY p.created_at DESC
       LIMIT 20
     `).bind(searchKeyword, searchKeyword, searchKeyword, searchKeyword).all();
 
-    // 2. 가이드 검색
+    // 2. 가이드 검색 - COALESCE로 NULL 처리
     const { results: guides } = await DB.prepare(`
       SELECT id, nickname, profile_image_url, trust_score, bio
       FROM users
-      WHERE nickname LIKE ? OR bio LIKE ?
+      WHERE 
+        COALESCE(nickname, '') LIKE ? OR 
+        COALESCE(bio, '') LIKE ?
       LIMIT 10
     `).bind(searchKeyword, searchKeyword).all();
 
@@ -49,13 +67,20 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         guides: guides.map((g: any) => ({
           ...g,
           profileImageUrl: g.profile_image_url,
-          trustScore: g.trust_score
+          trustScore: g.trust_score || 50
         }))
-      }
+      },
+      _debug: { ...debugInfo, guidesCount: guides.length, postsCount: posts.length }
     }), {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response(JSON.stringify({ 
+      error: err.message,
+      success: false
+    }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 };
