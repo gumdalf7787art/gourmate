@@ -259,7 +259,10 @@ export function EditPost() {
         tags: tags,
         editor_mode: editorMode,
         story_blocks: finalStoryBlocks,
-        menu_items: menuItems
+        menu_items: menuItems,
+        latitude: post?.place?.latitude || post?.latitude,
+        longitude: post?.place?.longitude || post?.longitude,
+        phone: post?.place?.phone || post?.phone
       };
 
       const res = await postService.updatePost(id, updateData);

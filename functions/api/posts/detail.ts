@@ -5,7 +5,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
     const id = url.searchParams.get('id');
 
     // DB 스키마 보정 (컬럼 누락 대비)
-    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude'];
+    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude', 'phone'];
     for (const col of columns) {
       try {
         await DB.prepare(`ALTER TABLE posts ADD COLUMN ${col} TEXT`).run();
@@ -21,6 +21,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         p.id, p.guide_id, p.restaurant_name, p.address, p.category, 
         p.content, p.review, p.rating, p.images, p.tags, 
         p.editor_mode, p.story_blocks, p.menu_items, p.likes, p.created_at,
+        p.latitude, p.longitude, p.phone,
         u.nickname as guide_nickname, 
         u.profile_image_url as guide_profile_image,
         u.trust_score as guide_trust_score
@@ -96,7 +97,8 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       story_blocks,
       menu_items,
       latitude,
-      longitude
+      longitude,
+      phone
     } = body;
 
     // 업데이트 쿼리 실행
@@ -104,7 +106,7 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       UPDATE posts 
       SET content = ?, review = ?, rating = ?, images = ?, tags = ?, 
           category = ?, editor_mode = ?, story_blocks = ?, menu_items = ?,
-          latitude = ?, longitude = ?
+          latitude = ?, longitude = ?, phone = ?
       WHERE id = ?
     `).bind(
       content, 
@@ -118,6 +120,7 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       JSON.stringify(menu_items || []),
       latitude,
       longitude,
+      phone,
       id
     ).run();
 
