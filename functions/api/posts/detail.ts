@@ -53,7 +53,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       createdAt: row.created_at
     };
 
-    return new Response(JSON.stringify(result), {
+    return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (err: any) {
