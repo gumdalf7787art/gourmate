@@ -282,7 +282,9 @@ export function RegisterPlace() {
         tags: tags,
         editor_mode: editorMode,
         story_blocks: finalStoryBlocks,
-        menu_items: menuItems
+        menu_items: menuItems,
+        latitude: place.y,
+        longitude: place.x
       };
 
       // 4. API 호출

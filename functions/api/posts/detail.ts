@@ -94,14 +94,17 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       category,
       editor_mode,
       story_blocks,
-      menu_items
+      menu_items,
+      latitude,
+      longitude
     } = body;
 
     // 업데이트 쿼리 실행
     await DB.prepare(`
       UPDATE posts 
       SET content = ?, review = ?, rating = ?, images = ?, tags = ?, 
-          category = ?, editor_mode = ?, story_blocks = ?, menu_items = ?
+          category = ?, editor_mode = ?, story_blocks = ?, menu_items = ?,
+          latitude = ?, longitude = ?
       WHERE id = ?
     `).bind(
       content, 
@@ -113,6 +116,8 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       editor_mode || 'simple',
       JSON.stringify(story_blocks || []),
       JSON.stringify(menu_items || []),
+      latitude,
+      longitude,
       id
     ).run();
 

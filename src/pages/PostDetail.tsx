@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   ChevronLeft, 
@@ -13,18 +14,17 @@ import {
   Flame,
   Utensils
 } from 'lucide-react';
-import { MOCK_POSTS } from '@/data/mock';
-import { useState, useEffect } from 'react';
+import { postService } from '@/services/postService';
 import { KakaoMap } from '@/components/KakaoMap';
 
 export function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [post, setPost] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  
-  const post = MOCK_POSTS.find(p => p.id === id);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,12 +32,38 @@ export function PostDetail() {
       setScrolled(window.scrollY > 100);
     };
     window.addEventListener('scroll', handleScroll);
+    
+    const fetchPost = async () => {
+      if (!id) return;
+      setIsLoading(true);
+      try {
+        const response = await postService.getPost(id);
+        const data = response.data || response;
+        if (data && data.id) {
+          setPost(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch post:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchPost();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-gray-500">
+      <div className="flex flex-col items-center justify-center min-h-screen text-gray-500 bg-black">
         <p>포스트를 찾을 수 없습니다.</p>
         <button 
           onClick={() => navigate(-1)}
@@ -242,18 +268,18 @@ export function PostDetail() {
           </div>
 
           {/* Menu Items Section */}
-          {post.menuItems && post.menuItems.length > 0 && (
+          {(post.menu_items || post.menuItems) && (post.menu_items || post.menuItems).length > 0 && (
             <div className="pt-10 space-y-4">
               <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
                 <Utensils className="w-3.5 h-3.5 text-primary-500" />
                 가이드 추천 메뉴
               </h3>
               <div className="bg-[#111] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl">
-                {post.menuItems.map((item, idx) => (
+                {(post.menu_items || post.menuItems).map((item: any, idx: number) => (
                   <div 
                     key={idx} 
                     className={`flex items-center justify-between p-5 ${
-                      idx !== post.menuItems!.length - 1 ? 'border-b border-white/5' : ''
+                      idx !== (post.menu_items || post.menuItems).length - 1 ? 'border-b border-white/5' : ''
                     }`}
                   >
                     <div className="flex flex-col gap-1">

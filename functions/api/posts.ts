@@ -73,7 +73,9 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       tags,
       editor_mode,
       story_blocks,
-      menu_items
+      menu_items,
+      latitude,
+      longitude
     } = body;
 
     if (!guide_id || !restaurant_name) {
@@ -83,7 +85,7 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
     const id = crypto.randomUUID();
     
     // DB 컬럼이 없을 경우를 대비해 ALTER TABLE 시도 (무시 가능)
-    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes'];
+    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude'];
     for (const col of columns) {
       try {
         await DB.prepare(`ALTER TABLE posts ADD COLUMN ${col} TEXT`).run();
@@ -95,9 +97,9 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       INSERT INTO posts (
         id, guide_id, restaurant_name, address, category, 
         content, review, rating, images, tags, 
-        editor_mode, story_blocks, menu_items
+        editor_mode, story_blocks, menu_items, latitude, longitude
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       id, 
       guide_id, 
@@ -111,7 +113,9 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       JSON.stringify(tags || []),
       editor_mode || 'simple',
       JSON.stringify(story_blocks || []),
-      JSON.stringify(menu_items || [])
+      JSON.stringify(menu_items || []),
+      latitude,
+      longitude
     ).run();
 
     return new Response(JSON.stringify({ success: true, id }), {

@@ -14,6 +14,8 @@ export interface PostData {
   editor_mode?: 'simple' | 'story';
   story_blocks?: any[];
   menu_items?: any[];
+  latitude?: number | string;
+  longitude?: number | string;
 }
 
 export const postService = {
