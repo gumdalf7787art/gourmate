@@ -30,13 +30,23 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       ORDER BY p.created_at DESC
     `).bind(id).all();
 
-    // JSON 필드 파싱
+    // JSON 필드 파싱 헬퍼 함수
+    const safeParse = (str: any) => {
+      if (typeof str !== 'string') return str || [];
+      try {
+        return JSON.parse(str || '[]');
+      } catch (e) {
+        console.error('JSON parse error:', str);
+        return [];
+      }
+    };
+
     const formattedPosts = posts.map((p: any) => ({
       ...p,
-      images: JSON.parse(p.images || '[]'),
-      tags: JSON.parse(p.tags || '[]'),
-      story_blocks: JSON.parse(p.story_blocks || '[]'),
-      menu_items: JSON.parse(p.menu_items || '[]'),
+      images: safeParse(p.images),
+      tags: safeParse(p.tags),
+      story_blocks: safeParse(p.story_blocks),
+      menu_items: safeParse(p.menu_items),
       place: {
         id: p.id,
         name: p.restaurant_name,

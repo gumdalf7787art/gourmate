@@ -7,7 +7,7 @@ import { postService } from '@/services/postService';
 
 const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
 
-export default function GuideProfile() {
+export function GuideProfile() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [guide, setGuide] = useState<any>(null);
