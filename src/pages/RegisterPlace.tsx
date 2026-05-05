@@ -243,9 +243,8 @@ export function RegisterPlace() {
     setIsLoading(true);
     
     try {
-      // 1. 이미지 업로드
+      // 1. 이미지 업로드 (간편 모드용)
       const imageUrls: string[] = [];
-      
       if (editorMode === 'simple') {
         for (const media of mediaFiles) {
           const res = await uploadService.uploadImage(media.file);
@@ -253,34 +252,41 @@ export function RegisterPlace() {
             imageUrls.push(res.url);
           }
         }
-      } else {
-        for (const block of storyBlocks) {
-          if (block.type === 'image' && block.file) {
-            const res = await uploadService.uploadImage(block.file);
-            if (res.success) {
-              imageUrls.push(res.url);
-              // 스토리 블록의 preview를 실제 URL로 교체 (필요한 경우)
-            }
-          }
-        }
       }
 
-      // 2. 포스트 데이터 생성
+      // 2. 스토리 블록 이미지 URL 업데이트 (스토리 모드용)
+      const finalStoryBlocks = editorMode === 'story' 
+        ? await Promise.all(storyBlocks.map(async (block) => {
+            if (block.type === 'image' && block.file) {
+              const res = await uploadService.uploadImage(block.file);
+              if (res.success) {
+                return { ...block, value: res.url };
+              }
+            }
+            return block;
+          }))
+        : [];
+
+      // 3. 포스트 데이터 생성
       const postData = {
         guide_id: user.id,
         restaurant_name: place.place_name,
         address: place.road_address_name || place.address_name,
         category: selectedTag,
         content: editorMode === 'simple' 
-          ? (content || review) 
-          : storyBlocks.map(b => b.type === 'text' ? b.value : `[이미지]`).join('\n'),
+          ? content 
+          : finalStoryBlocks.map(b => b.type === 'text' ? b.value : `[이미지]`).join('\n'),
+        review: review,
         rating: rating,
-        images: imageUrls,
-        tags: tags
+        images: editorMode === 'simple' ? imageUrls : finalStoryBlocks.filter(b => b.type === 'image').map(b => b.value),
+        tags: tags,
+        editor_mode: editorMode,
+        story_blocks: finalStoryBlocks,
+        menu_items: menuItems
       };
 
-      // 3. API 호출
-      await postService.createPost(postData);
+      // 4. API 호출
+      await postService.createPost(postData as any);
 
       setIsLoading(false);
       alert('맛집 등록이 완료되었습니다!\n상세 글과 미디어가 성공적으로 업로드되었습니다.');

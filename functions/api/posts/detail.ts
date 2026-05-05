@@ -42,10 +42,14 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         phone: row.phone
       },
       content: row.content,
+      review: row.review || '',
       rating: row.rating,
       likes: row.likes || 0,
       tags: row.tags ? JSON.parse(row.tags) : [],
       images: JSON.parse(row.images || '[]'),
+      editor_mode: row.editor_mode || 'simple',
+      story_blocks: row.story_blocks ? JSON.parse(row.story_blocks) : [],
+      menu_items: row.menu_items ? JSON.parse(row.menu_items) : [],
       createdAt: row.created_at
     };
 
@@ -73,23 +77,32 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
 
     const { 
       content, 
+      review,
       rating, 
       images,
       tags,
-      category
+      category,
+      editor_mode,
+      story_blocks,
+      menu_items
     } = body;
 
     // 업데이트 쿼리 실행
     await DB.prepare(`
       UPDATE posts 
-      SET content = ?, rating = ?, images = ?, tags = ?, category = ?
+      SET content = ?, review = ?, rating = ?, images = ?, tags = ?, 
+          category = ?, editor_mode = ?, story_blocks = ?, menu_items = ?
       WHERE id = ?
     `).bind(
       content, 
+      review || '',
       rating, 
       JSON.stringify(images || []), 
       JSON.stringify(tags || []),
       category,
+      editor_mode || 'simple',
+      JSON.stringify(story_blocks || []),
+      JSON.stringify(menu_items || []),
       id
     ).run();
 

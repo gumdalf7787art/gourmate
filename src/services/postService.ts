@@ -1,14 +1,19 @@
 import { apiFetch } from './api';
 
 export interface PostData {
+  id?: string;
   guide_id: string;
   restaurant_name: string;
   address: string;
   category: string;
   content: string;
+  review?: string;
   rating: number;
   images: string[];
   tags: string[];
+  editor_mode?: 'simple' | 'story';
+  story_blocks?: any[];
+  menu_items?: any[];
 }
 
 export const postService = {

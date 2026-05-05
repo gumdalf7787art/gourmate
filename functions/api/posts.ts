@@ -57,9 +57,13 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       address, 
       category, 
       content, 
+      review,
       rating, 
       images,
-      tags 
+      tags,
+      editor_mode,
+      story_blocks,
+      menu_items
     } = body;
 
     if (!guide_id || !restaurant_name) {
@@ -68,31 +72,37 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
 
     const id = crypto.randomUUID();
     
-    // DB에 저장 (tags와 likes 컬럼이 없을 수도 있으므로 일단 기본 컬럼 위주로 저장)
-    // 만약 컬럼이 없다면 에러가 날 것이므로, 안전하게 처리하려면 PRAGMA를 확인해야 함
-    // 하지만 여기서는 스키마에 정의된 것을 기준으로 작성함
+    // DB 컬럼이 없을 경우를 대비해 ALTER TABLE 시도 (무시 가능)
+    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes'];
+    for (const col of columns) {
+      try {
+        await DB.prepare(`ALTER TABLE posts ADD COLUMN ${col} TEXT`).run();
+      } catch (e) {}
+    }
+
+    // DB에 저장
     await DB.prepare(`
-      INSERT INTO posts (id, guide_id, restaurant_name, address, category, content, rating, images)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO posts (
+        id, guide_id, restaurant_name, address, category, 
+        content, review, rating, images, tags, 
+        editor_mode, story_blocks, menu_items
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       id, 
       guide_id, 
       restaurant_name, 
       address, 
       category, 
-      content, 
+      content,
+      review || '',
       rating, 
-      JSON.stringify(images || [])
+      JSON.stringify(images || []),
+      JSON.stringify(tags || []),
+      editor_mode || 'simple',
+      JSON.stringify(story_blocks || []),
+      JSON.stringify(menu_items || [])
     ).run();
-
-    // tags 컬럼이 나중에 추가될 수 있으므로, 별도의 UPDATE 시도를 할 수도 있음
-    try {
-      await DB.prepare(`UPDATE posts SET tags = ?, likes = ? WHERE id = ?`)
-        .bind(JSON.stringify(tags || []), 0, id)
-        .run();
-    } catch (e) {
-      console.log('tags or likes column might not exist yet');
-    }
 
     return new Response(JSON.stringify({ success: true, id }), {
       status: 201,

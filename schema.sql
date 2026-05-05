@@ -17,9 +17,15 @@ CREATE TABLE IF NOT EXISTS posts (
   restaurant_name TEXT NOT NULL,
   address TEXT NOT NULL,
   category TEXT,
-  content TEXT,
+  content TEXT, -- 상세 후기 (텍스트)
+  review TEXT, -- 한줄 평
   rating REAL,
   images TEXT, -- JSON array string
+  tags TEXT, -- JSON array string (keywords)
+  editor_mode TEXT DEFAULT 'simple', -- 'simple' or 'story'
+  story_blocks TEXT, -- JSON array string for story mode blocks
+  menu_items TEXT, -- JSON array string for recommended menus
+  likes INTEGER DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (guide_id) REFERENCES users(id)
 );
