@@ -64,5 +64,9 @@ export const postService = {
 
   async getGuideProfile(id: string) {
     return apiFetch(`/guide/profile?id=${id}`);
+  },
+
+  async search(keyword: string) {
+    return apiFetch(`/search?q=${encodeURIComponent(keyword)}`);
   }
 };

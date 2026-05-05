@@ -86,6 +86,8 @@ export function GuideProfile() {
 
   return (
     <div className="min-h-screen bg-black text-white pb-32 font-pretendard no-scrollbar">
+      {/* Debug Marker */}
+      <div className="hidden">Rendering Guide Profile: {id}</div>
       
       {/* Dynamic Header Background */}
       <div className="absolute top-0 left-0 w-full h-[400px] overflow-hidden opacity-30">

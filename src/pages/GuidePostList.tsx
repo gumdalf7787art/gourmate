@@ -1,15 +1,17 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { ChevronLeft, Star, Heart, Map as MapIcon, X } from 'lucide-react';
-import { MOCK_GUIDES, MOCK_POSTS } from '../data/mock';
 import { KakaoMap } from '../components/KakaoMap';
+import { postService } from '@/services/postService';
 
 const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
 
-export default function GuidePostList() {
+export function GuidePostList() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [guide, setGuide] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Get category and sort from URL or use defaults
   const initialCategory = searchParams.get('category') || '전체';
@@ -19,8 +21,25 @@ export default function GuidePostList() {
   const [sortOrder, setSortOrder] = useState(initialSort);
   const [showMap, setShowMap] = useState(false);
 
-  const guide = MOCK_GUIDES.find(g => g.id === id);
-  const guidePosts = useMemo(() => MOCK_POSTS.filter(p => p.guide.id === id), [id]);
+  useEffect(() => {
+    const fetchGuideData = async () => {
+      if (!id) return;
+      setIsLoading(true);
+      try {
+        const res = await postService.getGuideProfile(id);
+        if (res.success) {
+          setGuide(res.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch guide profile:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchGuideData();
+  }, [id]);
+
+  const guidePosts = useMemo(() => guide?.posts || [], [guide]);
 
   // Update URL when category or sort changes
   const handleCategoryChange = (category: string) => {
@@ -44,15 +63,15 @@ export default function GuidePostList() {
     // 1. Filter
     let result = guidePosts;
     if (activeCategory !== '전체') {
-      result = guidePosts.filter(post => {
+      result = guidePosts.filter((post: any) => {
         if (activeCategory === '가성비') return post.tags?.includes('가성비');
-        if (activeCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place.category === '파인다이닝';
-        return post.place.category === activeCategory;
+        if (activeCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place?.category === '파인다이닝';
+        return post.place?.category === activeCategory;
       });
     }
 
     // 2. Sort
-    return [...result].sort((a, b) => {
+    return [...result].sort((a: any, b: any) => {
       if (sortOrder === 'rating') return b.rating - a.rating;
       if (sortOrder === 'likes') return b.likes - a.likes;
       // Default: 'latest'
@@ -60,7 +79,22 @@ export default function GuidePostList() {
     });
   }, [guidePosts, activeCategory, sortOrder]);
 
-  if (!guide) return null;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!guide) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-gray-500 bg-black">
+        <p>가이드를 찾을 수 없습니다.</p>
+        <button onClick={() => navigate(-1)} className="mt-4 text-primary-500 font-bold">뒤로 가기</button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white pb-32 font-pretendard">

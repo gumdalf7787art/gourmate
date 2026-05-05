@@ -1,53 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Search, ArrowLeft, Utensils, User, MapPin, Hash, Heart, Star, BadgeCheck } from 'lucide-react';
+import { postService } from '@/services/postService';
 import { MOCK_POSTS, MOCK_COLLECTIONS } from '@/data/mock';
-
 
 export function GeneralSearch() {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState('');
+  const [results, setResults] = useState<{ posts: any[], guides: any[] }>({ posts: [], guides: [] });
 
-  // 지능형 검색 로직
-  const getFilteredPosts = () => {
-    if (!keyword) return [];
-    const lowKeyword = keyword.toLowerCase().trim();
-    
-    // 의미론적 연관 키워드 확장 (예: 데이트 -> 분위기, 기념일 등)
-    const semanticMap: Record<string, string[]> = {
-      '데이트': ['분위기', '커플', '야경', '파인다이닝', '기념일'],
-      '한식': ['국밥', '찌개', '고기', '백반', '반상'],
-      '일식': ['스시', '텐동', '오마카세', '라멘', '이자카야'],
-      '중식': ['짜장', '짬뽕', '딤섬', '마라'],
-      '카페': ['디저트', '베이커리', '커피', '카공', '감성'],
-      '술집': ['와인', '맥주', '소주', '칵테일', '바'],
-      '혼밥': ['1인분', '바테이블', '가성비', '빠른'],
-    };
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (!keyword.trim()) {
+        setResults({ posts: [], guides: [] });
+        return;
+      }
 
-    const relatedKeywords = semanticMap[lowKeyword] || [];
+      try {
+        const res = await postService.search(keyword);
+        if (res.success) {
+          setResults(res.data);
+        }
+      } catch (err) {
+        console.error('Search failed:', err);
+      }
+    }, 300);
 
-    return MOCK_POSTS.filter(post => {
-      const targetString = `
-        ${post.place.name} 
-        ${post.place.category} 
-        ${post.place.address} 
-        ${post.content} 
-        ${post.tags?.join(' ')}
-      `.toLowerCase();
+    return () => clearTimeout(timer);
+  }, [keyword]);
 
-      // 1. 직접 포함 여부
-      if (targetString.includes(lowKeyword)) return true;
-      
-      // 2. 의미론적 연관 검색어 포함 여부
-      return relatedKeywords.some(rk => targetString.includes(rk));
-    });
-  };
-
-  const filteredPosts = getFilteredPosts();
-  const filteredCollections = MOCK_COLLECTIONS.filter(c => 
-    c.title.toLowerCase().includes(keyword.toLowerCase()) ||
-    c.keywords?.some(k => k.toLowerCase().includes(keyword.toLowerCase()))
-  );
+  const filteredPosts = results.posts;
+  const filteredGuides = results.guides;
+  const filteredCollections: any[] = []; // 테마 검색은 추후 구현
 
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
@@ -101,7 +85,7 @@ export function GeneralSearch() {
                 <Link to="/popular-guides" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</Link>
               </div>
               <div className="space-y-3">
-                {MOCK_POSTS.slice(0, 3).map((post) => (
+                {MOCK_POSTS.slice(0, 3).map((post: any) => (
                   <div 
                     key={post.guide.id} 
                     onClick={() => navigate(`/guide/${post.guide.id}`)}
@@ -149,7 +133,7 @@ export function GeneralSearch() {
                 <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</span>
               </div>
               <div className="grid grid-cols-1 gap-2.5">
-                {MOCK_COLLECTIONS.slice(0, 3).map((collection) => (
+                {MOCK_COLLECTIONS.slice(0, 3).map((collection: any) => (
                   <div key={collection.id} className="bg-[#111] border border-white/10 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24">
                     <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
                       <img src={collection.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -247,7 +231,7 @@ export function GeneralSearch() {
                   );
                 })}
 
-                {MOCK_POSTS.filter(p => p.place.name.includes(keyword)).length === 0 && (
+                {MOCK_POSTS.filter((p: any) => p.place.name.includes(keyword)).length === 0 && (
                   <div className="py-12 flex flex-col items-center justify-center opacity-30">
                     <MapPin className="w-12 h-12 mb-3" />
                     <p className="text-sm font-medium">'{keyword}' 검색 결과가 없습니다.</p>
@@ -266,7 +250,7 @@ export function GeneralSearch() {
                 <button className="text-[10px] font-bold text-gray-500 hover:text-primary-500 transition-colors">더보기</button>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {MOCK_POSTS.filter(p => p.content.includes(keyword) || p.place.category.includes(keyword)).slice(0, 4).map(post => (
+                {MOCK_POSTS.filter((p: any) => p.content.includes(keyword) || p.place.category.includes(keyword)).slice(0, 4).map((post: any) => (
                   <div key={post.id} className="relative aspect-square rounded-2xl overflow-hidden border border-white/5">
                     <img src={post.images[0]} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
@@ -311,7 +295,7 @@ export function GeneralSearch() {
                     </div>
                   </div>
                 ))}
-                {MOCK_COLLECTIONS.filter(c => c.title.includes(keyword)).length === 0 && (
+                {MOCK_COLLECTIONS.filter((c: any) => c.title.includes(keyword)).length === 0 && (
                   <p className="text-xs text-gray-600 px-1 italic">'{keyword}' 키워드를 포함한 테마가 없습니다.</p>
                 )}
               </div>
@@ -327,42 +311,36 @@ export function GeneralSearch() {
                 <Link to="/popular-guides" className="text-[10px] font-bold text-primary-500 hover:text-primary-400 transition-colors">더보기</Link>
               </div>
               <div className="space-y-3">
-                {MOCK_POSTS.filter(p => p.guide.nickname.includes(keyword)).slice(0, 2).map(post => (
+                {filteredGuides.map((guide: any) => (
                   <div 
-                    key={post.guide.id} 
-                    onClick={() => navigate(`/guide/${post.guide.id}`)}
+                    key={guide.id} 
+                    onClick={() => navigate(`/guide/${guide.id}`)}
                     className="flex items-center justify-between p-4 bg-[#0c0c0c] border border-white/5 rounded-2xl group cursor-pointer hover:border-primary-500/20 transition-all"
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="relative flex-shrink-0">
-                        <img src={post.guide.profileImageUrl} alt="" className="w-10 h-10 rounded-full object-cover border border-white/10" />
-                        {post.guide.trustScore > 90 && (
+                        <img src={guide.profileImageUrl} alt="" className="w-10 h-10 rounded-full object-cover border border-white/10" />
+                        {guide.trustScore > 90 && (
                           <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
                             <BadgeCheck className="w-3.5 h-3.5 text-primary-500" />
                           </div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors truncate mb-0.5">{post.guide.nickname}</p>
-                        {post.guide.bio && (
+                        <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors truncate mb-0.5">{guide.nickname}</p>
+                        {guide.bio && (
                           <p className="text-[10px] text-gray-500 font-medium line-clamp-1 italic mb-0.5 opacity-70">
-                            "{post.guide.bio}"
+                            "{guide.bio}"
                           </p>
                         )}
-                        <p className="text-[10px] text-gray-500 font-medium">신뢰지수 {post.guide.trustScore} • 포스트 24개</p>
+                        <p className="text-[10px] text-gray-500 font-medium">신뢰지수 {guide.trustScore}</p>
                       </div>
                     </div>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        alert(`${post.guide.nickname}님을 팔로우했습니다.`);
-                      }}
-                      className="px-4 py-1.5 bg-white/5 border border-white/10 text-white text-xs font-bold rounded-lg hover:bg-primary-500 hover:border-primary-500 transition-all"
-                    >
-                      팔로우
-                    </button>
                   </div>
                 ))}
+                {filteredGuides.length === 0 && (
+                  <p className="text-xs text-gray-600 px-1 italic">'{keyword}' 검색 결과가 없습니다.</p>
+                )}
               </div>
             </section>
           </div>

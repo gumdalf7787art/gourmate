@@ -7,7 +7,7 @@ interface TrustScoreModalProps {
 }
 
 export function TrustScoreModal({ guide, onClose }: TrustScoreModalProps) {
-  const metrics = guide.trustMetrics || {
+  const metrics = (guide as any).trustMetrics || {
     paidRatio: 85,
     contentQuality: 80,
     communityScore: 75,
@@ -15,13 +15,14 @@ export function TrustScoreModal({ guide, onClose }: TrustScoreModalProps) {
   };
 
   const getGrade = (score: number) => {
-    if (score >= 95) return { name: 'Grand Master', color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' };
-    if (score >= 90) return { name: 'Verified Expert', color: 'text-purple-500', bg: 'bg-purple-500/10', border: 'border-purple-500/20' };
-    if (score >= 80) return { name: 'Trusted Guide', color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/20' };
+    const s = score || 0;
+    if (s >= 95) return { name: 'Grand Master', color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' };
+    if (s >= 90) return { name: 'Verified Expert', color: 'text-purple-500', bg: 'bg-purple-500/10', border: 'border-purple-500/20' };
+    if (s >= 80) return { name: 'Trusted Guide', color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/20' };
     return { name: 'Rising Gourmet', color: 'text-green-500', bg: 'bg-green-500/10', border: 'border-green-500/20' };
   };
 
-  const grade = getGrade(guide.trustScore);
+  const grade = getGrade(guide?.trustScore);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end justify-center p-4 sm:items-center">
@@ -42,7 +43,7 @@ export function TrustScoreModal({ guide, onClose }: TrustScoreModalProps) {
           <div className="text-center mb-10">
             <div className="inline-flex items-center justify-center relative mb-4">
               <div className="w-24 h-24 rounded-full border-4 border-white/5 flex items-center justify-center">
-                <span className="text-4xl font-black text-white tracking-tighter">{guide.trustScore}</span>
+                <span className="text-4xl font-black text-white tracking-tighter">{guide?.trustScore || 0}</span>
               </div>
               <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary-500 rounded-full shadow-lg">
                 <span className="text-[10px] font-black text-white whitespace-nowrap">TOP 1%</span>
