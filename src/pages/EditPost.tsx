@@ -122,12 +122,12 @@ export function EditPost() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    const newFiles = await Promise.all(Array.from(files).map(async file => {
+    const newFiles: { file?: File; preview: string; type: 'image' | 'video' }[] = await Promise.all(Array.from(files).map(async file => {
       const resized = file.type.startsWith('image/') ? await resizeImage(file) : file;
       return {
         file: resized,
         preview: URL.createObjectURL(resized),
-        type: file.type.startsWith('video/') ? 'video' : 'image' as const
+        type: (file.type.startsWith('video/') ? 'video' : 'image') as 'image' | 'video'
       };
     }));
     setMediaFiles([...mediaFiles, ...newFiles]);
@@ -188,12 +188,12 @@ export function EditPost() {
     setIsDragging(false);
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
-      const newFiles = await Promise.all(Array.from(files).map(async file => {
+      const newFiles: { file?: File; preview: string; type: 'image' | 'video' }[] = await Promise.all(Array.from(files).map(async file => {
         const resized = file.type.startsWith('image/') ? await resizeImage(file) : file;
         return {
           file: resized,
           preview: URL.createObjectURL(resized),
-          type: file.type.startsWith('video/') ? 'video' : 'image' as const
+          type: (file.type.startsWith('video/') ? 'video' : 'image') as 'image' | 'video'
         };
       }));
       setMediaFiles([...mediaFiles, ...newFiles]);
