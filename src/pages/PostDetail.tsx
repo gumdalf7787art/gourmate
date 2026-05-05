@@ -392,33 +392,25 @@ export function PostDetail() {
           </div>
         </section>
 
-        {/* Visitor Reviews */}
+        {/* Reviews Section */}
         <section className="py-12">
-          <h3 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 mb-8">
-            <MessageCircle className="w-3.5 h-3.5 text-primary-500" />
-            방문후기
-          </h3>
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
+              <MessageCircle className="w-3.5 h-3.5 text-primary-500" />
+              리뷰
+            </h3>
+            <button 
+              onClick={() => alert('리뷰 기능은 준비 중입니다!')}
+              className="px-4 py-2 bg-primary-500/10 border border-primary-500/30 rounded-xl text-[11px] font-black text-primary-500 hover:bg-primary-500 hover:text-white transition-all active:scale-95"
+            >
+              리뷰 작성하기
+            </button>
+          </div>
 
-          <div className="space-y-4">
-            {[
-              { name: '미식가S', date: '2026.04.25', rating: 5, content: '진짜 여기는 인생 맛집이에요! 분위기도 너무 좋고 음식 하나하나 정성이 느껴집니다.' },
-              { name: '초코바닐라', date: '2026.04.22', rating: 4, content: '웨이팅이 조금 있었지만 기다린 보람이 있네요. 깔끔하고 맛있습니다.' },
-            ].map((review: any, idx: number) => (
-              <div key={idx} className="p-6 bg-[#111] border border-white/10 rounded-2xl shadow-xl">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-primary-500/10 border border-primary-500/20 flex items-center justify-center text-[10px] text-primary-500 font-black">
-                      {review.name[0]}
-                    </div>
-                    <span className="text-[12px] font-bold text-gray-200">{review.name}</span>
-                  </div>
-                  <span className="text-[10px] text-gray-500 font-medium">{review.date}</span>
-                </div>
-                <p className="text-[14px] text-gray-400 leading-relaxed font-light">
-                  {review.content}
-                </p>
-              </div>
-            ))}
+          <div className="flex flex-col items-center justify-center py-12 bg-[#111] border border-white/5 border-dashed rounded-[32px]">
+            <MessageCircle className="w-8 h-8 text-gray-700 mb-3" />
+            <p className="text-sm font-bold text-gray-500">아직 등록된 리뷰가 없습니다.</p>
+            <p className="text-xs text-gray-600 mt-1">첫 번째 리뷰를 남겨보세요!</p>
           </div>
         </section>
       </main>
