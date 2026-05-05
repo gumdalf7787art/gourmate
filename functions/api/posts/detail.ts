@@ -87,19 +87,27 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
     }
 
     const { 
-      content, 
-      review,
-      rating, 
-      images,
-      tags,
-      category,
-      editor_mode,
-      story_blocks,
-      menu_items,
-      latitude,
-      longitude,
-      phone
+      content = '', 
+      review = '',
+      rating = 0, 
+      images = [],
+      tags = [],
+      category = '',
+      editor_mode = 'simple',
+      story_blocks = [],
+      menu_items = [],
+      latitude = null,
+      longitude = null,
+      phone = null
     } = body;
+
+    // PATCH 시에도 컬럼 누락 대비
+    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude', 'phone'];
+    for (const col of columns) {
+      try {
+        await DB.prepare(`ALTER TABLE posts ADD COLUMN ${col} TEXT`).run();
+      } catch (e) {}
+    }
 
     // 업데이트 쿼리 실행
     await DB.prepare(`
@@ -109,18 +117,18 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
           latitude = ?, longitude = ?, phone = ?
       WHERE id = ?
     `).bind(
-      content, 
-      review || '',
-      rating, 
-      JSON.stringify(images || []), 
-      JSON.stringify(tags || []),
-      category,
-      editor_mode || 'simple',
-      JSON.stringify(story_blocks || []),
-      JSON.stringify(menu_items || []),
-      latitude,
-      longitude,
-      phone,
+      String(content), 
+      String(review),
+      Number(rating), 
+      JSON.stringify(images), 
+      JSON.stringify(tags),
+      String(category),
+      String(editor_mode),
+      JSON.stringify(story_blocks),
+      JSON.stringify(menu_items),
+      latitude ? String(latitude) : null,
+      longitude ? String(longitude) : null,
+      phone ? String(phone) : null,
       id
     ).run();
 

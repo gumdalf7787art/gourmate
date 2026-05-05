@@ -260,10 +260,12 @@ export function EditPost() {
         editor_mode: editorMode,
         story_blocks: finalStoryBlocks,
         menu_items: menuItems,
-        latitude: post?.place?.latitude || post?.latitude,
-        longitude: post?.place?.longitude || post?.longitude,
-        phone: post?.place?.phone || post?.phone
+        latitude: post?.place?.latitude || post?.latitude || null,
+        longitude: post?.place?.longitude || post?.longitude || null,
+        phone: post?.place?.phone || post?.phone || null
       };
+
+      console.log('Updating post with data:', updateData);
 
       const res = await postService.updatePost(id, updateData);
       if (res.success) {
@@ -272,9 +274,9 @@ export function EditPost() {
       } else {
         alert(res.error || '수정 중 오류가 발생했습니다.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Update failed:', err);
-      alert('수정 중 서버 오류가 발생했습니다.');
+      alert(err.message || '수정 중 서버 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
     }
