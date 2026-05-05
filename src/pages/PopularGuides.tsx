@@ -138,8 +138,9 @@ export function PopularGuides() {
                 <UserPlus className="w-5 h-5" />
               </button>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* View All Places on Map Button */}
         {popularPlaces.length > 0 && (
