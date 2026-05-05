@@ -62,12 +62,12 @@ function Layout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="bg-black min-h-screen">
-      {/* PC 전용 사이드바 */}
-      <Sidebar />
-      
-      <div className="lg:pl-[260px] flex justify-center">
-        <main className="w-full max-w-[640px] lg:max-w-[1024px] min-h-screen bg-black border-x border-white/5 relative shadow-2xl">
+    <div className="bg-black min-h-screen flex justify-center">
+      <div className="w-full max-w-[1280px] flex relative">
+        {/* PC 전용 사이드바 */}
+        <Sidebar />
+        
+        <main className="flex-1 w-full max-w-[640px] lg:max-w-none min-h-screen bg-black border-x border-white/5 relative shadow-2xl mx-auto lg:mx-0">
           {children}
           
           {/* 모바일에서만 하단바 노출 */}

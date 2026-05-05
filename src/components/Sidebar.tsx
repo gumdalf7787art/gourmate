@@ -18,7 +18,7 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-[260px] bg-black border-r border-white/5 hidden lg:flex flex-col p-6 z-[100]">
+    <aside className="sticky top-0 h-screen w-[280px] bg-black border-r border-white/5 hidden lg:flex flex-col p-6 z-[100]">
       {/* Logo */}
       <div 
         onClick={() => navigate('/')} 
