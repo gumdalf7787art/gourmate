@@ -60,5 +60,9 @@ export const postService = {
       method: 'POST',
       body: JSON.stringify(data),
     });
+  },
+
+  async getGuideProfile(id: string) {
+    return apiFetch(`/guide/profile?id=${id}`);
   }
 };

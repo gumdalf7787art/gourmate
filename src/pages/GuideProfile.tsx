@@ -1,40 +1,73 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Plus, Heart, Info, Map as MapIcon, X } from 'lucide-react';
-import { MOCK_GUIDES, MOCK_POSTS, MOCK_COLLECTIONS } from '../data/mock';
 import { TrustScoreModal } from '../components/TrustScoreModal';
 import { KakaoMap } from '../components/KakaoMap';
+import { postService } from '@/services/postService';
 
 const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
 
 export default function GuideProfile() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [guide, setGuide] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('전체');
   const [showTrustModal, setShowTrustModal] = useState(false);
   const [showMap, setShowMap] = useState(false);
 
-  const guide = MOCK_GUIDES.find(g => g.id === id);
-  
-  const guidePosts = useMemo(() => MOCK_POSTS.filter(p => p.guide.id === id), [id]);
-  const top20Posts = useMemo(() => guidePosts.filter(p => p.isTop20), [guidePosts]);
-  const guideCollections = useMemo(() => MOCK_COLLECTIONS.filter(c => c.userId === id), [id]);
+  useEffect(() => {
+    const fetchGuideData = async () => {
+      if (!id) return;
+      setIsLoading(true);
+      try {
+        const res = await postService.getGuideProfile(id);
+        if (res.success) {
+          setGuide(res.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch guide profile:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchGuideData();
+  }, [id]);
+
+  const guidePosts = useMemo(() => guide?.posts || [], [guide]);
+  const top20Posts = useMemo(() => guidePosts.filter((p: any) => p.rating >= 4.5).slice(0, 5), [guidePosts]);
+  const guideCollections = useMemo<any[]>(() => [], []); // 테마 기능은 추후 연동
 
   // Calculate total likes from all posts
   const totalLikes = useMemo(() => {
-    return guidePosts.reduce((sum, post) => sum + post.likes, 0);
+    return guidePosts.reduce((sum: number, post: any) => sum + (post.likes || 0), 0);
   }, [guidePosts]);
 
   const filteredPosts = useMemo(() => {
     if (activeCategory === '전체') return guidePosts;
-    return guidePosts.filter(post => {
+    return guidePosts.filter((post: any) => {
       if (activeCategory === '가성비') return post.tags?.includes('가성비');
-      if (activeCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place.category === '파인다이닝';
-      return post.place.category === activeCategory;
+      if (activeCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place?.category === '파인다이닝';
+      return post.place?.category === activeCategory;
     });
   }, [guidePosts, activeCategory]);
 
-  if (!guide) return null;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!guide) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-gray-500 bg-black">
+        <p>가이드를 찾을 수 없습니다.</p>
+        <button onClick={() => navigate(-1)} className="mt-4 text-primary-500 font-bold">뒤로 가기</button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white pb-32 font-pretendard no-scrollbar">
@@ -118,7 +151,7 @@ export default function GuideProfile() {
               <button className="text-[11px] font-bold text-primary-500 uppercase tracking-widest">전체보기</button>
             </div>
             <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 snap-x pb-4">
-              {top20Posts.map((post, idx) => (
+              {top20Posts.map((post: any, idx: number) => (
                 <Link 
                   key={post.id} 
                   to={`/post/${post.id}`}
@@ -255,7 +288,7 @@ export default function GuideProfile() {
 
             {/* Preview Grid (Show 2 items) */}
             <div className="grid grid-cols-2 gap-4">
-              {filteredPosts.slice(0, 2).map(post => (
+              {filteredPosts.slice(0, 2).map((post: any) => (
                 <Link 
                   key={post.id} 
                   to={`/post/${post.id}`}
@@ -337,7 +370,7 @@ export default function GuideProfile() {
           
           <div className="flex-1 relative">
             <KakaoMap 
-              places={filteredPosts.map(p => ({
+              places={filteredPosts.map((p: any) => ({
                 id: p.place.id,
                 postId: p.id,
                 lat: p.place.latitude,
