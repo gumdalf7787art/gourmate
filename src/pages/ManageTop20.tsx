@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ChevronLeft, Medal, 
   Trash2, Plus, Star, 
-  ChevronUp, ChevronDown, Save
+  ChevronUp, ChevronDown
 } from 'lucide-react';
 import { postService } from '@/services/postService';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -15,6 +15,7 @@ export function ManageTop20() {
   const [top20, setTop20] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -42,6 +43,7 @@ export function ManageTop20() {
 
         setTop20(selected);
         setAllPosts(others);
+        setTimeout(() => setIsInitialized(true), 100);
       }
     } catch (err) {
       console.error('Failed to fetch posts:', err);
@@ -78,24 +80,24 @@ export function ManageTop20() {
     setTop20(newTop20);
   };
 
-  const handleSave = async () => {
-    if (!user) return;
+  const handleSave = async (currentTop20: any[]) => {
+    if (!user || !isInitialized) return;
     setIsSaving(true);
     try {
-      const top20Ids = top20.map(p => p.id);
-      const res = await postService.updateTop20(user.id, top20Ids);
-      if (res.success) {
-        alert('성공적으로 저장되었습니다.');
-        navigate(-1);
-      } else {
-        alert(res.error || '저장 중 오류가 발생했습니다.');
-      }
+      const top20Ids = currentTop20.map(p => p.id);
+      await postService.updateTop20(user.id, top20Ids);
     } catch (err) {
-      alert('저장 중 오류가 발생했습니다.');
+      console.error('Auto-save failed:', err);
     } finally {
-      setIsSaving(false);
+      setTimeout(() => setIsSaving(false), 500);
     }
   };
+
+  useEffect(() => {
+    if (isInitialized) {
+      handleSave(top20);
+    }
+  }, [top20, isInitialized]);
 
   if (isLoading) {
     return (
@@ -114,13 +116,19 @@ export function ManageTop20() {
           </button>
           <h1 className="text-lg font-bold">가이드 추천 Top 20 설정</h1>
         </div>
-        <button 
-          onClick={handleSave}
-          disabled={isSaving}
-          className="px-4 py-2 bg-primary-500 text-white text-sm font-black rounded-xl active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
-        >
-          {isSaving ? '저장 중...' : <><Save className="w-4 h-4" /> 저장</>}
-        </button>
+        <div className="flex items-center gap-2">
+          {isSaving ? (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10">
+              <div className="w-3 h-3 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+              <span className="text-[10px] font-bold text-primary-500 uppercase tracking-widest">Saving</span>
+            </div>
+          ) : isInitialized && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 text-gray-500">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Saved</span>
+            </div>
+          )}
+        </div>
       </header>
 
       <main className="px-5 py-8 space-y-12">
