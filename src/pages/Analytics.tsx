@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, Heart, Bookmark, MessageCircle, BarChart3, Star, Crown, ChevronRight } from 'lucide-react';
 import { postService } from '@/services/postService';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function Analytics() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const user = useAuthStore((state) => state.user);
   const [trendPeriod, setTrendPeriod] = useState<'today' | 'week' | 'month' | 'year'>('week');
   const [rankingPeriod, setRankingPeriod] = useState<'daily' | 'monthly' | 'total'>('total');
   const [isLoading, setIsLoading] = useState(true);
@@ -15,13 +18,11 @@ export function Analytics() {
 
   useEffect(() => {
     const fetchAnalytics = async () => {
-      const userStr = localStorage.getItem('user');
-      if (!userStr) {
-        navigate('/login');
+      if (!user) {
+        navigate('/login', { state: { from: location.pathname } });
         return;
       }
       
-      const user = JSON.parse(userStr);
       try {
         setIsLoading(true);
         const res = await postService.getAnalytics(user.id);

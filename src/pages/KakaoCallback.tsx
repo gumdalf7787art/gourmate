@@ -37,7 +37,9 @@ export function KakaoCallback() {
 
       if (data.success) {
         setUser(data.user);
-        navigate('/', { replace: true });
+        const redirectTo = localStorage.getItem('auth_redirect_from') || '/';
+        localStorage.removeItem('auth_redirect_from');
+        navigate(redirectTo, { replace: true });
       } else {
         throw new Error(data.error || '로그인 처리 중 오류가 발생했습니다.');
       }

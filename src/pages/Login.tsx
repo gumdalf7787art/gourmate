@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { authService } from '@/services/authService';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -7,10 +7,13 @@ import { isInAppBrowser } from '@/utils/browserUtils';
 
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const setUser = useAuthStore((state) => state.setUser);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const from = location.state?.from || '/';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +21,7 @@ export function Login() {
     try {
       const response = await authService.login({ email, password });
       setUser(response.user);
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err: any) {
       alert(err.message);
     } finally {
@@ -27,6 +30,7 @@ export function Login() {
   };
 
   const handleKakaoLogin = () => {
+    localStorage.setItem('auth_redirect_from', from);
     const KAKAO_REST_API_KEY = 'b5cf4e214dfb0563cfc62dcfbe89eae5';
     const REDIRECT_URI = `${window.location.origin}/auth/kakao/callback`;
     const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
@@ -34,6 +38,7 @@ export function Login() {
   };
 
   const handleNaverLogin = () => {
+    localStorage.setItem('auth_redirect_from', from);
     const NAVER_CLIENT_ID = 'PSvrhEu3rRnoRkbu0Swg';
     const REDIRECT_URI = `${window.location.origin}/auth/naver/callback`;
     const state = Math.random().toString(36).substring(7);
@@ -47,6 +52,7 @@ export function Login() {
       alert('구글 보안 정책상 카카오톡이나 인스타그램 등 인앱 브라우저에서는 로그인이 불가능합니다.\n\n오른쪽 하단 메뉴(⋮ 또는 지구본)를 눌러 "다른 브라우저로 열기"나 "Chrome으로 열기"를 선택해 주세요!');
       return;
     }
+    localStorage.setItem('auth_redirect_from', from);
     const GOOGLE_CLIENT_ID = '438715980569-qt98r95qlutqo6hc79a3n7s51i0l1ppl.apps.googleusercontent.com';
     const REDIRECT_URI = `${window.location.origin}/auth/google/callback`;
     const googleURL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=email profile openid&access_type=offline`;
