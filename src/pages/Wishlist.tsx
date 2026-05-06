@@ -188,7 +188,7 @@ export default function Wishlist() {
           <div className="flex-1 relative">
             <KakaoMap 
               places={wishlistedPosts
-                .filter((p: any) => p.place?.latitude != null && p.place?.longitude != null && p.place?.latitude !== "" && p.place?.longitude !== "")
+                .filter((p: any) => p.place?.latitude != null && p.place?.longitude != null && String(p.place.latitude) !== "" && String(p.place.longitude) !== "")
                 .map(p => ({
                   id: p.place.id,
                   postId: p.id,
