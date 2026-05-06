@@ -345,7 +345,7 @@ export function Home() {
 
                 <p className="text-[14px] text-gray-300 line-clamp-3 leading-relaxed font-light mb-4">
                   <span className="text-white font-bold mr-2 text-lg">“</span>
-                  {post.content}
+                  {post.review || post.content}
                   <span className="text-white font-bold ml-0.5 text-lg">”</span>
                 </p>
               </div>

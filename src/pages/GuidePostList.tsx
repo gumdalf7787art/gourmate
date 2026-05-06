@@ -183,7 +183,7 @@ export function GuidePostList() {
                         {post.place.name}
                       </h3>
                       <p className="text-[11px] text-gray-400 font-medium leading-relaxed line-clamp-2 italic">
-                        "{post.content}"
+                        "{post.review || post.content}"
                       </p>
                     </div>
 
