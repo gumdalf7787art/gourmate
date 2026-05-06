@@ -339,7 +339,7 @@ export function PostDetail() {
                     {post.guide.nickname}
                   </Link>
                   <Link 
-                    to={`/guide/${post.guide.id}/posts`}
+                    to={`/guide/${post.guide.id}`}
                     className="text-[10px] font-bold text-primary-500 border border-primary-500/30 px-2 py-0.5 rounded-full hover:bg-primary-500 hover:text-white transition-all ml-1 mb-1.5"
                   >
                     전체 리스트

@@ -32,9 +32,10 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
 
     // JSON 필드 파싱 헬퍼 함수
     const safeParse = (str: any) => {
-      if (typeof str !== 'string') return str || [];
+      if (typeof str !== 'string') return Array.isArray(str) ? str : [];
       try {
-        return JSON.parse(str || '[]');
+        const parsed = JSON.parse(str || '[]');
+        return Array.isArray(parsed) ? parsed : [];
       } catch (e) {
         console.error('JSON parse error:', str);
         return [];
