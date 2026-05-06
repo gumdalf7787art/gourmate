@@ -130,11 +130,18 @@ export function Home() {
                 <h4 className="text-white text-[13px] font-bold truncate mb-1 group-hover:text-primary-400 transition-colors">{post.place.name}</h4>
                 
                 {/* Keywords/Tags */}
-                <div className="flex flex-wrap gap-1 mb-2">
+                <div className="flex flex-wrap gap-1 mb-1.5">
                   {post.tags?.slice(0, 3).map((tag: string, idx: number) => (
                     <span key={idx} className="text-[9px] text-primary-500/80 font-medium">#{tag}</span>
                   ))}
                 </div>
+
+                {/* 한줄평 */}
+                {post.review && (
+                  <p className="text-[10px] text-gray-300 font-medium line-clamp-1 mb-2 italic opacity-80">
+                    "{post.review}"
+                  </p>
+                )}
 
                 <div className="flex items-center gap-1 text-gray-500">
                   <MapPin className="w-2.5 h-2.5 text-primary-500/50" />

@@ -42,6 +42,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         phone: row.phone
       },
       content: row.content,
+      review: row.review,
       rating: row.rating,
       likes: row.likes || 0, // DB에 없으면 0으로 처리
       tags: row.tags ? JSON.parse(row.tags) : [],
