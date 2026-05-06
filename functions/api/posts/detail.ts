@@ -16,6 +16,16 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       return new Response(JSON.stringify({ error: '포스트 ID가 필요합니다.' }), { status: 400 });
     }
 
+    // 조회수 로그 기록
+    try {
+      await DB.prepare(`INSERT INTO post_views (id, post_id) VALUES (?, ?)`).bind(crypto.randomUUID(), id).run();
+    } catch (e) {
+      try {
+        await DB.prepare(`CREATE TABLE IF NOT EXISTS post_views (id TEXT PRIMARY KEY, post_id TEXT NOT NULL, viewer_id TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)`).run();
+        await DB.prepare(`INSERT INTO post_views (id, post_id) VALUES (?, ?)`).bind(crypto.randomUUID(), id).run();
+      } catch (e2) {}
+    }
+
     const post = await DB.prepare(`
       SELECT 
         p.id, p.guide_id, p.restaurant_name, p.address, p.category, 

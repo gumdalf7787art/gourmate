@@ -1,54 +1,69 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, Heart, Bookmark, MessageCircle, BarChart3, Star, Crown, ChevronRight } from 'lucide-react';
-import { MOCK_POSTS } from '@/data/mock';
+import { postService } from '@/services/postService';
 
 export function Analytics() {
   const navigate = useNavigate();
   const [trendPeriod, setTrendPeriod] = useState<'today' | 'week' | 'month' | 'year'>('week');
   const [rankingPeriod, setRankingPeriod] = useState<'daily' | 'monthly' | 'total'>('total');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // 가상의 통계 데이터
-  const stats = {
-    totalViews: 142530,
-    totalLikes: 8420,
-    totalBookmarks: 3150,
-    totalComments: 1240,
-    viewsGrowth: 12.5, // %
-  };
+  // 실제 통계 데이터 상태
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
 
-  // 트렌드 차트용 가상 데이터
-  const trendData = {
-    today: [120, 250, 400, 310, 520, 480, 600], // 시간별 (단순화)
-    week: [1200, 1500, 1800, 1400, 2100, 2800, 2500], // 요일별
-    month: [4500, 5200, 4800, 6100], // 주차별
-    year: [12000, 15000, 14500, 18000, 21000, 25000, 22000, 19000, 24000, 28000, 31000, 35000], // 월별
-  };
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      const userStr = localStorage.getItem('user');
+      if (!userStr) {
+        navigate('/login');
+        return;
+      }
+      
+      const user = JSON.parse(userStr);
+      try {
+        setIsLoading(true);
+        const res = await postService.getAnalytics(user.id);
+        if (res.success) {
+          setAnalyticsData(res.data);
+        } else {
+          setError(res.error || '통계 데이터를 불러오지 못했습니다.');
+        }
+      } catch (err: any) {
+        setError(err.message || '네트워크 오류가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const currentTrendData = trendData[trendPeriod];
-  const maxTrendValue = Math.max(...currentTrendData);
+    fetchAnalytics();
+  }, [navigate]);
 
-  // 내 포스팅 목록 (순위 매기기용)
-  // Mock 데이터에 조회수가 없으므로 임의로 생성
-  const myPostsWithStats = MOCK_POSTS.map(post => ({
-    ...post,
-    views: {
-      daily: Math.floor(Math.random() * 500) + 50,
-      monthly: Math.floor(Math.random() * 5000) + 500,
-      total: Math.floor(Math.random() * 50000) + 5000,
-    }
-  }));
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary-500"></div>
+      </div>
+    );
+  }
 
-  // 순위 정렬
-  const sortedPosts = [...myPostsWithStats].sort((a, b) => b.views[rankingPeriod] - a.views[rankingPeriod]).slice(0, 5);
+  if (error || !analyticsData) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-5 text-center">
+        <p className="text-red-500 mb-4">{error || '데이터를 찾을 수 없습니다.'}</p>
+        <button onClick={() => window.location.reload()} className="px-4 py-2 bg-white text-black rounded-lg font-bold">다시 시도</button>
+      </div>
+    );
+  }
 
-  // 가상의 댓글 데이터
-  const recentComments = [
-    { id: 1, postName: '몽탄', author: '고기사랑', content: '진짜 인생 우대갈비입니다! 꿀팁 감사해요.', time: '2시간 전', profile: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80' },
-    { id: 2, postName: '오레노라멘', author: '면식수행자', content: '합정가면 무조건 들러야겠네요. 사진 너무 잘 찍으셨어요.', time: '5시간 전', profile: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&q=80' },
-    { id: 3, postName: '누데이크', author: '디저트헌터', content: '피크 케이크 정말 궁금했는데 후기 보고 주말에 가기로 결심했습니다 ㅎㅎ', time: '1일 전', profile: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80' },
-    { id: 4, postName: '다운타우너', author: '버거맨', content: '갈릭 버터 프라이즈는 못 참죠 ㅠㅠ', time: '2일 전', profile: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80' },
-  ];
+  const { stats, topPosts, recentComments, trendData } = analyticsData;
+
+  const currentTrendData = trendData[trendPeriod] || [0,0,0,0,0,0,0];
+  const maxTrendValue = Math.max(...currentTrendData, 1);
+
+  // 인기 포스팅 정렬 (API에서 순위가 이미 오긴 하지만 클라이언트에서 정렬 기준 변경 가능)
+  const sortedPosts = [...topPosts].sort((a, b) => b.views[rankingPeriod] - a.views[rankingPeriod]);
 
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
@@ -142,7 +157,7 @@ export function Analytics() {
 
             {/* Bars */}
             <div className="flex-1 h-full pl-8 flex items-end justify-between gap-1 pb-6 relative pt-5">
-              {currentTrendData.map((val, idx) => {
+              {currentTrendData.map((val: number, idx: number) => {
                 const heightPercentage = Math.max((val / maxTrendValue) * 100, 2);
                 return (
                   <div key={idx} className="relative flex flex-col items-center flex-1 h-full justify-end group">
@@ -196,7 +211,7 @@ export function Analytics() {
           </div>
 
           <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
-            {sortedPosts.map((post, idx) => (
+            {sortedPosts.map((post: any, idx: number) => (
               <div 
                 key={post.id} 
                 onClick={() => navigate(`/post/${post.id}`)}
@@ -250,7 +265,7 @@ export function Analytics() {
           </div>
 
           <div className="space-y-3">
-            {recentComments.map(comment => (
+            {recentComments.map((comment: any) => (
               <div key={comment.id} className="bg-[#111] border border-white/10 rounded-2xl p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">

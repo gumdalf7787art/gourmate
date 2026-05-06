@@ -103,5 +103,9 @@ export const postService = {
     return apiFetch(`/themes/${id}`, {
       method: 'DELETE',
     });
+  },
+
+  async getAnalytics(userId: string) {
+    return apiFetch(`/analytics?userId=${userId}`);
   }
 };
