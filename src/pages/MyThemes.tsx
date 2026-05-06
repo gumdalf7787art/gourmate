@@ -34,11 +34,21 @@ export function MyThemes() {
     }
   };
 
-  const handleDelete = (id: string, e: React.MouseEvent) => {
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (window.confirm('정말 이 테마를 삭제하시겠습니까?')) {
-      setThemes(themes.filter(t => t.id !== id));
-      setOpenMenuId(null);
+      try {
+        const res = await postService.deleteTheme(id);
+        if (res.success) {
+          setThemes(themes.filter(t => t.id !== id));
+          setOpenMenuId(null);
+        } else {
+          alert(res.error || '삭제에 실패했습니다.');
+        }
+      } catch (err) {
+        console.error('Delete failed:', err);
+        alert('삭제 중 오류가 발생했습니다.');
+      }
     }
   };
 

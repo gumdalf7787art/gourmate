@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Image as ImageIcon, X, Plus, Hash, Type, MapPin, Trash2 } from 'lucide-react';
-import { MOCK_COLLECTIONS } from '@/data/mock';
 import { postService } from '@/services/postService';
 import { useAuthStore } from '@/store/useAuthStore';
 import type { Place } from '@/data/mock';
@@ -46,19 +45,28 @@ export function ThemeEditor() {
   };
 
   useEffect(() => {
-    if (isEditMode) {
-      const existingTheme = MOCK_COLLECTIONS.find(c => c.id === id);
-      if (existingTheme) {
-        setTitle(existingTheme.title);
-        setDescription(existingTheme.description || '');
-        setThumbnail({ preview: existingTheme.thumbnail });
-        setTags(existingTheme.keywords || []);
-        setSelectedPlaces(existingTheme.places || []);
-      } else {
-        alert('테마를 찾을 수 없습니다.');
-        navigate(-1);
+    const fetchThemeDetail = async () => {
+      if (!id || !isEditMode) return;
+      try {
+        const res = await postService.getTheme(id);
+        if (res.success) {
+          const theme = res.data;
+          setTitle(theme.title);
+          setDescription(theme.description || '');
+          setThumbnail({ preview: theme.image_url });
+          setTags(theme.keywords || []);
+          // 테마에 포함된 포스트들의 place 정보 추출
+          setSelectedPlaces(theme.posts?.map((p: any) => p.place) || []);
+        } else {
+          alert(res.error || '테마를 찾을 수 없습니다.');
+          navigate('/my/themes');
+        }
+      } catch (err) {
+        console.error('Failed to fetch theme detail:', err);
       }
-    }
+    };
+
+    fetchThemeDetail();
     fetchUserPosts();
   }, [id, isEditMode, navigate, user]);
 
@@ -158,7 +166,10 @@ export function ThemeEditor() {
         postIds: selectedPlaces.map(p => p.id)
       };
 
-      const res = await postService.createTheme(themeData);
+      const res = isEditMode 
+        ? await postService.updateTheme(id!, themeData)
+        : await postService.createTheme(themeData);
+        
       if (res.success) {
         alert(isEditMode ? '테마가 수정되었습니다!' : '새 테마가 생성되었습니다!');
         navigate('/my/themes');

@@ -86,5 +86,22 @@ export const postService = {
 
   async getThemes(guideId?: string) {
     return apiFetch(`/themes${guideId ? `?guideId=${guideId}` : ''}`);
+  },
+
+  async getTheme(id: string) {
+    return apiFetch(`/themes/detail?id=${id}`);
+  },
+
+  async updateTheme(id: string, data: any) {
+    return apiFetch(`/themes/detail?id=${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async deleteTheme(id: string) {
+    return apiFetch(`/themes/detail?id=${id}`, {
+      method: 'DELETE',
+    });
   }
 };
