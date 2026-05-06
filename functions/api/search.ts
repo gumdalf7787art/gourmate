@@ -38,13 +38,23 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       LIMIT 20
     `).bind(searchKeyword, searchKeyword, searchKeyword, searchKeyword).all();
 
-    // 2. 가이드 검색 - COALESCE로 NULL 처리
+    // 2. 가이드 검색 - bio 컬럼 제거 (존재하지 않음)
     const { results: guides } = await DB.prepare(`
-      SELECT id, nickname, profile_image_url, trust_score, bio
+      SELECT id, nickname, profile_image_url, trust_score
       FROM users
       WHERE 
-        COALESCE(nickname, '') LIKE ? OR 
-        COALESCE(bio, '') LIKE ?
+        COALESCE(nickname, '') LIKE ?
+      LIMIT 10
+    `).bind(searchKeyword).all();
+
+    // 3. 테마 검색 추가
+    const { results: themes } = await DB.prepare(`
+      SELECT t.*, u.nickname as guide_nickname, u.profile_image_url as guide_profile_image
+      FROM themes t
+      JOIN users u ON t.guide_id = u.id
+      WHERE 
+        COALESCE(t.title, '') LIKE ? OR 
+        COALESCE(t.description, '') LIKE ?
       LIMIT 10
     `).bind(searchKeyword, searchKeyword).all();
 
@@ -59,6 +69,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
             profileImageUrl: p.guide_profile_image
           },
           place: {
+            id: p.id,
             name: p.restaurant_name,
             address: p.address,
             category: p.category
@@ -68,9 +79,17 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
           ...g,
           profileImageUrl: g.profile_image_url,
           trustScore: g.trust_score || 50
+        })),
+        themes: themes.map((t: any) => ({
+          ...t,
+          imageUrl: t.image_url,
+          guide: {
+            nickname: t.guide_nickname,
+            profileImageUrl: t.guide_profile_image
+          }
         }))
       },
-      _debug: { ...debugInfo, guidesCount: guides.length, postsCount: posts.length }
+      _debug: { ...debugInfo, guidesCount: guides.length, postsCount: posts.length, themesCount: themes.length }
     }), {
       headers: { 'Content-Type': 'application/json' }
     });

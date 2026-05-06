@@ -7,19 +7,23 @@ import { MOCK_POSTS, MOCK_COLLECTIONS } from '@/data/mock';
 export function GeneralSearch() {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState('');
-  const [results, setResults] = useState<{ posts: any[], guides: any[] }>({ posts: [], guides: [] });
+  const [results, setResults] = useState<{ posts: any[], guides: any[], themes: any[] }>({ posts: [], guides: [], themes: [] });
 
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (!keyword.trim()) {
-        setResults({ posts: [], guides: [] });
+        setResults({ posts: [], guides: [], themes: [] });
         return;
       }
 
       try {
         const res = await postService.search(keyword);
         if (res.success) {
-          setResults(res.data);
+          setResults({
+            posts: res.data.posts || [],
+            guides: res.data.guides || [],
+            themes: res.data.themes || []
+          });
         }
       } catch (err) {
         console.error('Search failed:', err);
@@ -31,7 +35,7 @@ export function GeneralSearch() {
 
   const filteredPosts = results.posts;
   const filteredGuides = results.guides;
-  const filteredCollections: any[] = []; // 테마 검색은 추후 구현
+  const filteredCollections = results.themes;
 
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
@@ -231,7 +235,7 @@ export function GeneralSearch() {
                   );
                 })}
 
-                {MOCK_POSTS.filter((p: any) => p.place.name.includes(keyword)).length === 0 && (
+                {filteredPosts.length === 0 && (
                   <div className="py-12 flex flex-col items-center justify-center opacity-30">
                     <MapPin className="w-12 h-12 mb-3" />
                     <p className="text-sm font-medium">'{keyword}' 검색 결과가 없습니다.</p>
@@ -250,9 +254,9 @@ export function GeneralSearch() {
                 <button className="text-[10px] font-bold text-gray-500 hover:text-primary-500 transition-colors">더보기</button>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {MOCK_POSTS.filter((p: any) => p.content.includes(keyword) || p.place.category.includes(keyword)).slice(0, 4).map((post: any) => (
-                  <div key={post.id} className="relative aspect-square rounded-2xl overflow-hidden border border-white/5">
-                    <img src={post.images[0]} className="w-full h-full object-cover" />
+                {filteredPosts.slice(0, 4).map((post: any) => (
+                  <div key={post.id} onClick={() => navigate(`/post/${post.id}`)} className="relative aspect-square rounded-2xl overflow-hidden border border-white/5 cursor-pointer group">
+                    <img src={post.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                     <div className="absolute bottom-2 left-3 right-3">
                       <p className="text-[11px] font-bold text-white truncate">{post.place.name}</p>
@@ -260,6 +264,9 @@ export function GeneralSearch() {
                   </div>
                 ))}
               </div>
+              {filteredPosts.length === 0 && (
+                <p className="text-xs text-gray-600 px-1 italic mt-2">검색 결과가 없습니다.</p>
+              )}
             </section>
 
             {/* Section: Themes (Collections) */}
@@ -272,30 +279,32 @@ export function GeneralSearch() {
                 <Link to="/popular-guides" className="text-[10px] font-bold text-gray-500 hover:text-primary-500 transition-colors">더보기</Link>
               </div>
               <div className="space-y-2.5">
-                {filteredCollections.slice(0, 3).map(collection => (
-                  <div key={collection.id} className="bg-[#111] border border-white/10 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24">
+                {filteredCollections.map(collection => (
+                  <div key={collection.id} onClick={() => navigate(`/theme/${collection.id}`)} className="bg-[#111] border border-white/10 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24 cursor-pointer">
                     <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
-                      <img src={collection.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <img src={collection.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                       <div className="absolute inset-0 bg-black/10"></div>
                     </div>
                     <div className="flex-1 p-3 flex flex-col justify-between">
                       <div>
                         <p className="text-[13px] font-bold text-white truncate group-hover:text-primary-400 transition-colors mb-1">{collection.title}</p>
                         <div className="flex items-center gap-2">
-                          <span className="text-[9px] text-gray-500">{collection.userId}</span>
-                          <div className="flex items-center gap-1 text-primary-500">
-                            <Heart className="w-2 h-2 fill-primary-500" />
-                            <span className="text-[9px] font-black">{collection.likes?.toLocaleString()}</span>
-                          </div>
+                          <span className="text-[9px] text-gray-500">{collection.guide.nickname}</span>
                         </div>
                       </div>
-                      <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase w-fit">
-                        {collection.places.length} SPOTS
-                      </span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase w-fit">
+                          Theme
+                        </span>
+                        <div className="flex items-center gap-1 text-primary-500">
+                          <Heart className="w-2 h-2 fill-primary-500" />
+                          <span className="text-[9px] font-black">{collection.likes || 0}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
-                {MOCK_COLLECTIONS.filter((c: any) => c.title.includes(keyword)).length === 0 && (
+                {filteredCollections.length === 0 && (
                   <p className="text-xs text-gray-600 px-1 italic">'{keyword}' 키워드를 포함한 테마가 없습니다.</p>
                 )}
               </div>
