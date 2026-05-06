@@ -118,9 +118,9 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       editor_mode || 'simple',
       JSON.stringify(story_blocks || []),
       JSON.stringify(menu_items || []),
-      latitude,
-      longitude,
-      phone
+      latitude || null,
+      longitude || null,
+      phone || ''
     ).run();
 
     return new Response(JSON.stringify({ success: true, id }), {

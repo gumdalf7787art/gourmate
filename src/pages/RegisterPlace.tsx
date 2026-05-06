@@ -284,7 +284,8 @@ export function RegisterPlace() {
         story_blocks: finalStoryBlocks,
         menu_items: menuItems,
         latitude: place.y,
-        longitude: place.x
+        longitude: place.x,
+        phone: place.phone || ''
       };
 
       // 4. API 호출
