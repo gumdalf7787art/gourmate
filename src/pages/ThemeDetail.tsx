@@ -52,10 +52,10 @@ export default function ThemeDetail() {
           <h1 className="text-3xl font-black tracking-tighter mb-4 leading-tight">
             {theme.title}
           </h1>
-          <div className="flex items-center gap-3">
-            <img src={guide.profileImageUrl} className="w-6 h-6 rounded-full border border-white/20" alt="" />
-            <span className="text-xs font-bold text-gray-300">By <span className="text-white">{guide.nickname}</span></span>
-          </div>
+          <Link to={`/guide/${guide.id}`} className="flex items-center gap-3 group/guide">
+            <img src={guide.profileImageUrl} className="w-6 h-6 rounded-full border border-white/20 group-hover/guide:scale-110 transition-transform" alt="" />
+            <span className="text-xs font-bold text-gray-300">By <span className="text-white group-hover/guide:text-primary-400 transition-colors">{guide.nickname}</span></span>
+          </Link>
         </div>
       </div>
 

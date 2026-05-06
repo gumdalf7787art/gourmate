@@ -43,6 +43,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
 
     const formattedPosts = posts.map((p: any) => ({
       ...p,
+      createdAt: p.created_at,
       images: safeParse(p.images),
       tags: safeParse(p.tags),
       story_blocks: safeParse(p.story_blocks),
@@ -58,13 +59,23 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       }
     }));
 
+    const formattedUser = {
+      id: user.id,
+      email: user.email,
+      nickname: user.nickname,
+      profileImageUrl: user.profile_image_url,
+      trustScore: user.trust_score || 0,
+      isOfficial: user.is_official === 1,
+      createdAt: user.created_at,
+      followers: 0, // 추후 팔로우 기능 연동
+      bio: user.bio || '맛있는 음식과 멋진 공간을 기록합니다.'
+    };
+
     return new Response(JSON.stringify({ 
       success: true, 
       data: {
-        ...user,
-        posts: formattedPosts,
-        followers: 0, // 추후 팔로우 기능 연동
-        bio: '맛있는 음식과 멋진 공간을 기록합니다.' // 추후 bio 컬럼 추가 시 연동
+        ...formattedUser,
+        posts: formattedPosts
       }
     }), {
       headers: { 'Content-Type': 'application/json' }

@@ -321,7 +321,7 @@ export function PostDetail() {
         <div className="py-8 border-b border-white/5">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="relative">
+              <Link to={`/guide/${post.guide.id}`} className="relative shrink-0 active:scale-95 transition-transform">
                 <img 
                   src={post.guide.profileImageUrl} 
                   alt={post.guide.nickname} 
@@ -332,12 +332,14 @@ export function PostDetail() {
                     <BadgeCheck className="w-4 h-4 text-primary-500" />
                   </div>
                 )}
-              </div>
+              </Link>
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-white leading-none mb-1.5">{post.guide.nickname}</span>
+                  <Link to={`/guide/${post.guide.id}`} className="font-bold text-white leading-none mb-1.5 hover:text-primary-400 transition-colors">
+                    {post.guide.nickname}
+                  </Link>
                   <Link 
-                    to={`/guide/${post.guide.id}`}
+                    to={`/guide/${post.guide.id}/posts`}
                     className="text-[10px] font-bold text-primary-500 border border-primary-500/30 px-2 py-0.5 rounded-full hover:bg-primary-500 hover:text-white transition-all ml-1 mb-1.5"
                   >
                     전체 리스트
