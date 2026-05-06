@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, MapPin, BadgeCheck, Flame, UtensilsCrossed, Heart } from 'lucide-react';
 import { MOCK_POSTS, MOCK_COLLECTIONS } from '@/data/mock';
@@ -47,6 +47,17 @@ export function Home() {
         if (selectedCategory === '가성비') return c.keywords?.includes('가성비');
         return c.keywords?.includes(selectedCategory);
       });
+
+  // 인기 가이드 중복 제거 및 실시간 포스트 수 포함 추출
+  const popularGuides = useMemo(() => {
+    const guideMap = new Map();
+    allPosts.forEach(post => {
+      if (post.guide && !guideMap.has(post.guide.id)) {
+        guideMap.set(post.guide.id, post.guide);
+      }
+    });
+    return Array.from(guideMap.values()).slice(0, 3);
+  }, [allPosts]);
 
   return (
     <div className="flex flex-col min-h-screen pb-24 bg-black selection:bg-primary-500/30">
@@ -224,27 +235,27 @@ export function Home() {
         </div>
 
         <div className="flex flex-col gap-3 px-5">
-          {allPosts.slice(0, 3).map((post) => (
-            <div key={post.guide.id} className="flex items-center justify-between p-4 bg-[#0f0f0f] border border-white/30 rounded-2xl group hover:border-white/40 transition-all shadow-xl">
-              <Link to={`/guide/${post.guide.id}`} className="flex items-center gap-3 flex-1">
+          {popularGuides.map((guide) => (
+            <div key={guide.id} className="flex items-center justify-between p-4 bg-[#0f0f0f] border border-white/30 rounded-2xl group hover:border-white/40 transition-all shadow-xl">
+              <Link to={`/guide/${guide.id}`} className="flex items-center gap-3 flex-1">
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-primary-500 to-orange-300 shadow-lg group-hover:scale-105 transition-transform">
-                    <img src={post.guide.profileImageUrl} alt="" className="w-full h-full rounded-full object-cover border-2 border-black" />
+                    <img src={guide.profileImageUrl} alt="" className="w-full h-full rounded-full object-cover border-2 border-black" />
                   </div>
-                  {post.guide.trustScore > 90 && (
+                  {guide.trustScore > 90 && (
                     <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 border border-white/30">
                       <BadgeCheck className="w-3.5 h-3.5 text-primary-500" />
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors truncate mb-0.5">{post.guide.nickname}</p>
-                  {post.guide.bio && (
+                  <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors truncate mb-0.5">{guide.nickname}</p>
+                  {guide.bio && (
                     <p className="text-[10px] text-gray-500 font-medium line-clamp-1 italic mb-0.5 opacity-70">
-                      "{post.guide.bio}"
+                      "{guide.bio}"
                     </p>
                   )}
-                  <p className="text-[10px] text-gray-500 font-medium">신뢰지수 {post.guide.trustScore} • 포스트 24개</p>
+                  <p className="text-[10px] text-gray-500 font-medium">신뢰지수 {guide.trustScore} • 포스트 {guide.postCount || 0}개</p>
                 </div>
               </Link>
               <button className="px-4 py-2 bg-white/5 border border-white/30 text-white text-[11px] font-black rounded-xl hover:bg-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter shadow-inner">

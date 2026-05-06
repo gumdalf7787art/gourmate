@@ -18,7 +18,8 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         p.latitude, p.longitude, p.phone,
         u.nickname as guide_nickname, 
         u.profile_image_url as guide_profile_image,
-        u.trust_score as guide_trust_score
+        u.trust_score as guide_trust_score,
+        (SELECT COUNT(*) FROM posts WHERE guide_id = p.guide_id) as guide_post_count
       FROM posts p
       JOIN users u ON p.guide_id = u.id
       ORDER BY p.created_at DESC
@@ -31,7 +32,8 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         id: row.guide_id,
         nickname: row.guide_nickname,
         profileImageUrl: row.guide_profile_image,
-        trustScore: row.guide_trust_score
+        trustScore: row.guide_trust_score,
+        postCount: row.guide_post_count
       },
       place: {
         name: row.restaurant_name,
