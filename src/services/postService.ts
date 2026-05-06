@@ -89,18 +89,18 @@ export const postService = {
   },
 
   async getTheme(id: string) {
-    return apiFetch(`/themes/detail?id=${id}`);
+    return apiFetch(`/themes/${id}`);
   },
 
   async updateTheme(id: string, data: any) {
-    return apiFetch(`/themes/detail?id=${id}`, {
+    return apiFetch(`/themes/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
   },
 
   async deleteTheme(id: string) {
-    return apiFetch(`/themes/detail?id=${id}`, {
+    return apiFetch(`/themes/${id}`, {
       method: 'DELETE',
     });
   }

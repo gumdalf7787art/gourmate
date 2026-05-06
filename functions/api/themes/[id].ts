@@ -1,8 +1,7 @@
 export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) => {
   try {
     const { DB } = context.env;
-    const url = new URL(context.request.url);
-    const id = url.searchParams.get('id');
+    const id = context.params.id as string;
 
     if (!id) {
       return new Response(JSON.stringify({ error: '테마 ID가 필요합니다.' }), { status: 400 });
@@ -67,8 +66,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
 export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context) => {
   try {
     const { DB } = context.env;
-    const url = new URL(context.request.url);
-    const id = url.searchParams.get('id');
+    const id = context.params.id as string;
     const body = await context.request.json() as any;
     const { title, description, thumbnail, tags, postIds } = body;
 
@@ -115,8 +113,7 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
 export const onRequestDelete: PagesFunction<{ DB: D1Database }> = async (context) => {
   try {
     const { DB } = context.env;
-    const url = new URL(context.request.url);
-    const id = url.searchParams.get('id');
+    const id = context.params.id as string;
 
     if (!id) {
       return new Response(JSON.stringify({ error: '테마 ID가 필요합니다.' }), { status: 400 });
