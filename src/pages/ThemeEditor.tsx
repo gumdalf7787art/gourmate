@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Image as ImageIcon, X, Plus, Hash, Type, MapPin } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Image as ImageIcon, X, Plus, Hash, Type, MapPin, Trash2 } from 'lucide-react';
 import { MOCK_COLLECTIONS, MOCK_POSTS } from '@/data/mock';
 import type { Place } from '@/data/mock';
 
@@ -15,6 +15,8 @@ export function ThemeEditor() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [thumbnail, setThumbnail] = useState<{ file?: File; preview: string } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragCounter = useRef(0);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   
@@ -54,6 +56,36 @@ export function ThemeEditor() {
     }
     setThumbnail(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounter.current++;
+    setIsDragging(true);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounter.current--;
+    if (dragCounter.current === 0) setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    dragCounter.current = 0;
+    setIsDragging(false);
+    
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const preview = URL.createObjectURL(file);
+      setThumbnail({ file, preview });
+    }
   };
 
   const togglePlaceSelection = (place: Place) => {
@@ -111,7 +143,7 @@ export function ThemeEditor() {
                   onClick={removeThumbnail}
                   className="px-4 py-2 bg-red-500/20 text-red-500 font-bold rounded-xl border border-red-500/50 hover:bg-red-500 hover:text-white transition-all flex items-center gap-2"
                 >
-                  <Trash2Icon className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4" />
                   삭제하기
                 </button>
               </div>
@@ -119,12 +151,24 @@ export function ThemeEditor() {
           ) : (
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full aspect-video border-2 border-dashed border-white/20 rounded-2xl flex flex-col items-center justify-center gap-3 hover:bg-white/5 hover:border-primary-500/50 transition-all group bg-[#111]"
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`w-full aspect-video border-2 border-dashed rounded-2xl flex flex-col items-center justify-center gap-3 transition-all group ${
+                isDragging 
+                  ? 'border-primary-500 bg-primary-500/10 ring-4 ring-primary-500/10' 
+                  : 'border-white/20 bg-[#111] hover:bg-white/5 hover:border-primary-500/50'
+              }`}
             >
-              <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 group-hover:bg-primary-500/10 transition-all">
-                <Plus className="w-6 h-6 text-gray-400 group-hover:text-primary-500" />
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+                isDragging ? 'bg-primary-500/20 scale-110' : 'bg-white/5 group-hover:scale-110 group-hover:bg-primary-500/10'
+              }`}>
+                <Plus className={`w-6 h-6 transition-colors ${isDragging ? 'text-primary-500' : 'text-gray-400 group-hover:text-primary-500'}`} />
               </div>
-              <span className="text-sm text-gray-500 font-medium group-hover:text-primary-500 transition-colors">멋진 썸네일 이미지를 올려주세요</span>
+              <span className={`text-sm font-medium transition-colors ${isDragging ? 'text-primary-500' : 'text-gray-500 group-hover:text-primary-500'}`}>
+                {isDragging ? '이미지를 여기에 놓으세요' : '멋진 썸네일 이미지를 올려주세요'}
+              </span>
             </button>
           )}
           <input
@@ -289,15 +333,3 @@ export function ThemeEditor() {
   );
 }
 
-// Trash2Icon은 lucide-react에서 import하지 않았으므로 파일 하단에 임시로 정의하거나 상단에서 import 추가
-function Trash2Icon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <path d="M3 6h18"></path>
-      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-      <line x1="10" y1="11" x2="10" y2="17"></line>
-      <line x1="14" y1="11" x2="14" y2="17"></line>
-    </svg>
-  );
-}
