@@ -187,16 +187,18 @@ export default function Wishlist() {
           
           <div className="flex-1 relative">
             <KakaoMap 
-              places={wishlistedPosts.map(p => ({
-                id: p.place.id,
-                postId: p.id,
-                lat: p.place.latitude,
-                lng: p.place.longitude,
-                name: p.place.name,
-                category: p.place.category,
-                rating: p.rating
-              }))}
-              level={7}
+              places={wishlistedPosts
+                .filter((p: any) => p.place?.latitude != null && p.place?.longitude != null && p.place?.latitude !== "" && p.place?.longitude !== "")
+                .map(p => ({
+                  id: p.place.id,
+                  postId: p.id,
+                  lat: Number(p.place.latitude),
+                  lng: Number(p.place.longitude),
+                  name: p.place.name,
+                  category: p.place.category,
+                  rating: p.rating
+                }))}
+              level={5}
               onSelect={(postId) => navigate(`/post/${postId}`)}
             />
           </div>

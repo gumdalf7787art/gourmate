@@ -1,3 +1,4 @@
+import { useMemo, useState, useEffect } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { Star } from 'lucide-react';
 
@@ -20,28 +21,70 @@ interface KakaoMapProps {
 }
 
 export function KakaoMap({ center, places, level = 3, onSelect, onBoundsChange }: KakaoMapProps) {
-  const mapCenter = center || (places.length > 0 
-    ? { lat: places[0].lat, lng: places[0].lng } 
-    : { lat: 37.5665, lng: 126.9780 });
+  const [map, setMap] = useState<kakao.maps.Map>();
+
+  const mapCenter = useMemo(() => {
+    // 1. Explicit center provided
+    if (center && Number(center.lat) !== 0 && !isNaN(Number(center.lat))) {
+      return { lat: Number(center.lat), lng: Number(center.lng) };
+    }
+    // 2. Center on the first place with valid coordinates
+    if (places.length > 0) {
+      const firstValid = places.find(p => Number(p.lat) !== 0 && !isNaN(Number(p.lat)));
+      if (firstValid) {
+        return { lat: Number(firstValid.lat), lng: Number(firstValid.lng) };
+      }
+    }
+    // 3. Fallback to Seoul City Hall
+    return { lat: 37.5665, lng: 126.9780 };
+  }, [center, places]);
+
+  useEffect(() => {
+    if (map && places.length > 0) {
+      // Small timeout to ensure DOM is ready and map has correct dimensions
+      const timer = setTimeout(() => {
+        map.relayout();
+        
+        if (!center) {
+          if (places.length === 1) {
+            // Single place: Center on it
+            const pos = new kakao.maps.LatLng(Number(places[0].lat), Number(places[0].lng));
+            map.setCenter(pos);
+          } else if (places.length > 1) {
+            // Multiple places: Fit all in view
+            const bounds = new kakao.maps.LatLngBounds();
+            places.forEach(p => {
+              if (Number(p.lat) !== 0 && !isNaN(Number(p.lat))) {
+                bounds.extend(new kakao.maps.LatLng(Number(p.lat), Number(p.lng)));
+              }
+            });
+            map.setBounds(bounds);
+          }
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [map, places, center]);
 
   return (
-    <div className="w-full h-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+    <div className="w-full h-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#111]">
       <Map
         center={mapCenter}
         style={{ width: '100%', height: '100%' }}
         level={level}
+        onCreate={setMap}
         onBoundsChanged={onBoundsChange}
       >
         {places.map((place) => (
           <MapMarker 
             key={place.id} 
-            position={{ lat: place.lat, lng: place.lng }}
+            position={{ lat: Number(place.lat), lng: Number(place.lng) }}
             onClick={() => place.postId && onSelect?.(place.postId)}
           >
             <div 
               className="p-3 bg-black/90 backdrop-blur-md rounded-xl border border-primary-500/30 text-white min-w-[120px] shadow-2xl cursor-pointer active:scale-95 transition-all"
-              onClick={() => {
-                // Ensure the event triggers properly on the card
+              onClick={(e) => {
+                e.stopPropagation();
                 if (place.postId) onSelect?.(place.postId);
               }}
             >

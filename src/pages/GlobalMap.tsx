@@ -56,15 +56,17 @@ export default function GlobalMap() {
       posts = posts.filter(p => p.guide.id === selectedGuideId);
     }
 
-    return posts.map(p => ({
-      id: p.place.id,
-      postId: p.id,
-      lat: p.place.latitude,
-      lng: p.place.longitude,
-      name: p.place.name,
-      category: p.place.category,
-      rating: p.rating
-    }));
+    return posts
+      .filter(p => p.place?.latitude != null && p.place?.longitude != null && p.place?.latitude !== "" && p.place?.longitude !== "")
+      .map(p => ({
+        id: p.place.id,
+        postId: p.id,
+        lat: Number(p.place.latitude),
+        lng: Number(p.place.longitude),
+        name: p.place.name,
+        category: p.place.category,
+        rating: p.rating
+      }));
   }, [visiblePosts, selectedGuideId]);
 
   return (
