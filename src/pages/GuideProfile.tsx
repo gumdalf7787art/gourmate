@@ -389,6 +389,7 @@ export function GuideProfile() {
           </nav>
           
           <div className="flex-1 relative">
+            {console.log('GuideProfile FilteredPosts:', filteredPosts)}
             <KakaoMap 
               places={filteredPosts
                 .filter((p: any) => p.place?.latitude != null && p.place?.longitude != null && String(p.place.latitude) !== "" && String(p.place.longitude) !== "")

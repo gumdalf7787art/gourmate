@@ -23,6 +23,8 @@ interface KakaoMapProps {
 export function KakaoMap({ center, places, level = 3, onSelect, onBoundsChange }: KakaoMapProps) {
   const [map, setMap] = useState<kakao.maps.Map>();
 
+  console.log('KakaoMap Places:', places);
+
   const mapCenter = useMemo(() => {
     // 1. Explicit center provided
     if (center && Number(center.lat) !== 0 && !isNaN(Number(center.lat))) {
@@ -40,28 +42,30 @@ export function KakaoMap({ center, places, level = 3, onSelect, onBoundsChange }
   }, [center, places]);
 
   useEffect(() => {
-    if (map && places.length > 0) {
-      // Small timeout to ensure DOM is ready and map has correct dimensions
+    if (map && mapCenter) {
+      const pos = new kakao.maps.LatLng(mapCenter.lat, mapCenter.lng);
+      map.setCenter(pos);
+      // Small delay for relayout
       const timer = setTimeout(() => {
         map.relayout();
-        
-        if (!center) {
-          if (places.length === 1) {
-            // Single place: Center on it
-            const pos = new kakao.maps.LatLng(Number(places[0].lat), Number(places[0].lng));
-            map.setCenter(pos);
-          } else if (places.length > 1) {
-            // Multiple places: Fit all in view
-            const bounds = new kakao.maps.LatLngBounds();
-            places.forEach(p => {
-              if (Number(p.lat) !== 0 && !isNaN(Number(p.lat))) {
-                bounds.extend(new kakao.maps.LatLng(Number(p.lat), Number(p.lng)));
-              }
-            });
-            map.setBounds(bounds);
-          }
+        map.setCenter(pos);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [map, mapCenter]);
+
+  useEffect(() => {
+    if (map && places.length > 1 && !center) {
+      const timer = setTimeout(() => {
+        const validPlaces = places.filter(p => Number(p.lat) !== 0 && !isNaN(Number(p.lat)));
+        if (validPlaces.length > 1) {
+          const bounds = new kakao.maps.LatLngBounds();
+          validPlaces.forEach(p => {
+            bounds.extend(new kakao.maps.LatLng(Number(p.lat), Number(p.lng)));
+          });
+          map.setBounds(bounds);
         }
-      }, 100);
+      }, 400);
       return () => clearTimeout(timer);
     }
   }, [map, places, center]);
@@ -69,6 +73,7 @@ export function KakaoMap({ center, places, level = 3, onSelect, onBoundsChange }
   return (
     <div className="w-full h-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#111]">
       <Map
+        key={places.length > 0 ? `${places[0].id}-${places.length}` : 'empty-map'}
         center={mapCenter}
         style={{ width: '100%', height: '100%' }}
         level={level}
