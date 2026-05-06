@@ -145,7 +145,9 @@ export function Home() {
 
                 <div className="flex items-center gap-1 text-gray-500">
                   <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
-                  <span className="text-[10px] truncate leading-none">{post.place.address.split(' ')[1]} {post.place.address.split(' ')[2]}</span>
+                  <span className="text-[10px] truncate leading-none">
+                    {post.place.address.split(' ')[0].replace('서울특별시', '서울').replace('부산광역시', '부산').replace('대구광역시', '대구').replace('인천광역시', '인천').replace('광주광역시', '광주').replace('대전광역시', '대전').replace('울산광역시', '울산').replace('세종특별자치시', '세종')} {post.place.address.split(' ')[1]}
+                  </span>
                 </div>
               </Link>
             ))
