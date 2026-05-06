@@ -68,5 +68,12 @@ export const postService = {
 
   async search(keyword: string) {
     return apiFetch(`/search?q=${encodeURIComponent(keyword)}`);
+  },
+
+  async updateTop20(guideId: string, top20Ids: string[]) {
+    return apiFetch('/guide/top20', {
+      method: 'POST',
+      body: JSON.stringify({ guideId, top20Ids })
+    });
   }
 };

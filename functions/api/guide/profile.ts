@@ -24,7 +24,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       SELECT 
         p.id, p.restaurant_name, p.address, p.category, p.content, p.review, p.rating, 
         p.images, p.tags, p.editor_mode, p.story_blocks, p.menu_items, p.likes, p.created_at,
-        p.latitude, p.longitude, p.phone
+        p.latitude, p.longitude, p.phone, p.is_paid, p.top_rank
       FROM posts p
       WHERE p.guide_id = ?
       ORDER BY p.created_at DESC
@@ -57,8 +57,14 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         latitude: p.latitude,
         longitude: p.longitude,
         phone: p.phone
-      }
+      },
+      isPaid: p.is_paid === '1' || p.is_paid === 1,
+      topRank: p.top_rank ? parseInt(p.top_rank) : null
     }));
+
+    const top20Posts = formattedPosts
+      .filter(p => p.topRank !== null)
+      .sort((a, b) => a.topRank! - b.topRank!);
 
     const formattedUser = {
       id: user.id,
@@ -76,7 +82,8 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       success: true, 
       data: {
         ...formattedUser,
-        posts: formattedPosts
+        posts: formattedPosts,
+        top20Posts: top20Posts
       }
     }), {
       headers: { 'Content-Type': 'application/json' }

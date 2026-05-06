@@ -2,7 +2,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
   try {
     const { DB } = context.env;
 
-    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude', 'phone', 'is_paid'];
+    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude', 'phone', 'is_paid', 'top_rank'];
     for (const col of columns) {
       try {
         await DB.prepare(`ALTER TABLE posts ADD COLUMN ${col} TEXT`).run();
@@ -15,7 +15,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         p.id, p.guide_id, p.restaurant_name, p.address, p.category, 
         p.content, p.review, p.rating, p.images, p.tags, 
         p.editor_mode, p.story_blocks, p.menu_items, p.likes, p.created_at,
-        p.latitude, p.longitude, p.phone, p.is_paid,
+        p.latitude, p.longitude, p.phone, p.is_paid, p.top_rank,
         u.nickname as guide_nickname, 
         u.profile_image_url as guide_profile_image,
         u.trust_score as guide_trust_score,
@@ -50,6 +50,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       tags: row.tags ? JSON.parse(row.tags) : [],
       images: JSON.parse(row.images || '[]'),
       isPaid: row.is_paid === '1' || row.is_paid === 1,
+      topRank: row.top_rank ? parseInt(row.top_rank) : null,
       createdAt: row.created_at
     }));
 

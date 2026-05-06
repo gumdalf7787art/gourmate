@@ -19,6 +19,7 @@ import { MyPage } from '@/pages/MyPage';
 import { ProfileSettings } from '@/pages/ProfileSettings';
 import { MyPosts } from '@/pages/MyPosts';
 import { EditPost } from '@/pages/EditPost';
+import { ManageTop20 } from '@/pages/ManageTop20';
 import { FollowingList } from '@/pages/FollowingList';
 import { Notifications } from '@/pages/Notifications';
 import { MyThemes } from '@/pages/MyThemes';
@@ -106,6 +107,7 @@ function App() {
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route path="/my" element={<MyPage />} />
           <Route path="/my/settings" element={<ProfileSettings />} />
+          <Route path="/my/top20" element={<ManageTop20 />} />
           <Route path="/my/posts" element={<MyPosts />} />
           <Route path="/my/posts/edit/:id" element={<EditPost />} />
           <Route path="/my/following" element={<FollowingList />} />

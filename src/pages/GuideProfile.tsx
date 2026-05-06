@@ -11,6 +11,7 @@ export function GuideProfile() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [guide, setGuide] = useState<any>(null);
+  const [top20Posts, setTop20Posts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('전체');
   const [showTrustModal, setShowTrustModal] = useState(false);
@@ -26,6 +27,7 @@ export function GuideProfile() {
         const res = await postService.getGuideProfile(id);
         if (res.success) {
           setGuide(res.data);
+          setTop20Posts(res.data.top20Posts || []);
         } else {
           setError(res.error || '가이드 정보를 불러오지 못했습니다.');
         }
@@ -39,7 +41,6 @@ export function GuideProfile() {
   }, [id]);
 
   const guidePosts = useMemo(() => guide?.posts || [], [guide]);
-  const top20Posts = useMemo(() => guidePosts.filter((p: any) => p.rating >= 4.5).slice(0, 5), [guidePosts]);
   const guideCollections = useMemo<any[]>(() => [], []); // 테마 기능은 추후 연동
 
   // Calculate total likes from all posts

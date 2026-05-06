@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Settings, Users, Bell, Heart, 
-  FileText, FolderPlus, BarChart2, 
+  FileText, Medal, FolderPlus, BarChart2, 
   HelpCircle, Megaphone, LogOut, UserX, ChevronRight 
 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -34,6 +34,7 @@ export function MyPage() {
       title: '콘텐츠 관리',
       items: [
         { icon: <FileText className="w-5 h-5" />, label: '나의 포스팅 관리', desc: '작성한 포스팅 조회/수정/삭제', link: '/my/posts' },
+        { icon: <Medal className="w-5 h-5" />, label: '가이드 추천 Top 20 설정', desc: '나의 대표 맛집 순위 관리', link: '/my/top20' },
         { icon: <FolderPlus className="w-5 h-5" />, label: '나의 테마 관리', desc: '나만의 맛집 지도 만들기', link: '/my/themes' },
         { icon: <BarChart2 className="w-5 h-5" />, label: '접속 및 통계 관리', desc: '조회수 및 댓글 확인', link: '/my/analytics' },
       ]

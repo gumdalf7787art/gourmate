@@ -5,7 +5,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
     const id = url.searchParams.get('id');
 
     // DB 스키마 보정 (컬럼 누락 대비)
-    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude', 'phone', 'is_paid'];
+    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude', 'phone', 'is_paid', 'top_rank'];
     for (const col of columns) {
       try {
         await DB.prepare(`ALTER TABLE posts ADD COLUMN ${col} TEXT`).run();
@@ -21,7 +21,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         p.id, p.guide_id, p.restaurant_name, p.address, p.category, 
         p.content, p.review, p.rating, p.images, p.tags, 
         p.editor_mode, p.story_blocks, p.menu_items, p.likes, p.created_at,
-        p.latitude, p.longitude, p.phone, p.is_paid,
+        p.latitude, p.longitude, p.phone, p.is_paid, p.top_rank,
         u.nickname as guide_nickname, 
         u.profile_image_url as guide_profile_image,
         u.trust_score as guide_trust_score
@@ -62,6 +62,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       story_blocks: row.story_blocks ? JSON.parse(row.story_blocks) : [],
       menu_items: row.menu_items ? JSON.parse(row.menu_items) : [],
       isPaid: row.is_paid === '1' || row.is_paid === 1,
+      topRank: row.top_rank ? parseInt(row.top_rank) : null,
       createdAt: row.created_at
     };
 
@@ -100,7 +101,8 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       latitude = null,
       longitude = null,
       phone = null,
-      is_paid = 0
+      is_paid = 0,
+      top_rank = null
     } = body;
 
     // PATCH 시에도 컬럼 누락 대비
@@ -116,7 +118,7 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       UPDATE posts 
       SET content = ?, review = ?, rating = ?, images = ?, tags = ?, 
           category = ?, editor_mode = ?, story_blocks = ?, menu_items = ?,
-          latitude = ?, longitude = ?, phone = ?, is_paid = ?
+          latitude = ?, longitude = ?, phone = ?, is_paid = ?, top_rank = ?
       WHERE id = ?
     `).bind(
       String(content), 
@@ -132,6 +134,7 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       longitude ? String(longitude) : null,
       phone ? String(phone) : null,
       is_paid ? 1 : 0,
+      top_rank ? parseInt(top_rank) : null,
       id
     ).run();
 
