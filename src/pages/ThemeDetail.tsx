@@ -67,15 +67,15 @@ export default function ThemeDetail() {
   return (
     <div className="min-h-screen bg-black text-white pb-32">
       {/* Hero Section */}
-      <div className="relative h-[400px] w-full overflow-hidden">
+      <div className="relative h-[300px] w-full overflow-hidden">
         {theme.image_url && (
           <img 
             src={theme.image_url} 
             alt={theme.title} 
-            className="w-full h-full object-cover scale-105"
+            className="w-full h-full object-cover"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
         
         {/* Top Nav */}
         <div className="absolute top-0 left-0 right-0 p-5 flex items-center justify-between z-20">
@@ -89,44 +89,48 @@ export default function ThemeDetail() {
             <Share2 className="w-5 h-5" />
           </button>
         </div>
+      </div>
 
-        {/* Theme Title Info */}
-        <div className="absolute bottom-10 left-0 right-0 px-6 z-10">
-          <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
-            {theme.keywords?.map((tag: string, idx: number) => (
-              <span key={idx} className="shrink-0 px-3 py-1 bg-primary-500/20 backdrop-blur-md text-primary-500 text-[11px] font-black rounded-full border border-primary-500/30">
-                #{tag}
-              </span>
-            ))}
-          </div>
-          <h1 className="text-3xl font-black tracking-tighter leading-tight mb-3">
-            {theme.title}
-          </h1>
-          <p className="text-gray-300 text-sm leading-relaxed max-w-[90%]">
+      {/* Theme Info Section */}
+      <div className="px-6 py-8">
+        <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
+          {theme.keywords?.map((tag: string, idx: number) => (
+            <span key={idx} className="shrink-0 px-3 py-1 bg-primary-500/10 text-primary-500 text-[11px] font-black rounded-full border border-primary-500/20">
+              #{tag}
+            </span>
+          ))}
+        </div>
+        
+        <h1 className="text-3xl font-black tracking-tighter leading-tight mb-4">
+          {theme.title}
+        </h1>
+        
+        <div className="bg-white/5 border border-white/5 rounded-2xl p-5 mb-8">
+          <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
             {theme.description}
           </p>
-          
-          <div className="flex items-center gap-4 mt-6 pt-6 border-t border-white/10">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-gray-800">
-                {theme.guide_image && <img src={theme.guide_image} alt="" className="w-full h-full object-cover" />}
-              </div>
-              <span className="text-sm font-bold text-white">가이드 추천</span>
+        </div>
+        
+        <div className="flex items-center gap-4 pb-8 border-b border-white/10">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-gray-800">
+              {theme.guide_image && <img src={theme.guide_image} alt="" className="w-full h-full object-cover" />}
             </div>
-            <div className="flex items-center gap-1.5 text-gray-400">
-              <Clock className="w-3.5 h-3.5" />
-              <span className="text-xs">{formattedDate}</span>
-            </div>
+            <span className="text-sm font-bold text-white">가이드 추천</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-gray-500">
+            <Clock className="w-3.5 h-3.5" />
+            <span className="text-xs font-medium">{formattedDate}</span>
           </div>
         </div>
       </div>
 
       {/* Spots List */}
-      <main className="px-6 -mt-4 relative z-20">
-        <div className="flex items-center justify-between mb-8">
+      <main className="px-6 relative z-20">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-6 bg-primary-500 rounded-full"></div>
-            <h2 className="text-xl font-black text-white tracking-tight">테마 속 맛집 <span className="text-primary-500">{theme.posts?.length || 0}</span></h2>
+            <div className="w-1.5 h-5 bg-primary-500 rounded-full"></div>
+            <h2 className="text-lg font-black text-white tracking-tight">테마 속 맛집 <span className="text-primary-500">{theme.posts?.length || 0}</span></h2>
           </div>
         </div>
 
