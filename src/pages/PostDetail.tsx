@@ -10,6 +10,7 @@ import {
   Heart, 
   MessageCircle,
   BadgeCheck,
+  CheckCircle2,
   Info,
   Star,
   Flame,
