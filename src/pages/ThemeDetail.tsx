@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Share2, MapPin, Heart, Clock, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Share2, MapPin, Heart, Clock, ChevronRight, AlertCircle } from 'lucide-react';
 import { postService } from '@/services/postService';
 
-export function ThemeDetail() {
+export default function ThemeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [theme, setTheme] = useState<any>(null);
@@ -14,7 +14,9 @@ export function ThemeDetail() {
     const fetchThemeDetail = async () => {
       if (!id) return;
       setIsLoading(true);
+      setError(null);
       try {
+        console.log('Fetching theme:', id);
         const res = await postService.getTheme(id);
         if (res.success) {
           setTheme(res.data);
@@ -22,6 +24,7 @@ export function ThemeDetail() {
           setError(res.error || '테마를 불러오지 못했습니다.');
         }
       } catch (err: any) {
+        console.error('Fetch error:', err);
         setError(err.message || '네트워크 오류가 발생했습니다.');
       } finally {
         setIsLoading(false);
@@ -42,7 +45,13 @@ export function ThemeDetail() {
   if (error || !theme) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-10 text-center bg-black">
-        <h2 className="text-xl font-bold text-white mb-4">{error || '테마를 찾을 수 없습니다.'}</h2>
+        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-6">
+          <AlertCircle className="w-8 h-8 text-gray-600" />
+        </div>
+        <h2 className="text-xl font-bold text-white mb-2">테마를 찾을 수 없습니다</h2>
+        <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+          {error || '해당 테마의 정보를 불러오는 중 문제가 발생했습니다.'}
+        </p>
         <button 
           onClick={() => navigate(-1)} 
           className="px-8 py-3 bg-white text-black font-black rounded-2xl active:scale-95 transition-all shadow-xl"
@@ -53,15 +62,19 @@ export function ThemeDetail() {
     );
   }
 
+  const formattedDate = theme.created_at ? new Date(theme.created_at).toLocaleDateString() : '';
+
   return (
     <div className="min-h-screen bg-black text-white pb-32">
       {/* Hero Section */}
-      <div className="relative h-[450px] w-full overflow-hidden">
-        <img 
-          src={theme.image_url} 
-          alt={theme.title} 
-          className="w-full h-full object-cover scale-105"
-        />
+      <div className="relative h-[400px] w-full overflow-hidden">
+        {theme.image_url && (
+          <img 
+            src={theme.image_url} 
+            alt={theme.title} 
+            className="w-full h-full object-cover scale-105"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black"></div>
         
         {/* Top Nav */}
@@ -79,30 +92,30 @@ export function ThemeDetail() {
 
         {/* Theme Title Info */}
         <div className="absolute bottom-10 left-0 right-0 px-6 z-10">
-          <div className="flex gap-2 mb-4">
+          <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
             {theme.keywords?.map((tag: string, idx: number) => (
-              <span key={idx} className="px-3 py-1 bg-primary-500/20 backdrop-blur-md text-primary-500 text-[11px] font-black rounded-full border border-primary-500/30">
+              <span key={idx} className="shrink-0 px-3 py-1 bg-primary-500/20 backdrop-blur-md text-primary-500 text-[11px] font-black rounded-full border border-primary-500/30">
                 #{tag}
               </span>
             ))}
           </div>
-          <h1 className="text-4xl font-black tracking-tighter leading-tight mb-3">
+          <h1 className="text-3xl font-black tracking-tighter leading-tight mb-3">
             {theme.title}
           </h1>
-          <p className="text-gray-300 text-sm leading-relaxed max-w-[80%]">
+          <p className="text-gray-300 text-sm leading-relaxed max-w-[90%]">
             {theme.description}
           </p>
           
-          <div className="flex items-center gap-4 mt-8 pt-8 border-t border-white/10">
+          <div className="flex items-center gap-4 mt-6 pt-6 border-t border-white/10">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20">
-                <img src={theme.guide_image || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100'} alt="" />
+              <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-gray-800">
+                {theme.guide_image && <img src={theme.guide_image} alt="" className="w-full h-full object-cover" />}
               </div>
               <span className="text-sm font-bold text-white">가이드 추천</span>
             </div>
             <div className="flex items-center gap-1.5 text-gray-400">
               <Clock className="w-3.5 h-3.5" />
-              <span className="text-xs">{new Date(theme.created_at).toLocaleDateString()}</span>
+              <span className="text-xs">{formattedDate}</span>
             </div>
           </div>
         </div>
@@ -124,18 +137,17 @@ export function ThemeDetail() {
               onClick={() => navigate(`/post/${post.id}`)}
               className="bg-[#111] border border-white/5 rounded-[28px] overflow-hidden group active:scale-[0.98] transition-all cursor-pointer shadow-2xl"
             >
-              <div className="relative h-56">
+              <div className="relative h-52">
                 <img 
                   src={post.images?.[0] || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800'} 
                   alt={post.restaurant_name} 
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10">
-                  <span className="text-[10px] font-black text-primary-500">SPOT {idx + 1}</span>
+                  <span className="text-[10px] font-black text-primary-500 uppercase">Spot {idx + 1}</span>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
                 
-                {/* Ranking or Rating Overlay */}
                 <div className="absolute bottom-4 right-4 flex items-center gap-1 px-3 py-1.5 bg-primary-500 rounded-full shadow-lg">
                   <Heart className="w-3.5 h-3.5 fill-white" />
                   <span className="text-xs font-black text-white">{(post.likes || 0).toLocaleString()}</span>
@@ -144,14 +156,14 @@ export function ThemeDetail() {
 
               <div className="p-6">
                 <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 className="text-xl font-bold text-white group-hover:text-primary-500 transition-colors mb-1">{post.restaurant_name}</h3>
+                  <div className="flex-1 min-w-0 pr-4">
+                    <h3 className="text-xl font-bold text-white group-hover:text-primary-500 transition-colors mb-1 truncate">{post.restaurant_name}</h3>
                     <div className="flex items-center gap-1.5 text-gray-500">
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span className="text-[11px] font-medium">{post.address}</span>
+                      <MapPin className="w-3.5 h-3.5 shrink-0" />
+                      <span className="text-[11px] font-medium truncate">{post.address}</span>
                     </div>
                   </div>
-                  <span className="px-3 py-1 bg-white/5 text-gray-400 text-[10px] font-bold rounded-lg border border-white/10 uppercase tracking-tighter">
+                  <span className="shrink-0 px-3 py-1 bg-white/5 text-gray-400 text-[10px] font-bold rounded-lg border border-white/10 uppercase tracking-tighter">
                     {post.category}
                   </span>
                 </div>
@@ -161,12 +173,12 @@ export function ThemeDetail() {
                 </p>
 
                 <div className="flex items-center justify-between pt-5 border-t border-white/5">
-                  <div className="flex gap-2">
-                    {post.tags?.slice(0, 3).map((tag: string, i: number) => (
-                      <span key={i} className="text-[10px] font-bold text-gray-500">#{tag}</span>
+                  <div className="flex gap-2 overflow-hidden">
+                    {post.tags?.slice(0, 2).map((tag: string, i: number) => (
+                      <span key={i} className="text-[10px] font-bold text-gray-600 truncate">#{tag}</span>
                     ))}
                   </div>
-                  <div className="flex items-center gap-1 text-primary-500 text-[11px] font-bold group-hover:translate-x-1 transition-transform">
+                  <div className="flex items-center gap-1 text-primary-500 text-[11px] font-bold group-hover:translate-x-1 transition-transform shrink-0">
                     자세히 보기
                     <ChevronRight className="w-4 h-4" />
                   </div>

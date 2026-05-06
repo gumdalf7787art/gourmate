@@ -9,7 +9,7 @@ import { GuideProfile } from '@/pages/GuideProfile';
 import { GuidePostList } from '@/pages/GuidePostList';
 import { PopularGuides } from './pages/PopularGuides';
 import GuideCollectionList from './pages/GuideCollectionList';
-import { ThemeDetail } from './pages/ThemeDetail';
+import ThemeDetail from './pages/ThemeDetail';
 import PopularRestaurants from './pages/PopularRestaurants';
 import GlobalMap from './pages/GlobalMap';
 import Wishlist from './pages/Wishlist';
