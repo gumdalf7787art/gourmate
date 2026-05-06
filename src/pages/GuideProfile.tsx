@@ -41,7 +41,7 @@ export function GuideProfile() {
   }, [id]);
 
   const guidePosts = useMemo(() => guide?.posts || [], [guide]);
-  const guideCollections = useMemo<any[]>(() => [], []); // 테마 기능은 추후 연동
+  const guideCollections = useMemo(() => guide?.themes || [], [guide]);
 
   // Calculate total likes from all posts
   const totalLikes = useMemo(() => {
@@ -231,7 +231,7 @@ export function GuideProfile() {
             <p className="text-[13px] text-gray-500 font-medium mb-6">믿고 보는 미식가들의 큐레이션</p>
             
             <div className="flex flex-col gap-3">
-              {guideCollections.map(c => (
+              {guideCollections.map((c: any) => (
                 <Link 
                   key={c.id} 
                   to={`/theme/${c.id}`}
@@ -239,7 +239,7 @@ export function GuideProfile() {
                 >
                   {/* Left Image */}
                   <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
-                    <img src={c.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img src={c.image_url} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-black/10"></div>
                   </div>
                   
@@ -252,7 +252,7 @@ export function GuideProfile() {
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-[9px] text-gray-500 font-medium">{guide.nickname}</span>
                         <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
-                          {c.places.length} 스팟
+                          {c.post_count} 스팟
                         </span>
                       </div>
                     </div>

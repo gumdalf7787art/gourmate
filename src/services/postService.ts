@@ -75,5 +75,16 @@ export const postService = {
       method: 'POST',
       body: JSON.stringify({ guideId, top20Ids })
     });
+  },
+
+  async createTheme(data: any) {
+    return apiFetch('/themes', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async getThemes(guideId?: string) {
+    return apiFetch(`/themes${guideId ? `?guideId=${guideId}` : ''}`);
   }
 };

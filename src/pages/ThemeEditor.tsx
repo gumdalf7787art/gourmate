@@ -119,7 +119,7 @@ export function ThemeEditor() {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!title.trim()) {
       alert('테마 제목을 입력해주세요.');
       return;
@@ -128,13 +128,48 @@ export function ThemeEditor() {
       alert('테마 썸네일을 추가해주세요.');
       return;
     }
+    if (selectedPlaces.length === 0) {
+      alert('테마에 포함할 식당을 최소 하나 이상 선택해주세요.');
+      return;
+    }
 
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      let imageUrl = thumbnail.preview;
+
+      // 1. 이미지 업로드 (새 파일인 경우)
+      if (thumbnail.file) {
+        const { uploadService } = await import('@/services/uploadService');
+        const uploadRes = await uploadService.uploadImage(thumbnail.file);
+        if (uploadRes.success) {
+          imageUrl = uploadRes.url;
+        } else {
+          throw new Error(uploadRes.error || '이미지 업로드에 실패했습니다.');
+        }
+      }
+
+      // 2. 테마 저장
+      const themeData = {
+        guideId: user?.id,
+        title,
+        description,
+        thumbnail: imageUrl,
+        tags,
+        postIds: selectedPlaces.map(p => p.id)
+      };
+
+      const res = await postService.createTheme(themeData);
+      if (res.success) {
+        alert(isEditMode ? '테마가 수정되었습니다!' : '새 테마가 생성되었습니다!');
+        navigate('/my/themes');
+      } else {
+        alert(res.error || '테마 저장 중 오류가 발생했습니다.');
+      }
+    } catch (err: any) {
+      alert(err.message || '오류가 발생했습니다.');
+    } finally {
       setIsLoading(false);
-      alert(isEditMode ? '테마가 수정되었습니다!' : '새 테마가 생성되었습니다!');
-      navigate('/my/themes');
-    }, 1000);
+    }
   };
 
   return (

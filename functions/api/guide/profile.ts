@@ -30,6 +30,16 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       ORDER BY p.created_at DESC
     `).bind(id).all();
 
+    // 3. 가이드가 생성한 테마 조회
+    const { results: themes } = await DB.prepare(`
+      SELECT t.*, COUNT(tp.post_id) as post_count
+      FROM themes t
+      LEFT JOIN theme_posts tp ON t.id = tp.theme_id
+      WHERE t.guide_id = ?
+      GROUP BY t.id
+      ORDER BY t.created_at DESC
+    `).bind(id).all();
+
     // JSON 필드 파싱 헬퍼 함수
     const safeParse = (str: any) => {
       if (typeof str !== 'string') return Array.isArray(str) ? str : [];
@@ -66,6 +76,11 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       .filter(p => p.topRank !== null)
       .sort((a, b) => a.topRank! - b.topRank!);
 
+    const formattedThemes = themes.map((t: any) => ({
+      ...t,
+      keywords: safeParse(t.keywords)
+    }));
+
     const formattedUser = {
       id: user.id,
       email: user.email,
@@ -83,7 +98,8 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       data: {
         ...formattedUser,
         posts: formattedPosts,
-        top20Posts: top20Posts
+        top20Posts: top20Posts,
+        themes: formattedThemes
       }
     }), {
       headers: { 'Content-Type': 'application/json' }

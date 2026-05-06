@@ -37,8 +37,19 @@ CREATE TABLE IF NOT EXISTS themes (
   title TEXT NOT NULL,
   description TEXT,
   image_url TEXT,
+  keywords TEXT, -- JSON array string
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (guide_id) REFERENCES users(id)
+);
+
+-- Theme Posts Table (Many-to-Many)
+CREATE TABLE IF NOT EXISTS theme_posts (
+  theme_id TEXT NOT NULL,
+  post_id TEXT NOT NULL,
+  sort_order INTEGER DEFAULT 0,
+  PRIMARY KEY (theme_id, post_id),
+  FOREIGN KEY (theme_id) REFERENCES themes(id),
+  FOREIGN KEY (post_id) REFERENCES posts(id)
 );
 
 -- Follows Table

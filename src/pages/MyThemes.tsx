@@ -1,14 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, MoreVertical, Trash2, Edit2, LayoutGrid } from 'lucide-react';
-import { MOCK_COLLECTIONS } from '@/data/mock';
+import { useAuthStore } from '@/store/useAuthStore';
+import { postService } from '@/services/postService';
 
 export function MyThemes() {
   const navigate = useNavigate();
-  // 사용자의 테마라고 가정하고 전체 또는 일부를 가져옴
-  // 여기서는 userId가 'g1'인 것들을 내 테마로 가정하거나 전체를 사용 (Mock)
-  const [themes, setThemes] = useState(MOCK_COLLECTIONS.filter(c => c.userId === 'g1'));
+  const user = useAuthStore((state) => state.user);
+  const [themes, setThemes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    fetchThemes();
+  }, [user]);
+
+  const fetchThemes = async () => {
+    if (!user) return;
+    setIsLoading(true);
+    try {
+      const res = await postService.getThemes(user.id);
+      if (res.success) {
+        setThemes(res.data || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch themes:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -68,7 +92,12 @@ export function MyThemes() {
             내 테마 목록 ({themes.length})
           </h3>
 
-          {themes.length === 0 ? (
+          {isLoading ? (
+            <div className="py-20 flex flex-col items-center gap-4">
+              <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
+              <p className="text-sm text-gray-500 font-bold uppercase tracking-widest">Loading Themes</p>
+            </div>
+          ) : themes.length === 0 ? (
             <div className="py-12 text-center text-gray-500 text-sm">
               생성된 테마가 없습니다.
             </div>
@@ -80,7 +109,7 @@ export function MyThemes() {
                 className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden active:scale-[0.98] transition-transform cursor-pointer relative"
               >
                 <div className="relative h-32 w-full">
-                  <img src={theme.thumbnail} alt={theme.title} className="w-full h-full object-cover" />
+                  <img src={theme.image_url} alt={theme.title} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                   
                   {/* Menu Button */}
@@ -124,7 +153,7 @@ export function MyThemes() {
                 
                 <div className="p-4 bg-[#0a0a0a] flex items-center justify-between">
                   <div className="flex gap-2">
-                    {theme.keywords?.slice(0, 2).map((keyword, idx) => (
+                    {theme.keywords?.slice(0, 2).map((keyword: string, idx: number) => (
                       <span key={idx} className="px-2 py-1 bg-primary-500/10 text-primary-500 text-[10px] font-bold rounded-lg border border-primary-500/20">
                         #{keyword}
                       </span>
@@ -136,7 +165,7 @@ export function MyThemes() {
                     )}
                   </div>
                   <span className="text-xs font-black text-gray-500">
-                    포함된 식당 <span className="text-white">{theme.places.length}</span>곳
+                    포함된 식당 <span className="text-white">{theme.post_count}</span>곳
                   </span>
                 </div>
               </div>
