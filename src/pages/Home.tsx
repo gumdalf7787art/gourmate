@@ -305,7 +305,7 @@ export function Home() {
                         </span>
                         <div className="flex items-center gap-1 px-2 py-0.5 bg-black/50 backdrop-blur-md rounded-md border border-white/10">
                           <Heart className="w-2.5 h-2.5 text-primary-500 fill-primary-500" />
-                          <span className="text-[10px] font-black text-white">{post.likes.toLocaleString()}</span>
+                          <span className="text-[10px] font-black text-white">{(post.likes || 0).toLocaleString()}</span>
                         </div>
                       </div>
                     </div>

@@ -193,7 +193,7 @@ export function GuidePostList() {
                       </span>
                       <div className="flex items-center gap-1 text-primary-500">
                         <Heart className="w-2.5 h-2.5 fill-primary-500" />
-                        <span className="text-[10px] font-black">{post.likes.toLocaleString()}</span>
+                        <span className="text-[10px] font-black">{(post.likes || 0).toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
