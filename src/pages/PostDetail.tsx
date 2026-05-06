@@ -233,6 +233,11 @@ export function PostDetail() {
             <span className="px-2 py-0.5 bg-primary-500 text-white text-[9px] font-black rounded-md uppercase tracking-tight">
               {post.place.category}
             </span>
+            {post.isPaid && (
+              <span className="px-2 py-0.5 bg-green-500/10 text-green-500 text-[9px] font-black rounded-md border border-green-500/20 uppercase tracking-tight flex items-center gap-1">
+                <CheckCircle2 className="w-2.5 h-2.5" /> 내돈내산
+              </span>
+            )}
             <div className="flex items-center gap-1 ml-auto">
               <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
               <span className="text-sm font-black text-white">{post.rating.toFixed(1)}</span>
@@ -355,9 +360,17 @@ export function PostDetail() {
           </div>
 
           <div className="bg-[#111] rounded-2xl p-6 border border-white/30 relative shadow-2xl">
-            <div className="absolute -top-3 left-6 bg-black px-2 flex items-center gap-1">
-              <Flame className="w-4 h-4 text-primary-500" />
-              <span className="text-primary-500 font-black text-xs uppercase tracking-widest">한줄평</span>
+            <div className="absolute -top-3 left-6 bg-black px-2 flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <Flame className="w-4 h-4 text-primary-500" />
+                <span className="text-primary-500 font-black text-xs uppercase tracking-widest">한줄평</span>
+              </div>
+              {post.isPaid && (
+                <div className="flex items-center gap-1 px-1.5 py-0.5 bg-green-500/10 rounded border border-green-500/30">
+                  <CheckCircle2 className="w-2.5 h-2.5 text-green-500" />
+                  <span className="text-green-500 font-black text-[8px] uppercase tracking-tighter">Verified Stay</span>
+                </div>
+              )}
             </div>
             <p className="text-[15px] text-gray-200 leading-relaxed font-light whitespace-pre-wrap pt-2 italic">
               "{post.review || post.content}"

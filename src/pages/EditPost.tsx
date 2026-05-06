@@ -29,6 +29,7 @@ export function EditPost() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [menuItems, setMenuItems] = useState<{ name: string; price: string; isSignature: boolean }[]>([]);
+  const [isPaid, setIsPaid] = useState(false);
 
   // 스토리 에디터 관련 상태
   const [editorMode, setEditorMode] = useState<'simple' | 'story'>('simple');
@@ -60,6 +61,7 @@ export function EditPost() {
           setTags(foundPost.tags || []);
           setMenuItems(foundPost.menu_items || []);
           setEditorMode(foundPost.editor_mode || 'simple');
+          setIsPaid(foundPost.isPaid || false);
           
           if (foundPost.story_blocks && foundPost.story_blocks.length > 0) {
             setStoryBlocks(foundPost.story_blocks);
@@ -262,7 +264,8 @@ export function EditPost() {
         menu_items: menuItems,
         latitude: post?.place?.latitude || post?.latitude || null,
         longitude: post?.place?.longitude || post?.longitude || null,
-        phone: post?.place?.phone || post?.phone || null
+        phone: post?.place?.phone || post?.phone || null,
+        is_paid: isPaid
       };
 
       console.log('Updating post with data:', updateData);
@@ -411,6 +414,35 @@ export function EditPost() {
               className="w-full h-24 bg-[#141414] border border-white/30 rounded-2xl p-4 text-white resize-none"
               placeholder="예: 웨이팅이 길지만 그럴 가치가 충분합니다..."
             />
+          </div>
+
+          {/* 내돈내산 Toggle */}
+          <div className="pt-2">
+            <button
+              onClick={() => setIsPaid(!isPaid)}
+              className={`w-full flex items-center justify-between p-5 rounded-2xl border transition-all duration-500 ${
+                isPaid 
+                  ? 'bg-primary-500/10 border-primary-500 shadow-[0_0_20px_rgba(249,115,22,0.15)]' 
+                  : 'bg-[#111] border-white/30 text-gray-500'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 ${
+                  isPaid ? 'bg-primary-500 text-white rotate-[360deg]' : 'bg-white/5 text-gray-700'
+                }`}>
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <p className={`text-sm font-black tracking-tight ${isPaid ? 'text-white' : 'text-gray-500'}`}>
+                    내돈내산 리뷰인가요?
+                  </p>
+                  <p className="text-[10px] font-medium opacity-60">직접 결제하고 이용한 솔직한 후기임을 인증합니다.</p>
+                </div>
+              </div>
+              <div className={`w-12 h-6 rounded-full relative transition-all duration-500 ${isPaid ? 'bg-primary-500' : 'bg-white/10'}`}>
+                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-500 ${isPaid ? 'left-7 shadow-lg' : 'left-1'}`} />
+              </div>
+            </button>
           </div>
 
           {/* Editor Mode */}

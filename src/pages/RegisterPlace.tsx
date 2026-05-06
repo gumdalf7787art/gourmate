@@ -29,6 +29,7 @@ export function RegisterPlace() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [menuItems, setMenuItems] = useState<{ name: string; price: string; isSignature: boolean }[]>([]);
+  const [isPaid, setIsPaid] = useState(false);
 
   // 스토리 에디터 관련 상태
   const [editorMode, setEditorMode] = useState<'simple' | 'story'>('simple');
@@ -285,7 +286,8 @@ export function RegisterPlace() {
         menu_items: menuItems,
         latitude: place.y,
         longitude: place.x,
-        phone: place.phone || ''
+        phone: place.phone || '',
+        is_paid: isPaid
       };
 
       // 4. API 호출
@@ -573,6 +575,35 @@ export function RegisterPlace() {
               placeholder="예: 웨이팅이 길지만 그럴 가치가 충분합니다..."
               className="w-full h-24 bg-[#141414] border border-white/30 rounded-2xl p-4 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-none transition-all"
             ></textarea>
+          </div>
+
+          {/* 내돈내산 Toggle */}
+          <div className="pt-2">
+            <button
+              onClick={() => setIsPaid(!isPaid)}
+              className={`w-full flex items-center justify-between p-5 rounded-2xl border transition-all duration-500 ${
+                isPaid 
+                  ? 'bg-primary-500/10 border-primary-500 shadow-[0_0_20px_rgba(249,115,22,0.15)]' 
+                  : 'bg-[#111] border-white/30 text-gray-500'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 ${
+                  isPaid ? 'bg-primary-500 text-white rotate-[360deg]' : 'bg-white/5 text-gray-700'
+                }`}>
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <p className={`text-sm font-black tracking-tight ${isPaid ? 'text-white' : 'text-gray-500'}`}>
+                    내돈내산 리뷰인가요?
+                  </p>
+                  <p className="text-[10px] font-medium opacity-60">직접 결제하고 이용한 솔직한 후기임을 인증합니다.</p>
+                </div>
+              </div>
+              <div className={`w-12 h-6 rounded-full relative transition-all duration-500 ${isPaid ? 'bg-primary-500' : 'bg-white/10'}`}>
+                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-500 ${isPaid ? 'left-7 shadow-lg' : 'left-1'}`} />
+              </div>
+            </button>
           </div>
 
           {/* Editor Mode Tabs */}
