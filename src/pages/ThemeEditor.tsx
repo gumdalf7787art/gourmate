@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Image as ImageIcon, X, Plus, Hash, Type, MapPin, Trash2 } from 'lucide-react';
-import { MOCK_COLLECTIONS, MOCK_POSTS } from '@/data/mock';
+import { MOCK_COLLECTIONS } from '@/data/mock';
+import { postService } from '@/services/postService';
+import { useAuthStore } from '@/store/useAuthStore';
 import type { Place } from '@/data/mock';
 
 export function ThemeEditor() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
+  const user = useAuthStore(state => state.user);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -21,10 +24,26 @@ export function ThemeEditor() {
   const [tagInput, setTagInput] = useState('');
   
   // 선택된 식당 (포스팅)
-  const [selectedPlaces, setSelectedPlaces] = useState<Place[]>([]);
+  const [selectedPlaces, setSelectedPlaces] = useState<any[]>([]);
+  
+  // 내 포스팅 목록
+  const [myPosts, setMyPosts] = useState<any[]>([]);
+  const [isPostsLoading, setIsPostsLoading] = useState(true);
 
-  // 내 포스팅 목록 (실제로는 API에서 가져오겠지만, 여기서는 전체 Mock Posts를 사용)
-  const myPosts = MOCK_POSTS;
+  const fetchUserPosts = async () => {
+    if (!user) return;
+    setIsPostsLoading(true);
+    try {
+      const res = await postService.getGuideProfile(user.id);
+      if (res.success) {
+        setMyPosts(res.data.posts || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch user posts:', err);
+    } finally {
+      setIsPostsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (isEditMode) {
@@ -40,7 +59,8 @@ export function ThemeEditor() {
         navigate(-1);
       }
     }
-  }, [id, isEditMode, navigate]);
+    fetchUserPosts();
+  }, [id, isEditMode, navigate, user]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -270,38 +290,55 @@ export function ThemeEditor() {
           </div>
 
           <div className="grid gap-3">
-            {myPosts.map(post => {
-              const isSelected = selectedPlaces.some(p => p.id === post.place.id);
-              return (
-                <div 
-                  key={post.id}
-                  onClick={() => togglePlaceSelection(post.place)}
-                  className={`flex items-center gap-4 p-3 rounded-2xl border transition-all cursor-pointer ${
-                    isSelected 
-                      ? 'bg-primary-500/10 border-primary-500/50 shadow-[0_0_15px_rgba(249,115,22,0.1)]' 
-                      : 'bg-[#111] border-white/5 hover:border-white/20'
-                  }`}
+            {isPostsLoading ? (
+              <div className="py-10 flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-3 border-primary-500 border-t-transparent rounded-full animate-spin" />
+                <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">Loading Posts</p>
+              </div>
+            ) : myPosts.length === 0 ? (
+              <div className="bg-[#111] border border-dashed border-white/10 rounded-2xl p-10 text-center">
+                <p className="text-sm text-gray-500">작성한 포스팅이 없습니다.<br/>먼저 맛집을 등록해 보세요!</p>
+                <button 
+                  onClick={() => navigate('/register-place')}
+                  className="mt-4 px-4 py-2 bg-primary-500/10 text-primary-500 text-xs font-bold rounded-lg border border-primary-500/20 hover:bg-primary-500 hover:text-white transition-all"
                 >
-                  <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/10">
-                    <img src={post.images[0]} alt={post.place.name} className="w-full h-full object-cover" />
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-bold text-white truncate mb-1">{post.place.name}</h4>
-                    <div className="flex items-center gap-1 text-[11px] text-gray-400">
-                      <MapPin className="w-3 h-3" />
-                      <span className="truncate">{post.place.address}</span>
+                  맛집 등록하러 가기
+                </button>
+              </div>
+            ) : (
+              myPosts.map(post => {
+                const isSelected = selectedPlaces.some(p => p.id === post.place.id);
+                return (
+                  <div 
+                    key={post.id}
+                    onClick={() => togglePlaceSelection(post.place)}
+                    className={`flex items-center gap-4 p-3 rounded-2xl border transition-all cursor-pointer ${
+                      isSelected 
+                        ? 'bg-primary-500/10 border-primary-500/50 shadow-[0_0_15px_rgba(249,115,22,0.1)]' 
+                        : 'bg-[#111] border-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/10">
+                      <img src={post.images[0]} alt={post.place.name} className="w-full h-full object-cover" />
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-bold text-white truncate mb-1">{post.place.name}</h4>
+                      <div className="flex items-center gap-1 text-[11px] text-gray-400">
+                        <MapPin className="w-3 h-3" />
+                        <span className="truncate">{post.place.address}</span>
+                      </div>
+                    </div>
+
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 mr-1 transition-colors ${
+                      isSelected ? 'bg-primary-500 border-primary-500' : 'border-white/20'
+                    }`}>
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-white" />}
                     </div>
                   </div>
-
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 mr-1 transition-colors ${
-                    isSelected ? 'bg-primary-500 border-primary-500' : 'border-white/20'
-                  }`}>
-                    {isSelected && <CheckCircle2 className="w-4 h-4 text-white" />}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </section>
 
