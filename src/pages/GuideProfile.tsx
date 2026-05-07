@@ -58,6 +58,24 @@ export function GuideProfile() {
     });
   }, [guidePosts, activeCategory]);
 
+  const mapPlaces = useMemo(() => {
+    return filteredPosts
+      .filter((p: any) => {
+        const lat = Number(p.place?.latitude);
+        const lng = Number(p.place?.longitude);
+        return lat !== 0 && !isNaN(lat) && lng !== 0 && !isNaN(lng);
+      })
+      .map((p: any) => ({
+        id: `marker-${p.id}-${p.place?.id || 'no-place'}`,
+        postId: p.id,
+        lat: Number(p.place?.latitude),
+        lng: Number(p.place?.longitude),
+        name: p.place?.name,
+        category: p.place?.category,
+        rating: p.rating
+      }));
+  }, [filteredPosts]);
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
@@ -390,21 +408,7 @@ export function GuideProfile() {
           
           <div className="flex-1 relative">
             <KakaoMap 
-              places={filteredPosts
-                .filter((p: any) => {
-                  const lat = Number(p.place?.latitude);
-                  const lng = Number(p.place?.longitude);
-                  return lat !== 0 && !isNaN(lat) && lng !== 0 && !isNaN(lng);
-                })
-                .map((p: any) => ({
-                  id: `marker-${p.id}-${p.place?.id || 'no-place'}`, // Ensure unique ID
-                  postId: p.id,
-                  lat: Number(p.place.latitude),
-                  lng: Number(p.place.longitude),
-                  name: p.place.name,
-                  category: p.place.category,
-                  rating: p.rating
-                }))}
+              places={mapPlaces}
               level={5}
               onSelect={(postId) => navigate(`/post/${postId}`)}
             />
@@ -413,7 +417,10 @@ export function GuideProfile() {
             <div className="absolute bottom-10 left-5 right-5 z-10 pointer-events-none">
                <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl p-4 shadow-2xl">
                  <p className="text-[11px] text-gray-400 font-bold mb-1 uppercase tracking-widest">Map View</p>
-                 <p className="text-sm font-medium text-white">현재 필터링된 맛집 <span className="text-primary-500 font-black">{filteredPosts.length}</span>곳을 지도에서 확인하세요.</p>
+                 <p className="text-sm font-medium text-white">현재 필터링된 맛집 <span className="text-primary-500 font-black">{mapPlaces.length}</span>곳을 지도에서 확인하세요.</p>
+                 {filteredPosts.length > mapPlaces.length && (
+                   <p className="text-[10px] text-red-400 mt-1">* {filteredPosts.length - mapPlaces.length}곳은 위치 정보가 없어 지도에 표시되지 않습니다.</p>
+                 )}
                </div>
             </div>
           </div>
