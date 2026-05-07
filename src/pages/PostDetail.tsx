@@ -812,27 +812,46 @@ export function PostDetail() {
           <section className="py-12 border-b border-white/5">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h3 className="text-xl font-black text-white tracking-tighter">이 집을 리뷰한 다른 가이드</h3>
-                <p className="text-[12px] text-gray-500 font-medium mt-1">서로 다른 시선으로 본 이 식당의 매력</p>
+                <h2 className="text-xl font-black text-white tracking-tighter">이 집을 리뷰한 다른 가이드</h2>
+                <p className="text-[13px] text-gray-500 font-medium mt-1">서로 다른 시선으로 본 이 식당의 매력</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
               {otherGuidePosts.slice(0, 4).map((p) => (
-                <Link to={`/post/${p.id}`} key={p.id} className="group">
-                  <div className="aspect-square rounded-2xl overflow-hidden mb-3 border border-white/10 relative bg-[#111]">
-                    <img src={p.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <Link to={`/post/${p.id}`} key={p.id} className="group cursor-pointer">
+                  <div className="aspect-square w-full rounded-xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
+                    <img src={p.images[0]} alt={p.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
                     <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
                       <div className="flex items-center gap-1 text-white">
                         <Flame className="w-2.5 h-2.5 text-primary-500" />
                         <span className="text-[10px] font-bold">{p.likes || 0}</span>
                       </div>
-                      <span className="text-[10px] text-gray-200 font-bold">{p.guide.nickname}</span>
+                      <span className="text-[9px] text-gray-400 font-medium">{p.guide.nickname}</span>
                     </div>
                   </div>
-                  <p className="text-[13px] text-gray-300 line-clamp-2 leading-relaxed italic opacity-90">
-                    "{p.review || p.content.substring(0, 30)}..."
-                  </p>
+                  <h4 className="text-white text-[13px] font-bold truncate mb-1 group-hover:text-primary-400 transition-colors">{p.place.name}</h4>
+                  
+                  {/* Keywords/Tags */}
+                  <div className="flex flex-wrap gap-1 mb-1.5">
+                    {p.tags?.slice(0, 3).map((tag: string, idx: number) => (
+                      <span key={idx} className="text-[9px] text-primary-500/80 font-medium">#{tag}</span>
+                    ))}
+                  </div>
+
+                  {/* 한줄평 */}
+                  {p.review && (
+                    <p className="text-[10px] text-gray-300 font-medium line-clamp-1 mb-2 italic opacity-80">
+                      "{p.review}"
+                    </p>
+                  )}
+
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
+                    <span className="text-[10px] truncate leading-none">
+                      {p.place.address.split(' ')[0].replace('서울특별시', '서울').replace('부산광역시', '부산').replace('대구광역시', '대구').replace('인천광역시', '인천').replace('광주광역시', '광주').replace('대전광역시', '대전').replace('울산광역시', '울산').replace('세종특별자치시', '세종')} {p.place.address.split(' ')[1]}
+                    </span>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -841,18 +860,18 @@ export function PostDetail() {
 
         {/* 이 집과 비슷한 다른 식당 */}
         {similarPosts.length > 0 && (
-          <section className="py-12 pb-20">
+          <section className="py-12 pb-24">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h3 className="text-xl font-black text-white tracking-tighter">이 집과 비슷한 다른 식당</h3>
-                <p className="text-[12px] text-gray-500 font-medium mt-1">가이드들이 추천하는 비슷한 스타일의 맛집</p>
+                <h2 className="text-xl font-black text-white tracking-tighter">이 집과 비슷한 다른 식당</h2>
+                <p className="text-[13px] text-gray-500 font-medium mt-1">가이드들이 추천하는 비슷한 스타일의 맛집</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
               {similarPosts.map((p) => (
-                <Link to={`/post/${p.id}`} key={p.id} className="group">
-                  <div className="aspect-square rounded-2xl overflow-hidden mb-3 border border-white/10 relative bg-[#111]">
-                    <img src={p.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <Link to={`/post/${p.id}`} key={p.id} className="group cursor-pointer">
+                  <div className="aspect-square w-full rounded-xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
+                    <img src={p.images[0]} alt={p.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
                     <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
                       <div className="flex items-center gap-1 text-white">
@@ -863,10 +882,25 @@ export function PostDetail() {
                     </div>
                   </div>
                   <h4 className="text-white text-[13px] font-bold truncate mb-1 group-hover:text-primary-400 transition-colors">{p.place.name}</h4>
+                  
+                  {/* Keywords/Tags */}
+                  <div className="flex flex-wrap gap-1 mb-1.5">
+                    {p.tags?.slice(0, 3).map((tag: string, idx: number) => (
+                      <span key={idx} className="text-[9px] text-primary-500/80 font-medium">#{tag}</span>
+                    ))}
+                  </div>
+
+                  {/* 한줄평 */}
+                  {p.review && (
+                    <p className="text-[10px] text-gray-300 font-medium line-clamp-1 mb-2 italic opacity-80">
+                      "{p.review}"
+                    </p>
+                  )}
+
                   <div className="flex items-center gap-1 text-gray-500">
                     <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
-                    <span className="text-[10px] truncate">
-                      {p.place.address.split(' ')[0].replace('서울특별시', '서울')} {p.place.address.split(' ')[1]}
+                    <span className="text-[10px] truncate leading-none">
+                      {p.place.address.split(' ')[0].replace('서울특별시', '서울').replace('부산광역시', '부산').replace('대구광역시', '대구').replace('인천광역시', '인천').replace('광주광역시', '광주').replace('대전광역시', '대전').replace('울산광역시', '울산').replace('세종특별자치시', '세종')} {p.place.address.split(' ')[1]}
                     </span>
                   </div>
                 </Link>
