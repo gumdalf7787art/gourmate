@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Settings, Users, Bell, Heart, Map as MapIcon,
@@ -13,14 +13,22 @@ export function MyPage() {
   const { user, logout } = useAuthStore();
   const unreadCount = useNotificationStore((state) => state.unreadCount);
   const navigate = useNavigate();
+  
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login', { replace: true });
   };
 
-  const handleWithdraw = async () => {
+  const handleWithdrawClick = () => {
+    setShowWithdrawModal(true);
+  };
+
+  const executeWithdraw = async () => {
     if (!user) return;
+    setIsWithdrawing(true);
     
     // 탈퇴 처리
     try {
@@ -33,7 +41,10 @@ export function MyPage() {
         alert(res.error || '탈퇴 처리 중 오류가 발생했습니다.');
       }
     } catch (err: any) {
-      alert(err.message || '탈퇴 처리 중 오류가 발생했습니다.');
+      alert('탈퇴 처리 중 오류가 발생했습니다.');
+    } finally {
+      setIsWithdrawing(false);
+      setShowWithdrawModal(false);
     }
   };
 
@@ -63,7 +74,7 @@ export function MyPage() {
         { icon: <Megaphone className="w-5 h-5" />, label: '공지사항', desc: 'GOURMATE의 새로운 소식', link: '/my/notice' },
         { icon: <HelpCircle className="w-5 h-5" />, label: '고객센터', desc: '자주 묻는 질문 및 문의', link: '/my/support' },
         { icon: <LogOut className="w-5 h-5" />, label: '로그아웃', onClick: handleLogout },
-        { icon: <UserX className="w-5 h-5 text-red-500" />, label: '회원탈퇴', onClick: handleWithdraw, textClass: 'text-red-500' },
+        { icon: <UserX className="w-5 h-5 text-red-500" />, label: '회원탈퇴', onClick: handleWithdrawClick, textClass: 'text-red-500' },
       ]
     }
   ];
@@ -167,6 +178,38 @@ export function MyPage() {
           </section>
         ))}
       </div>
+
+      {/* Withdraw Confirm Modal */}
+      {showWithdrawModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#111] border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl flex flex-col items-center text-center">
+            <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
+              <UserX className="w-6 h-6 text-red-500" />
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">정말 탈퇴하시겠습니까?</h3>
+            <p className="text-sm text-gray-400 mb-8 leading-relaxed">
+              탈퇴하시면 작성하신 모든 포스팅, 테마 등<br/>
+              모든 데이터는 삭제되며 복구할 수 없습니다.
+            </p>
+            <div className="flex gap-3 w-full">
+              <button 
+                onClick={() => setShowWithdrawModal(false)}
+                disabled={isWithdrawing}
+                className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl transition-colors disabled:opacity-50"
+              >
+                탈퇴취소
+              </button>
+              <button 
+                onClick={executeWithdraw}
+                disabled={isWithdrawing}
+                className="flex-1 py-3.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-red-500/20 disabled:opacity-50"
+              >
+                {isWithdrawing ? '처리 중...' : '탈퇴진행'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
