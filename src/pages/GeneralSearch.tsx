@@ -41,7 +41,7 @@ export function GeneralSearch() {
     <div className="flex flex-col min-h-screen bg-black pb-24">
       {/* Search Header */}
       <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl px-5 pt-12 pb-4 border-b border-white/5">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 max-w-[1400px] mx-auto w-full">
           <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
             <ArrowLeft className="w-6 h-6" />
           </button>
@@ -64,7 +64,7 @@ export function GeneralSearch() {
       {/* Content Area */}
       <main className="flex-1 p-5 pb-24 overflow-y-auto">
         {!keyword ? (
-          <div className="space-y-10 pt-4">
+          <div className="space-y-10 pt-4 max-w-[1200px] mx-auto">
             {/* Popular Tags */}
             <div>
               <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest mb-5 px-1">실시간 인기 검색어</h3>
@@ -88,7 +88,7 @@ export function GeneralSearch() {
                 <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest">추천 가이드</h3>
                 <Link to="/popular-guides" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</Link>
               </div>
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {MOCK_POSTS.slice(0, 3).map((post: any) => (
                   <div 
                     key={post.guide.id} 
@@ -108,23 +108,9 @@ export function GeneralSearch() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors truncate mb-0.5">{post.guide.nickname}</p>
-                        {post.guide.bio && (
-                          <p className="text-[10px] text-gray-500 font-medium line-clamp-1 italic mb-0.5 opacity-70">
-                            "{post.guide.bio}"
-                          </p>
-                        )}
-                        <p className="text-[10px] text-gray-500 font-medium">신뢰지수 {post.guide.trustScore} • 포스트 24개</p>
+                        <p className="text-[10px] text-gray-500 font-medium">신뢰지수 {post.guide.trustScore}</p>
                       </div>
                     </div>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        alert(`${post.guide.nickname}님을 팔로우했습니다.`);
-                      }}
-                      className="px-4 py-2 bg-white/5 border border-white/10 text-white text-[11px] font-black rounded-xl hover:bg-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter"
-                    >
-                      팔로우
-                    </button>
                   </div>
                 ))}
               </div>
@@ -136,9 +122,9 @@ export function GeneralSearch() {
                 <h3 className="text-xs font-black text-gray-500 uppercase tracking-widest">추천 테마</h3>
                 <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</span>
               </div>
-              <div className="grid grid-cols-1 gap-2.5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {MOCK_COLLECTIONS.slice(0, 3).map((collection: any) => (
-                  <div key={collection.id} className="bg-[#111] border border-white/10 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24">
+                  <div key={collection.id} onClick={() => navigate(`/theme/${collection.id}`)} className="bg-[#111] border border-white/10 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24 cursor-pointer">
                     <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
                       <img src={collection.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                       <div className="absolute inset-0 bg-black/10"></div>
@@ -148,16 +134,15 @@ export function GeneralSearch() {
                         <h4 className="text-[13px] font-bold text-white group-hover:text-primary-400 transition-colors pr-6 leading-tight line-clamp-2">
                           {collection.title}
                         </h4>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[9px] text-gray-500 font-medium">{collection.userId}</span>
-                          <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
-                            {collection.places.length} SPOTS
-                          </span>
-                        </div>
                       </div>
-                      <div className="flex items-center gap-1 text-primary-500">
-                        <Heart className="w-2.5 h-2.5 fill-primary-500" />
-                        <span className="text-[10px] font-black">{collection.likes?.toLocaleString()}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
+                          {collection.places.length} SPOTS
+                        </span>
+                        <div className="flex items-center gap-1 text-primary-500">
+                          <Heart className="w-2.5 h-2.5 fill-primary-500" />
+                          <span className="text-[10px] font-black">{collection.likes?.toLocaleString()}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -166,7 +151,7 @@ export function GeneralSearch() {
             </div>
           </div>
         ) : (
-          <div className="space-y-10 pt-4">
+          <div className="space-y-12 pt-4 max-w-[1400px] mx-auto">
             {/* Section: Restaurants */}
             <section>
               <div className="flex items-center justify-between mb-5 px-1">
@@ -176,182 +161,128 @@ export function GeneralSearch() {
                 </h3>
                 <span className="text-[10px] font-bold text-primary-500">전체 {Array.from(new Set(filteredPosts.map(p => p.place.id))).length}</span>
               </div>
-              <div className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {Array.from(new Set(filteredPosts.map(p => p.place.id))).map(placeId => {
                   const placePosts = filteredPosts.filter(p => p.place.id === placeId);
                   const place = placePosts[0].place;
                   
                   return (
-                    <div key={placeId} className="bg-[#111] border border-white/20 rounded-[24px] overflow-hidden shadow-2xl">
-                      {/* Restaurant Header */}
-                      <div 
-                        onClick={() => navigate(`/post/${placePosts[0].id}`)}
-                        className="p-5 flex items-center gap-4 border-b border-white/5 active:bg-white/5 transition-colors cursor-pointer"
-                      >
-                        <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 border border-white/10 shadow-lg">
-                          <img src={placePosts[0].images[0]} className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <span className="text-[9px] font-black text-primary-500 uppercase tracking-tighter px-1.5 py-0.5 bg-primary-500/10 rounded">
-                              {place.category}
-                            </span>
-                          </div>
-                          <h4 className="text-lg font-black text-white truncate leading-tight">{place.name}</h4>
-                          <p className="text-[11px] text-gray-500 truncate mt-0.5 font-medium">{place.address}</p>
+                    <div 
+                      key={placeId} 
+                      onClick={() => navigate(`/post/${placePosts[0].id}`)}
+                      className="bg-[#111] border border-white/20 rounded-[24px] overflow-hidden shadow-2xl flex flex-col cursor-pointer group hover:border-primary-500/30 transition-all"
+                    >
+                      <div className="aspect-square relative overflow-hidden">
+                        <img src={placePosts[0].images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute top-3 left-3">
+                          <span className="text-[9px] font-black text-white uppercase tracking-tighter px-1.5 py-0.5 bg-primary-500 rounded-md shadow-lg">
+                            {place.category}
+                          </span>
                         </div>
                       </div>
-
-                      {/* Guides Recommended Section */}
-                      <div className="bg-[#0c0c0c] p-4">
-                        <p className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] mb-3 px-1">Recommended By</p>
-                        <div className="space-y-3">
-                          {placePosts.map(post => (
-                            <div 
-                              key={post.id} 
-                              onClick={() => navigate(`/post/${post.id}`)}
-                              className="flex items-center gap-3 p-2.5 rounded-xl border border-white/5 bg-black/40 hover:border-primary-500/30 transition-all cursor-pointer group"
-                            >
-                              <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 shrink-0">
-                                <img src={post.guide.profileImageUrl} alt="" className="w-full h-full object-cover" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between mb-0.5">
-                                  <span className="text-[11px] font-bold text-white group-hover:text-primary-400 transition-colors">{post.guide.nickname}</span>
-                                  <div className="flex items-center gap-1">
-                                    <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
-                                    <span className="text-[10px] font-black text-white">{post.rating}</span>
-                                  </div>
-                                </div>
-                                <p className="text-[11px] text-gray-400 line-clamp-1 italic font-light">
-                                  "{post.content.split('.')[0]}..."
-                                </p>
-                              </div>
-                            </div>
-                          ))}
+                      <div className="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h4 className="text-[15px] font-black text-white truncate leading-tight mb-1 group-hover:text-primary-500 transition-colors">{place.name}</h4>
+                          <p className="text-[11px] text-gray-500 truncate font-medium">{place.address.split(' ').slice(0, 2).join(' ')}</p>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
+                          <div className="flex -space-x-2">
+                            {placePosts.slice(0, 3).map((p, i) => (
+                              <img key={i} src={p.guide.profileImageUrl} className="w-5 h-5 rounded-full border border-black object-cover" />
+                            ))}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
+                            <span className="text-[10px] font-black text-white">{placePosts[0].rating}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   );
                 })}
-
-                {filteredPosts.length === 0 && (
-                  <div className="py-12 flex flex-col items-center justify-center opacity-30">
-                    <MapPin className="w-12 h-12 mb-3" />
-                    <p className="text-sm font-medium">'{keyword}' 검색 결과가 없습니다.</p>
-                  </div>
-                )}
               </div>
+              {filteredPosts.length === 0 && (
+                <div className="py-12 flex flex-col items-center justify-center opacity-30">
+                  <MapPin className="w-12 h-12 mb-3" />
+                  <p className="text-sm font-medium">'{keyword}' 검색 결과가 없습니다.</p>
+                </div>
+              )}
             </section>
 
             {/* Section: Menus */}
             <section>
-              <div className="flex items-center justify-between mb-4 px-1">
+              <div className="flex items-center justify-between mb-5 px-1">
                 <h3 className="text-sm font-black text-white flex items-center gap-2">
                   <Utensils className="w-4 h-4 text-primary-500" />
                   메뉴 / 후기
                 </h3>
                 <button className="text-[10px] font-bold text-gray-500 hover:text-primary-500 transition-colors">더보기</button>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                {filteredPosts.slice(0, 4).map((post: any) => (
-                  <div key={post.id} onClick={() => navigate(`/post/${post.id}`)} className="relative aspect-square rounded-2xl overflow-hidden border border-white/5 cursor-pointer group">
-                    <img src={post.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                    <div className="absolute bottom-2 left-3 right-3">
-                      <p className="text-[11px] font-bold text-white truncate">{post.place.name}</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filteredPosts.slice(0, 8).map((post: any) => (
+                  <div 
+                    key={post.id} 
+                    onClick={() => navigate(`/post/${post.id}`)} 
+                    className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden cursor-pointer group hover:border-primary-500/30 transition-all flex flex-col"
+                  >
+                    <div className="aspect-square relative overflow-hidden">
+                      <img src={post.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                      <div className="absolute bottom-2 left-3 right-3">
+                        <p className="text-[10px] font-black text-white truncate opacity-80">{post.place.name}</p>
+                      </div>
+                    </div>
+                    <div className="p-3">
+                      <h4 className="text-[13px] font-bold text-white truncate mb-1 group-hover:text-primary-500 transition-colors">
+                        {post.menu_items?.[0]?.name || post.place.name}
+                      </h4>
+                      <p className="text-[11px] text-gray-500 leading-snug line-clamp-2 font-medium italic opacity-80">
+                        "{post.review || post.content}"
+                      </p>
                     </div>
                   </div>
                 ))}
               </div>
-              {filteredPosts.length === 0 && (
-                <p className="text-xs text-gray-600 px-1 italic mt-2">검색 결과가 없습니다.</p>
-              )}
             </section>
 
-            {/* Section: Themes (Collections) */}
-            <section>
-              <div className="flex items-center justify-between mb-4 px-1">
-                <h3 className="text-sm font-black text-white flex items-center gap-2">
+            {/* Section: Themes & Guides */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <section>
+                <h3 className="text-sm font-black text-white flex items-center gap-2 mb-5 px-1">
                   <Hash className="w-4 h-4 text-primary-500" />
                   테마 큐레이션
                 </h3>
-                <Link to="/popular-guides" className="text-[10px] font-bold text-gray-500 hover:text-primary-500 transition-colors">더보기</Link>
-              </div>
-              <div className="space-y-2.5">
-                {filteredCollections.map(collection => (
-                  <div key={collection.id} onClick={() => navigate(`/theme/${collection.id}`)} className="bg-[#111] border border-white/10 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24 cursor-pointer">
-                    <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
-                      <img src={collection.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                      <div className="absolute inset-0 bg-black/10"></div>
-                    </div>
-                    <div className="flex-1 p-3 flex flex-col justify-between">
-                      <div>
-                        <p className="text-[13px] font-bold text-white truncate group-hover:text-primary-400 transition-colors mb-1">{collection.title}</p>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[9px] text-gray-500">{collection.guide.nickname}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase w-fit">
-                          Theme
-                        </span>
-                        <div className="flex items-center gap-1 text-primary-500">
-                          <Heart className="w-2 h-2 fill-primary-500" />
-                          <span className="text-[9px] font-black">{collection.likes || 0}</span>
-                        </div>
+                <div className="space-y-3">
+                  {filteredCollections.slice(0, 4).map(collection => (
+                    <div key={collection.id} onClick={() => navigate(`/theme/${collection.id}`)} className="bg-[#111] border border-white/10 rounded-xl overflow-hidden group hover:border-primary-500/30 transition-all flex h-20 cursor-pointer">
+                      <img src={collection.imageUrl} className="w-20 h-full object-cover flex-shrink-0" />
+                      <div className="flex-1 p-3 flex flex-col justify-center">
+                        <p className="text-[12px] font-bold text-white truncate group-hover:text-primary-400 transition-colors">{collection.title}</p>
+                        <p className="text-[9px] text-gray-500 mt-1">{collection.guide.nickname}</p>
                       </div>
                     </div>
-                  </div>
-                ))}
-                {filteredCollections.length === 0 && (
-                  <p className="text-xs text-gray-600 px-1 italic">'{keyword}' 키워드를 포함한 테마가 없습니다.</p>
-                )}
-              </div>
-            </section>
+                  ))}
+                </div>
+              </section>
 
-            {/* Section: Guides */}
-            <section>
-              <div className="flex items-center justify-between mb-4 px-1">
-                <h3 className="text-sm font-black text-white flex items-center gap-2">
+              <section>
+                <h3 className="text-sm font-black text-white flex items-center gap-2 mb-5 px-1">
                   <User className="w-4 h-4 text-primary-500" />
                   가이드
                 </h3>
-                <Link to="/popular-guides" className="text-[10px] font-bold text-primary-500 hover:text-primary-400 transition-colors">더보기</Link>
-              </div>
-              <div className="space-y-3">
-                {filteredGuides.map((guide: any) => (
-                  <div 
-                    key={guide.id} 
-                    onClick={() => navigate(`/guide/${guide.id}`)}
-                    className="flex items-center justify-between p-4 bg-[#0c0c0c] border border-white/5 rounded-2xl group cursor-pointer hover:border-primary-500/20 transition-all"
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="relative flex-shrink-0">
-                        <img src={guide.profileImageUrl} alt="" className="w-10 h-10 rounded-full object-cover border border-white/10" />
-                        {guide.trustScore > 90 && (
-                          <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                            <BadgeCheck className="w-3.5 h-3.5 text-primary-500" />
-                          </div>
-                        )}
-                      </div>
+                <div className="space-y-3">
+                  {filteredGuides.slice(0, 4).map((guide: any) => (
+                    <div key={guide.id} onClick={() => navigate(`/guide/${guide.id}`)} className="flex items-center gap-3 p-3 bg-[#111] border border-white/5 rounded-2xl group cursor-pointer hover:border-primary-500/20 transition-all">
+                      <img src={guide.profileImageUrl} className="w-10 h-10 rounded-full object-cover border border-white/10" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors truncate mb-0.5">{guide.nickname}</p>
-                        {guide.bio && (
-                          <p className="text-[10px] text-gray-500 font-medium line-clamp-1 italic mb-0.5 opacity-70">
-                            "{guide.bio}"
-                          </p>
-                        )}
-                        <p className="text-[10px] text-gray-500 font-medium">신뢰지수 {guide.trustScore}</p>
+                        <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors truncate">{guide.nickname}</p>
+                        <p className="text-[10px] text-gray-500">신뢰지수 {guide.trustScore}</p>
                       </div>
                     </div>
-                  </div>
-                ))}
-                {filteredGuides.length === 0 && (
-                  <p className="text-xs text-gray-600 px-1 italic">'{keyword}' 검색 결과가 없습니다.</p>
-                )}
-              </div>
-            </section>
+                  ))}
+                </div>
+              </section>
+            </div>
           </div>
         )}
       </main>
