@@ -267,48 +267,67 @@ export function Home() {
           <Link to="/popular-guides" className="text-[12px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-5">
-          {popularGuides.map((guide) => (
-            <div key={guide.id} className="flex items-center justify-between p-5 bg-[#111] border border-white/10 rounded-[28px] group hover:border-primary-500/30 transition-all shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-5">
+          {popularGuides.slice(0, 4).map((guide) => (
+            <div key={guide.id} className="flex flex-col p-6 bg-[#111] border border-white/10 rounded-[32px] group hover:border-primary-500/30 transition-all shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
               
-              <Link to={`/guide/${guide.id}`} className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="relative">
-                  <div className="w-14 h-14 rounded-full p-1 bg-gradient-to-tr from-primary-500 to-orange-400 shadow-xl group-hover:scale-105 transition-transform duration-500">
-                    <img src={guide.profileImageUrl} alt="" className="w-full h-full rounded-full object-cover border-2 border-black" />
-                  </div>
-                  {guide.trustScore > 90 && (
-                    <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-1 border border-white/20 shadow-lg">
-                      <BadgeCheck className="w-4 h-4 text-primary-500" />
+              <div className="flex items-start justify-between mb-5">
+                <Link to={`/guide/${guide.id}`} className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-primary-500 to-orange-400 shadow-xl group-hover:scale-105 transition-transform duration-500">
+                      <img src={guide.profileImageUrl} alt="" className="w-full h-full rounded-full object-cover border-2 border-black" />
                     </div>
-                  )}
+                    {guide.trustScore > 90 && (
+                      <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-1 border border-white/20 shadow-lg">
+                        <BadgeCheck className="w-4 h-4 text-primary-500" />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <p className="text-lg font-black text-white group-hover:text-primary-400 transition-colors tracking-tight">{guide.nickname}</p>
+                      <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[10px] font-black rounded uppercase">Lv.{Math.floor(guide.trustScore / 10)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">신뢰지수</span>
+                        <span className="text-[12px] text-white font-black">{guide.trustScore}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+                <button className="px-5 py-2 bg-white text-black text-[12px] font-black rounded-xl hover:bg-primary-500 hover:text-white transition-all uppercase tracking-tighter shadow-xl active:scale-90">
+                  팔로우
+                </button>
+              </div>
+
+              {guide.bio && (
+                <div className="mb-6 relative">
+                  <p className="text-[13px] text-gray-400 font-medium line-clamp-2 italic leading-relaxed pl-4 border-l-2 border-primary-500/30">
+                    "{guide.bio}"
+                  </p>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <p className="text-[16px] font-black text-white group-hover:text-primary-400 transition-colors truncate tracking-tight">{guide.nickname}</p>
-                    <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[9px] font-black rounded uppercase">Lv.{Math.floor(guide.trustScore / 10)}</span>
-                  </div>
-                  {guide.bio && (
-                    <p className="text-[11px] text-gray-500 font-medium line-clamp-1 italic mb-2 opacity-80">
-                      "{guide.bio}"
-                    </p>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1">
-                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">신뢰도</span>
-                      <span className="text-[11px] text-white font-black">{guide.trustScore}</span>
-                    </div>
-                    <span className="w-1 h-1 bg-gray-800 rounded-full"></span>
-                    <div className="flex items-center gap-1">
-                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">포스트</span>
-                      <span className="text-[11px] text-white font-black">{guide.postCount || 0}</span>
-                    </div>
-                  </div>
+              )}
+
+              <div className="grid grid-cols-4 gap-2 pt-5 border-t border-white/5">
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter mb-1">포스트</span>
+                  <span className="text-[14px] text-white font-black">{guide.postCount || 0}</span>
                 </div>
-              </Link>
-              <button className="ml-4 px-5 py-2 bg-white text-black text-[11px] font-black rounded-xl hover:bg-primary-500 hover:text-white transition-all uppercase tracking-tighter shadow-xl active:scale-90">
-                팔로우
-              </button>
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter mb-1">팔로워</span>
+                  <span className="text-[14px] text-white font-black">{(guide.followers || 0).toLocaleString()}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter mb-1">좋아요</span>
+                  <span className="text-[14px] text-white font-black">{(guide.likes || 0).toLocaleString()}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter mb-1">테마</span>
+                  <span className="text-[14px] text-white font-black">{guide.themeCount || 0}</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
