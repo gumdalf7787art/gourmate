@@ -32,8 +32,8 @@ export function MyPage() {
       } else {
         alert(res.error || '탈퇴 처리 중 오류가 발생했습니다.');
       }
-    } catch (err) {
-      alert('탈퇴 처리 중 오류가 발생했습니다.');
+    } catch (err: any) {
+      alert(err.message || '탈퇴 처리 중 오류가 발생했습니다.');
     }
   };
 
