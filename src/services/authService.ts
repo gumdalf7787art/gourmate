@@ -28,4 +28,11 @@ export const authService = {
       body: JSON.stringify(data),
     });
   },
+
+  async withdraw(userId: string) {
+    return apiFetch('/user/withdraw', {
+      method: 'POST',
+      body: JSON.stringify({ userId }),
+    });
+  },
 };
