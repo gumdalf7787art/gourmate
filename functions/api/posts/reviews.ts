@@ -53,8 +53,8 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
     const id = crypto.randomUUID();
 
     await DB.prepare(`
-      INSERT INTO reviews (id, post_id, user_id, content, parent_id)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO reviews (id, post_id, user_id, content, parent_id, created_at)
+      VALUES (?, ?, ?, ?, ?, DATETIME('now', '+9 hours'))
     `).bind(id, post_id, user_id, content, parent_id || null).run();
 
     // Send notification to post owner
