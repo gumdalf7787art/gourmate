@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, Star, Heart, Map as MapIcon, X, SlidersHorizontal } from 'lucide-react';
+import { postService } from '@/services/postService';
 import { MOCK_POSTS } from '@/data/mock';
 import { KakaoMap } from '@/components/KakaoMap';
 
@@ -10,22 +11,46 @@ export default function PopularRestaurants() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('전체');
   const [showMap, setShowMap] = useState(false);
-  const [sortOrder, setSortOrder] = useState<'likes' | 'rating' | 'latest'>('likes');
+  const [sortOrder, setSortOrder] = useState<'popular' | 'likes' | 'latest'>('popular');
+  const [realPosts, setRealPosts] = useState<any[]>([]);
+  const [displayLimit, setDisplayLimit] = useState(20);
+
+  useEffect(() => {
+    postService.getPosts().then(data => {
+      setRealPosts(data || []);
+    });
+  }, []);
+
+  const allPosts = useMemo(() => {
+    return [...realPosts, ...MOCK_POSTS];
+  }, [realPosts]);
 
   // Filter and Sort Logic
   const filteredPosts = useMemo(() => {
-    let result = MOCK_POSTS.filter(post => post.isTop20); // Only Top 20 / Popular posts
+    let result = allPosts;
 
     if (activeCategory !== '전체') {
-      result = result.filter(post => post.place.category === activeCategory);
+      result = result.filter(post => {
+        if (activeCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place.category === '파인다이닝';
+        if (activeCategory === '가성비') return post.tags?.includes('가성비');
+        return post.place.category === activeCategory;
+      });
     }
 
     return [...result].sort((a, b) => {
-      if (sortOrder === 'likes') return b.likes - a.likes;
-      if (sortOrder === 'rating') return b.rating - a.rating;
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sortOrder === 'popular') {
+        const scoreA = (a.likes || 0) * 1.5 + (a.bookmarks || 0) + (new Date(a.createdAt || a.created_at).getTime() / 1000000000);
+        const scoreB = (b.likes || 0) * 1.5 + (b.bookmarks || 0) + (new Date(b.createdAt || b.created_at).getTime() / 1000000000);
+        return scoreB - scoreA;
+      }
+      if (sortOrder === 'likes') return (b.likes || 0) - (a.likes || 0);
+      return new Date(b.createdAt || b.created_at).getTime() - new Date(a.createdAt || a.created_at).getTime();
     });
-  }, [activeCategory, sortOrder]);
+  }, [allPosts, activeCategory, sortOrder]);
+
+  const displayedPosts = useMemo(() => {
+    return filteredPosts.slice(0, displayLimit);
+  }, [filteredPosts, displayLimit]);
 
   return (
     <div className="min-h-screen bg-black pb-24">
@@ -71,8 +96,8 @@ export default function PopularRestaurants() {
               onChange={(e) => setSortOrder(e.target.value as any)}
               className="appearance-none bg-[#111] text-gray-400 text-[11px] font-bold py-1.5 pl-3 pr-8 rounded-lg border border-white/10 outline-none focus:border-primary-500/50 cursor-pointer"
             >
-              <option value="likes">인기순</option>
-              <option value="rating">평점순</option>
+              <option value="popular">종합 인기순</option>
+              <option value="likes">좋아요순</option>
               <option value="latest">최신순</option>
             </select>
             <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600">
@@ -83,8 +108,8 @@ export default function PopularRestaurants() {
 
         {/* Post Grid */}
         <div className="px-6 grid grid-cols-2 gap-4">
-          {filteredPosts.length > 0 ? (
-            filteredPosts.map((post, idx) => (
+          {displayedPosts.length > 0 ? (
+            displayedPosts.map((post, idx) => (
               <Link 
                 key={post.id} 
                 to={`/post/${post.id}`}
@@ -98,8 +123,8 @@ export default function PopularRestaurants() {
                     {idx + 1}
                   </div>
                   <div className="absolute top-2 right-2 px-1.5 py-0.5 bg-black/40 backdrop-blur-md rounded-md flex items-center gap-1">
-                    <Star className="w-2 h-2 text-yellow-500 fill-yellow-500" />
-                    <span className="text-[9px] font-black text-white">{post.rating}</span>
+                    <Heart className="w-2.5 h-2.5 text-primary-500 fill-primary-500" />
+                    <span className="text-[9px] font-black text-white">{(post.likes || 0).toLocaleString()}</span>
                   </div>
                 </div>
 
@@ -113,17 +138,17 @@ export default function PopularRestaurants() {
                       {post.place.category} · {post.guide.nickname}
                     </p>
                     <p className="text-[11px] text-gray-400 font-medium leading-relaxed line-clamp-2 italic">
-                      "{post.content}"
+                      "{post.review || post.content}"
                     </p>
                   </div>
 
                   <div className="flex items-center justify-between pt-1 border-t border-white/5">
                     <span className="text-[9px] text-gray-600 font-bold">
-                      {post.bookmarks.toLocaleString()} 저장
+                      {(post.bookmarks || 0).toLocaleString()} 저장
                     </span>
                     <div className="flex items-center gap-1 text-primary-500">
                       <Heart className="w-2.5 h-2.5 fill-primary-500" />
-                      <span className="text-[10px] font-black">{post.likes.toLocaleString()}</span>
+                      <span className="text-[10px] font-black">{(post.likes || 0).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -137,6 +162,18 @@ export default function PopularRestaurants() {
             </div>
           )}
         </div>
+
+        {/* Load More Button */}
+        {filteredPosts.length > displayedPosts.length && displayedPosts.length < 40 && (
+          <div className="px-6 mt-8 flex justify-center">
+            <button 
+              onClick={() => setDisplayLimit(prev => Math.min(prev + 20, 40))}
+              className="px-8 py-3 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+            >
+              더보기
+            </button>
+          </div>
+        )}
 
         {/* Bottom Map Button */}
         {filteredPosts.length > 0 && (
