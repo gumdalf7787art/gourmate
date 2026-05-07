@@ -17,7 +17,10 @@ import {
   Utensils,
   LayoutGrid,
   Send,
-  CornerDownRight
+  CornerDownRight,
+  Map as MapIcon,
+  Plus,
+  X
 } from 'lucide-react';
 import { postService } from '@/services/postService';
 import { KakaoMap } from '@/components/KakaoMap';
@@ -36,6 +39,10 @@ export function PostDetail() {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isFollowingGuide, setIsFollowingGuide] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [userMaps, setUserMaps] = useState<any[]>([]);
+  const [newMapName, setNewMapName] = useState('');
+  const [isCreatingMap, setIsCreatingMap] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
@@ -144,6 +151,57 @@ export function PostDetail() {
     } catch (err) {
       setIsFollowingGuide(previousFollowing);
       console.error('Failed to update follow:', err);
+    }
+  };
+
+  const openMapModal = async () => {
+    if (!user) {
+      alert('로그인이 필요한 기능입니다.');
+      navigate('/login');
+      return;
+    }
+    setShowMapModal(true);
+    try {
+      const res = await postService.getUserMaps(user.id);
+      if (res.success) {
+        setUserMaps(res.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch user maps:', err);
+    }
+  };
+
+  const handleAddToMap = async (mapId: string) => {
+    try {
+      const res = await postService.addToMap(mapId, id!);
+      if (res.success) {
+        alert('나의 지도에 추가되었습니다.');
+        setShowMapModal(false);
+      }
+    } catch (err) {
+      console.error('Failed to add to map:', err);
+      alert('추가에 실패했습니다.');
+    }
+  };
+
+  const handleCreateAndAdd = async () => {
+    if (!newMapName.trim()) return;
+    setIsCreatingMap(true);
+    try {
+      const createRes = await postService.createUserMap(user!.id, newMapName.trim());
+      if (createRes.success) {
+        const addRes = await postService.addToMap(createRes.id, id!);
+        if (addRes.success) {
+          alert(`'${newMapName}' 폴더가 생성되고 맛집이 추가되었습니다.`);
+          setNewMapName('');
+          setShowMapModal(false);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to create and add to map:', err);
+      alert('처리에 실패했습니다.');
+    } finally {
+      setIsCreatingMap(false);
     }
   };
 
@@ -373,6 +431,17 @@ export function PostDetail() {
           >
             <Heart className={`w-5 h-5 ${isBookmarked ? 'fill-primary-500' : ''}`} />
             <span className="font-bold">관심등록</span>
+          </button>
+        </div>
+
+        {/* Add to My Map Button */}
+        <div className="mb-8">
+          <button 
+            onClick={openMapModal}
+            className="w-full h-14 bg-white text-black rounded-2xl flex items-center justify-center gap-2 font-black shadow-xl active:scale-95 transition-all"
+          >
+            <MapIcon className="w-5 h-5" />
+            나의 지도에 담기
           </button>
         </div>
 
@@ -725,6 +794,59 @@ export function PostDetail() {
           공유하기
         </button>
       </footer>
+      {/* Map Selection Modal */}
+      {showMapModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-5">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowMapModal(false)} />
+          <div className="relative w-full max-w-sm bg-[#111] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-white/5 flex items-center justify-between">
+              <h3 className="text-lg font-black text-white">나의 지도에 담기</h3>
+              <button onClick={() => setShowMapModal(false)} className="p-2 hover:bg-white/5 rounded-full text-gray-400">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="max-h-[300px] overflow-y-auto p-4 space-y-2 no-scrollbar">
+              {userMaps.map((map) => (
+                <button
+                  key={map.id}
+                  onClick={() => handleAddToMap(map.id)}
+                  className="w-full p-4 bg-white/5 hover:bg-white/10 rounded-2xl flex items-center justify-between transition-all group"
+                >
+                  <div className="flex flex-col items-start">
+                    <span className="text-sm font-bold text-white group-hover:text-primary-500">{map.name}</span>
+                    <span className="text-[10px] text-gray-500">{map.post_count}개의 장소</span>
+                  </div>
+                  <Plus className="w-4 h-4 text-gray-600 group-hover:text-primary-500" />
+                </button>
+              ))}
+              
+              {userMaps.length === 0 && (
+                <p className="text-center py-8 text-gray-500 text-sm">아직 생성된 지도가 없습니다.</p>
+              )}
+            </div>
+            
+            <div className="p-6 bg-black/40 border-t border-white/5">
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={newMapName}
+                  onChange={(e) => setNewMapName(e.target.value)}
+                  placeholder="새 지도 폴더 이름"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-500 transition-all"
+                />
+                <button 
+                  onClick={handleCreateAndAdd}
+                  disabled={!newMapName.trim() || isCreatingMap}
+                  className="px-4 bg-primary-500 text-white font-black rounded-xl text-sm disabled:opacity-50 active:scale-95 transition-all"
+                >
+                  생성
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

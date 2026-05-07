@@ -169,5 +169,40 @@ export const postService = {
 
   async getFollowedGuides(userId: string) {
     return apiFetch(`/user/follow?followerId=${userId}`);
+  },
+
+  // User Map functions
+  async getUserMaps(userId: string) {
+    return apiFetch(`/user/maps?userId=${userId}`);
+  },
+
+  async createUserMap(userId: string, name: string) {
+    return apiFetch('/user/maps', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'create_map', userId, name })
+    });
+  },
+
+  async deleteUserMap(mapId: string) {
+    return apiFetch(`/user/maps?action=delete_map&mapId=${mapId}`, {
+      method: 'DELETE'
+    });
+  },
+
+  async getMapItems(userId: string, mapId: string) {
+    return apiFetch(`/user/maps?userId=${userId}&mapId=${mapId}`);
+  },
+
+  async addToMap(mapId: string, postId: string) {
+    return apiFetch('/user/maps', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'add_item', mapId, postId })
+    });
+  },
+
+  async removeFromMap(mapId: string, postId: string) {
+    return apiFetch(`/user/maps?action=remove_item&mapId=${mapId}&postId=${postId}`, {
+      method: 'DELETE'
+    });
   }
 };

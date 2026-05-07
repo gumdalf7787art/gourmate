@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
-  Settings, Users, Bell, Heart, 
+  Settings, Users, Bell, Heart, Map as MapIcon,
   FileText, Medal, FolderPlus, BarChart2, 
   HelpCircle, Megaphone, LogOut, UserX, ChevronRight 
 } from 'lucide-react';
@@ -28,6 +28,7 @@ export function MyPage() {
         { icon: <Users className="w-5 h-5" />, label: '나의 팔로우', desc: '내가 팔로우하는 가이드 목록', link: '/my/following' },
         { icon: <Bell className="w-5 h-5" />, label: '알림', desc: '새로운 소식 및 활동 알림', link: '/my/notifications' },
         { icon: <Heart className="w-5 h-5" />, label: '나의 관심 목록', desc: '저장한 장소 및 테마', link: '/wishlist' },
+        { icon: <MapIcon className="w-5 h-5" />, label: '나의 맛집 지도', desc: '나만의 맛집 분류 및 지도 확인', link: '/my/maps' },
       ]
     },
     {

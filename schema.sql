@@ -81,3 +81,22 @@ CREATE TABLE IF NOT EXISTS likes (
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (post_id) REFERENCES posts(id)
 );
+
+-- User Custom Maps (Categories)
+CREATE TABLE IF NOT EXISTS user_maps (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- User Map Items (Posts in categories)
+CREATE TABLE IF NOT EXISTS user_map_items (
+  map_id TEXT NOT NULL,
+  post_id TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (map_id, post_id),
+  FOREIGN KEY (map_id) REFERENCES user_maps(id),
+  FOREIGN KEY (post_id) REFERENCES posts(id)
+);

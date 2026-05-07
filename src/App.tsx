@@ -17,6 +17,7 @@ import { Signup } from '@/pages/Signup';
 import { Login } from '@/pages/Login';
 import { MyPage } from '@/pages/MyPage';
 import { ProfileSettings } from '@/pages/ProfileSettings';
+import { MyMap } from '@/pages/MyMap';
 import { MyPosts } from '@/pages/MyPosts';
 import { EditPost } from '@/pages/EditPost';
 import { ManageTop20 } from '@/pages/ManageTop20';
@@ -107,6 +108,7 @@ function App() {
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
           <Route path="/my" element={<MyPage />} />
           <Route path="/my/settings" element={<ProfileSettings />} />
+          <Route path="/my/maps" element={<MyMap />} />
           <Route path="/my/top20" element={<ManageTop20 />} />
           <Route path="/my/posts" element={<MyPosts />} />
           <Route path="/my/posts/edit/:id" element={<EditPost />} />
