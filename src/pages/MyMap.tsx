@@ -7,7 +7,6 @@ import {
   MoreVertical, 
   Trash2, 
   ChevronRight,
-  Utensils,
   X
 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -240,8 +239,15 @@ export function MyMap() {
 
           <div className="w-full h-full">
             <KakaoMap 
-              places={mapItems.map(item => item.place)}
-              height="100%"
+              places={mapItems.map(item => ({
+                id: item.id,
+                postId: item.id,
+                name: item.place.name,
+                category: item.place.category,
+                lat: Number(item.place.latitude),
+                lng: Number(item.place.longitude)
+              }))}
+              onSelect={(postId) => navigate(`/post/${postId}`)}
             />
           </div>
 
