@@ -10,6 +10,7 @@ import { GuidePostList } from '@/pages/GuidePostList';
 import { PopularGuides } from './pages/PopularGuides';
 import GuideCollectionList from './pages/GuideCollectionList';
 import ThemeDetail from './pages/ThemeDetail';
+import PopularThemes from './pages/PopularThemes';
 import PopularRestaurants from './pages/PopularRestaurants';
 import GlobalMap from './pages/GlobalMap';
 import Wishlist from './pages/Wishlist';
@@ -95,6 +96,7 @@ function App() {
           <Route path="/guide/:id/themes" element={<GuideCollectionList />} />
           <Route path="/popular-guides" element={<PopularGuides />} />
           <Route path="/theme/:id" element={<ThemeDetail />} />
+          <Route path="/popular-themes" element={<PopularThemes />} />
           <Route path="/popular-restaurants" element={<PopularRestaurants />} />
           <Route path="/search" element={<GeneralSearch />} />
           <Route path="/register-place" element={<RegisterPlace />} />

@@ -198,7 +198,7 @@ export function Home() {
           <h2 className="text-lg font-bold text-white tracking-tight">추천 테마</h2>
             <p className="text-[11px] text-gray-500 mt-0.5">믿고 보는 미식가들의 큐레이션</p>
           </div>
-          <Link to="/guide/themes" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
+          <Link to="/popular-themes" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
         </div>
         
         <div className="flex flex-col gap-3 px-5">
