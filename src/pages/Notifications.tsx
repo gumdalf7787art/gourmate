@@ -18,26 +18,21 @@ export function Notifications() {
   }, [user?.id, fetchNotifications]);
 
   const handleClearAll = () => {
-    // confirmation is better, but making it more reliable
-    const confirmed = window.confirm('모든 알림 내역을 완전히 지우시겠습니까?');
-    if (confirmed) {
-      clearNotifications();
-      setSelectedIds([]);
-    }
+    // Remove confirm to ensure it works immediately
+    clearNotifications();
+    setSelectedIds([]);
   };
 
   const handleDeleteSelected = () => {
     if (selectedIds.length === 0) return;
-    const confirmed = window.confirm(`${selectedIds.length}개의 알림을 삭제하시겠습니까?`);
-    if (confirmed) {
-      const remaining = notifications.filter(n => !selectedIds.includes(n.id));
-      setNotifications(remaining);
-      setSelectedIds([]);
-    }
+    // Remove confirm to ensure it works immediately
+    const remaining = notifications.filter(n => !selectedIds.includes(n.id));
+    setNotifications(remaining);
+    setSelectedIds([]);
   };
 
   const toggleSelect = (id: number, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent navigating to link when selecting
+    e.stopPropagation();
     setSelectedIds(prev => 
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
@@ -153,9 +148,9 @@ export function Notifications() {
                 className="flex items-center pr-1 transition-transform active:scale-125"
               >
                 {selectedIds.includes(noti.id) ? (
-                  <CheckCircle2 className="w-5.5 h-5.5 text-primary-500 fill-primary-500/10" />
+                  <CheckCircle2 className="w-5.5 h-5.5 text-primary-500 fill-primary-500/20" strokeWidth={2.5} />
                 ) : (
-                  <Circle className="w-5.5 h-5.5 text-white/10" strokeWidth={1.5} />
+                  <Circle className="w-5.5 h-5.5 text-white/60 hover:text-white transition-colors" strokeWidth={2} />
                 )}
               </div>
               <div className="w-10 h-10 rounded-full bg-black border border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-inner">
