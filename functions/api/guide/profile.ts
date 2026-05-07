@@ -10,7 +10,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
 
     // 1. 가이드 기본 정보 조회
     const user = await DB.prepare(`
-      SELECT id, email, nickname, profile_image_url, trust_score, is_official, created_at
+      SELECT id, email, nickname, profile_image_url, trust_score, is_official, created_at, bio
       FROM users
       WHERE id = ?
     `).bind(id).first() as any;

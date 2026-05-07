@@ -18,15 +18,22 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
     } else {
       // Get all followed guides for user
       const results = await context.env.DB.prepare(`
-        SELECT u.id, u.nickname, u.profile_image_url, u.trust_score, 
-               (SELECT COUNT(*) FROM follows WHERE following_id = u.id) as followers
+        SELECT u.id, u.nickname, u.profile_image_url as profileImageUrl, u.trust_score as trustScore, u.bio,
+               (SELECT COUNT(*) FROM follows WHERE following_id = u.id) as followers,
+               (SELECT SUM(likes) FROM posts WHERE guide_id = u.id) as likes
         FROM follows f
         JOIN users u ON f.following_id = u.id
         WHERE f.follower_id = ?
         ORDER BY f.created_at DESC
       `).bind(followerId).all();
 
-      return Response.json({ success: true, data: results.results });
+      const guides = results.results.map((g: any) => ({
+        ...g,
+        bio: g.bio || '맛있는 음식과 멋진 공간을 기록합니다.',
+        likes: g.likes || 0
+      }));
+
+      return Response.json({ success: true, data: guides });
     }
   } catch (error: any) {
     return Response.json({ success: false, error: error.message }, { status: 500 });
