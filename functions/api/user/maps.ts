@@ -9,15 +9,23 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
 
   try {
     if (mapId) {
-      // Get posts for a specific map
-      const results = await context.env.DB.prepare(`
-        SELECT p.*, u.nickname as guide_nickname, u.profile_image_url as guide_profile_image
-        FROM user_map_items umi
-        JOIN posts p ON umi.post_id = p.id
-        JOIN users u ON p.guide_id = u.id
-        WHERE umi.map_id = ?
-        ORDER BY umi.created_at DESC
-      `).bind(mapId).all();
+      // Get posts for a specific map or ALL maps
+      const query = mapId === 'all' 
+        ? `SELECT DISTINCT p.*, u.nickname as guide_nickname, u.profile_image_url as guide_profile_image
+           FROM user_map_items umi
+           JOIN user_maps um ON umi.map_id = um.id
+           JOIN posts p ON umi.post_id = p.id
+           JOIN users u ON p.guide_id = u.id
+           WHERE um.user_id = ?
+           ORDER BY umi.created_at DESC`
+        : `SELECT p.*, u.nickname as guide_nickname, u.profile_image_url as guide_profile_image
+           FROM user_map_items umi
+           JOIN posts p ON umi.post_id = p.id
+           JOIN users u ON p.guide_id = u.id
+           WHERE umi.map_id = ?
+           ORDER BY umi.created_at DESC`;
+
+      const results = await context.env.DB.prepare(query).bind(mapId === 'all' ? userId : mapId).all();
 
       const posts = results.results.map((post: any) => ({
         ...post,

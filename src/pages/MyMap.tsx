@@ -23,7 +23,9 @@ export function MyMap() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newMapName, setNewMapName] = useState('');
   const [showMap, setShowMap] = useState(false);
+  const [showList, setShowList] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [isViewAll, setIsViewAll] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -62,7 +64,15 @@ export function MyMap() {
 
   const handleSelectMap = (mapId: string) => {
     setSelectedMapId(mapId);
+    setIsViewAll(false);
     fetchMapItems(mapId);
+    setShowList(true);
+  };
+
+  const handleViewAllMap = () => {
+    setSelectedMapId('all');
+    setIsViewAll(true);
+    fetchMapItems('all');
     setShowMap(true);
   };
 
@@ -114,12 +124,23 @@ export function MyMap() {
       </header>
 
       <main className="flex-1 px-5 py-6">
-        <div className="mb-8">
-          <h2 className="text-2xl font-black text-white leading-tight mb-2">
-            나만의 맛집<br />
-            분류하여 관리하기
-          </h2>
-          <p className="text-sm text-gray-500">맛집을 폴더별로 나누고 지도에서 확인해보세요.</p>
+        <div className="mb-8 flex items-end justify-between">
+          <div>
+            <h2 className="text-2xl font-black text-white leading-tight mb-2">
+              나만의 맛집<br />
+              분류하여 관리하기
+            </h2>
+            <p className="text-sm text-gray-500">맛집을 폴더별로 나누고 지도에서 확인해보세요.</p>
+          </div>
+          <button 
+            onClick={handleViewAllMap}
+            className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-primary-500 text-white flex items-center justify-center shadow-lg shadow-primary-500/20 group-hover:shadow-primary-500/40">
+              <MapIcon className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] font-black text-primary-500 uppercase tracking-tighter">전체 지도보기</span>
+          </button>
         </div>
 
         {isLoading ? (
@@ -164,20 +185,23 @@ export function MyMap() {
                       e.stopPropagation();
                       setOpenMenuId(openMenuId === map.id ? null : map.id);
                     }}
-                    className="p-2 text-gray-600 hover:text-white transition-colors"
+                    className="p-2 text-gray-600 hover:text-white transition-colors relative z-30"
                   >
                     <MoreVertical className="w-5 h-5" />
                   </button>
                   {openMenuId === map.id && (
-                    <div className="absolute right-12 mt-2 w-32 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-20">
-                      <button 
-                        onClick={(e) => handleDeleteMap(map.id, e)}
-                        className="w-full px-4 py-3 flex items-center gap-2 text-sm text-red-500 hover:bg-red-500/10 transition-colors text-left"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        삭제하기
-                      </button>
-                    </div>
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); }} />
+                      <div className="absolute right-12 mt-2 w-32 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50">
+                        <button 
+                          onClick={(e) => handleDeleteMap(map.id, e)}
+                          className="w-full px-4 py-3 flex items-center gap-2 text-sm text-red-500 hover:bg-red-500/10 transition-colors text-left"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          삭제하기
+                        </button>
+                      </div>
+                    </>
                   )}
                   <ChevronRight className="w-5 h-5 text-gray-700 group-hover:text-primary-500 transition-colors" />
                 </div>
@@ -231,7 +255,7 @@ export function MyMap() {
             </button>
             <div className="px-4 py-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10">
               <span className="text-sm font-bold text-white">
-                {maps.find(m => m.id === selectedMapId)?.name} ({mapItems.length})
+                {isViewAll ? '전체 지도' : maps.find(m => m.id === selectedMapId)?.name} ({mapItems.length})
               </span>
             </div>
             <div className="w-12" />
@@ -270,6 +294,79 @@ export function MyMap() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* List View Modal */}
+      {showList && (
+        <div className="fixed inset-0 z-[250] bg-black flex flex-col">
+          <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl px-5 py-4 border-b border-white/5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button onClick={() => setShowList(false)} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
+                <ArrowLeft className="w-6 h-6" />
+              </button>
+              <h1 className="text-lg font-bold text-white">
+                {maps.find(m => m.id === selectedMapId)?.name}
+              </h1>
+            </div>
+            <button 
+              onClick={() => setShowMap(true)}
+              className="px-4 py-2 bg-primary-500 text-white text-xs font-black rounded-xl active:scale-95 transition-all shadow-lg shadow-primary-500/20"
+            >
+              지도에서 보기
+            </button>
+          </header>
+
+          <main className="flex-1 overflow-y-auto px-5 py-6 no-scrollbar">
+            <div className="grid gap-3">
+              {mapItems.map((item) => (
+                <div 
+                  key={item.id}
+                  onClick={() => navigate(`/post/${item.id}`)}
+                  className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden flex gap-4 p-3 active:scale-[0.98] transition-all group"
+                >
+                  <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 border border-white/5">
+                    <img src={item.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  </div>
+                  <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                    <div>
+                      <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest block mb-1">{item.place.category}</span>
+                      <h4 className="text-sm font-bold text-white truncate group-hover:text-primary-400 transition-colors">{item.place.name}</h4>
+                      <p className="text-[11px] text-gray-500 truncate mt-0.5">{item.place.address}</p>
+                    </div>
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full overflow-hidden border border-white/20">
+                          <img src={item.guide.profileImageUrl} alt="" className="w-full h-full object-cover" />
+                        </div>
+                        <span className="text-[10px] text-gray-400 font-bold">{item.guide.nickname}</span>
+                      </div>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (window.confirm('이 폴더에서 삭제하시겠습니까?')) {
+                            postService.removeFromMap(selectedMapId!, item.id).then(() => {
+                              setMapItems(prev => prev.filter(i => i.id !== item.id));
+                              fetchMaps(); // Update counts
+                            });
+                          }
+                        }}
+                        className="p-1.5 text-gray-600 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {mapItems.length === 0 && (
+                <div className="py-20 text-center">
+                  <p className="text-gray-500 text-sm">저장된 맛집이 없습니다.</p>
+                </div>
+              )}
+            </div>
+          </main>
         </div>
       )}
     </div>
