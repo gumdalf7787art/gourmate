@@ -448,72 +448,7 @@ export function PostDetail() {
           )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-4 py-8 border-b border-white/5">
-          <button 
-            onClick={handleLike}
-            className={`flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
-              isLiked ? 'bg-primary-500/10 border-primary-500 text-primary-500' : 'bg-[#111] border-white/10 text-gray-400 hover:text-white'
-            }`}
-          >
-            <Flame className={`w-5 h-5 ${isLiked ? 'fill-primary-500' : ''}`} />
-            <span className="font-bold">좋아요</span>
-          </button>
-          <button 
-            onClick={handleBookmark}
-            className={`flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
-              isBookmarked ? 'bg-primary-500/10 border-primary-500 text-primary-500' : 'bg-[#111] border-white/10 text-gray-400 hover:text-white'
-            }`}
-          >
-            <Heart className={`w-5 h-5 ${isBookmarked ? 'fill-primary-500' : ''}`} />
-            <span className="font-bold">관심등록</span>
-          </button>
-        </div>
-
-        {/* Add to My Map Button */}
-        <div className="mb-8">
-          <button 
-            onClick={openMapModal}
-            className="w-full h-14 bg-white text-black rounded-2xl flex items-center justify-center gap-2 font-black shadow-xl active:scale-95 transition-all"
-          >
-            <MapIcon className="w-5 h-5" />
-            나의 지도에 담기
-          </button>
-        </div>
-
-        {/* Recommended Menu (Reordered) */}
-        {(post.menu_items || post.menuItems) && (post.menu_items || post.menuItems).length > 0 && (
-          <div className="py-8 border-b border-white/5">
-            <h3 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 mb-6">
-              <Utensils className="w-3.5 h-3.5 text-primary-500" />
-              가이드 추천 메뉴
-            </h3>
-            <div className="bg-[#111] border border-white/10 rounded-[24px] overflow-hidden">
-              {(post.menu_items || post.menuItems).map((item: any, idx: number) => (
-                <div 
-                  key={idx} 
-                  className={`flex items-center justify-between p-5 ${
-                    idx !== (post.menu_items || post.menuItems).length - 1 ? 'border-b border-white/5' : ''
-                  }`}
-                >
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[15px] font-black text-white">{item.name}</span>
-                      {item.isSignature && (
-                        <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[9px] font-black rounded uppercase tracking-tighter">
-                          Signature
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <span className="text-[14px] font-black text-primary-500">{item.price}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* One-liner Review (한줄평) */}
+        {/* One-liner Review (한줄평) - MOVED TO TOP */}
         <div className="py-8 border-b border-white/5">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -580,6 +515,71 @@ export function PostDetail() {
             </p>
           </div>
         </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-4 py-8 border-b border-white/5">
+          <button 
+            onClick={handleLike}
+            className={`flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
+              isLiked ? 'bg-primary-500/10 border-primary-500 text-primary-500' : 'bg-[#111] border-white/10 text-gray-400 hover:text-white'
+            }`}
+          >
+            <Flame className={`w-5 h-5 ${isLiked ? 'fill-primary-500' : ''}`} />
+            <span className="font-bold">좋아요</span>
+          </button>
+          <button 
+            onClick={handleBookmark}
+            className={`flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
+              isBookmarked ? 'bg-primary-500/10 border-primary-500 text-primary-500' : 'bg-[#111] border-white/10 text-gray-400 hover:text-white'
+            }`}
+          >
+            <Heart className={`w-5 h-5 ${isBookmarked ? 'fill-primary-500' : ''}`} />
+            <span className="font-bold">관심등록</span>
+          </button>
+        </div>
+
+        {/* Add to My Map Button */}
+        <div className="py-8 border-b border-white/5">
+          <button 
+            onClick={openMapModal}
+            className="w-full h-14 bg-white text-black rounded-2xl flex items-center justify-center gap-2 font-black shadow-xl active:scale-95 transition-all"
+          >
+            <MapIcon className="w-5 h-5" />
+            나의 지도에 담기
+          </button>
+        </div>
+
+        {/* Recommended Menu (Reordered) */}
+        {(post.menu_items || post.menuItems) && (post.menu_items || post.menuItems).length > 0 && (
+          <div className="py-8 border-b border-white/5">
+            <h3 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 mb-6">
+              <Utensils className="w-3.5 h-3.5 text-primary-500" />
+              가이드 추천 메뉴
+            </h3>
+            <div className="bg-[#111] border border-white/10 rounded-[24px] overflow-hidden">
+              {(post.menu_items || post.menuItems).map((item: any, idx: number) => (
+                <div 
+                  key={idx} 
+                  className={`flex items-center justify-between p-5 ${
+                    idx !== (post.menu_items || post.menuItems).length - 1 ? 'border-b border-white/5' : ''
+                  }`}
+                >
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[15px] font-black text-white">{item.name}</span>
+                      {item.isSignature && (
+                        <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[9px] font-black rounded uppercase tracking-tighter">
+                          Signature
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <span className="text-[14px] font-black text-primary-500">{item.price}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Detailed Content (상세내용) */}
         <section className="py-12 border-b border-white/5">
