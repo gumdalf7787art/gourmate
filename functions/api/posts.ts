@@ -8,6 +8,18 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         await DB.prepare(`ALTER TABLE posts ADD COLUMN ${col} TEXT`).run();
       } catch (e) {}
     }
+
+    // followers 테이블이 없을 경우 생성
+    try {
+      await DB.prepare(`
+        CREATE TABLE IF NOT EXISTS followers (
+          id TEXT PRIMARY KEY,
+          follower_id TEXT NOT NULL,
+          following_id TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `).run();
+    } catch (e) {}
     
     // JOIN을 통해 작성자 정보를 포함하여 최신순으로 가져옴
     const { results } = await DB.prepare(`
