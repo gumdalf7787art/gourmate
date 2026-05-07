@@ -5,77 +5,79 @@ interface Notification {
   id: number;
   type: string;
   message: string;
-  time: string;
+  createdAt: string;
   isRead: boolean;
+  link?: string;
 }
 
 interface NotificationState {
   notifications: Notification[];
   unreadCount: number;
+  isLoading: boolean;
+  error: string | null;
+  fetchNotifications: (userId: string) => Promise<void>;
+  markAsRead: (notificationId: number) => Promise<void>;
   setNotifications: (notifications: Notification[]) => void;
-  markAsRead: (id: number) => void;
 }
 
 export const useNotificationStore = create<NotificationState>()(
   persist(
-    (set) => ({
-      notifications: [
-        {
-          id: 1,
-          type: 'system',
-          message: 'Gourmate에 오신 것을 환영합니다! 🎉 당신만의 진정성 있는 맛집 지도를 만들어보세요.',
-          time: '1시간 전',
-          isRead: true
-        },
-        {
-          id: 2,
-          type: 'guide',
-          message: '하단 중앙의 [+] 버튼을 눌러 당신의 첫 번째 맛집 포스팅을 시작해 보세요!',
-          time: '30분 전',
-          isRead: true
-        },
-        {
-          id: 3,
-          type: 'guide',
-          message: '다른 미식가들을 팔로우하고 그들의 숨은 맛집 리스트를 실시간으로 확인해 보세요.',
-          time: '10분 전',
-          isRead: true
-        },
-        {
-          id: 4,
-          type: 'follow',
-          message: "미식가 '성수동주민'님이 회원님을 팔로우하기 시작했습니다. 👤",
-          time: '방금 전',
-          isRead: false
-        },
-        {
-          id: 5,
-          type: 'system',
-          message: "회원님의 '나만 알고 싶은 카페' 테마에 새로운 장소가 추천되었습니다. ☕",
-          time: '방금 전',
-          isRead: false
-        },
-        {
-          id: 6,
-          type: 'system',
-          message: '이번 주 Gourmate 인기 가이드 후보로 선정되셨습니다! 축하드려요! 🏅',
-          time: '방금 전',
-          isRead: false
+    (set, get) => ({
+      notifications: [],
+      unreadCount: 0,
+      isLoading: false,
+      error: null,
+
+      fetchNotifications: async (userId) => {
+        if (!userId) return;
+        set({ isLoading: true, error: null });
+        try {
+          const response = await fetch(`/api/notifications?userId=${userId}`);
+          const result = await response.json();
+          if (result.success) {
+            const notifications = result.data.map((n: any) => ({
+              ...n,
+              isRead: Boolean(n.isRead)
+            }));
+            set({ 
+              notifications, 
+              unreadCount: notifications.filter((n: any) => !n.isRead).length,
+              isLoading: false 
+            });
+          } else {
+            set({ error: result.error, isLoading: false });
+          }
+        } catch (err: any) {
+          set({ error: err.message, isLoading: false });
         }
-      ],
-      unreadCount: 3,
+      },
+
+      markAsRead: async (notificationId) => {
+        try {
+          const response = await fetch('/api/notifications', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notificationId })
+          });
+          const result = await response.json();
+          
+          if (result.success) {
+            const newNotifications = get().notifications.map(n => 
+              n.id === notificationId ? { ...n, isRead: true } : n
+            );
+            set({ 
+              notifications: newNotifications,
+              unreadCount: newNotifications.filter(n => !n.isRead).length
+            });
+          }
+        } catch (err) {
+          console.error('Failed to mark notification as read:', err);
+        }
+      },
+
       setNotifications: (notifications) => set({ 
         notifications,
         unreadCount: notifications.filter(n => !n.isRead).length
-      }),
-      markAsRead: (id) => set((state) => {
-        const newNotifications = state.notifications.map(n => 
-          n.id === id ? { ...n, isRead: true } : n
-        );
-        return {
-          notifications: newNotifications,
-          unreadCount: newNotifications.filter(n => !n.isRead).length
-        };
       }),
     }),
     {

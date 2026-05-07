@@ -100,3 +100,17 @@ CREATE TABLE IF NOT EXISTS user_map_items (
   FOREIGN KEY (map_id) REFERENCES user_maps(id),
   FOREIGN KEY (post_id) REFERENCES posts(id)
 );
+
+-- Notifications Table
+CREATE TABLE IF NOT EXISTS notifications (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT NOT NULL,
+  type TEXT NOT NULL, -- 'follow', 'like', 'system', etc.
+  from_user_id TEXT, -- User who triggered the notification
+  message TEXT NOT NULL,
+  link TEXT, -- Optional link to redirect
+  is_read INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (from_user_id) REFERENCES users(id)
+);

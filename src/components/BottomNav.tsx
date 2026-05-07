@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Home, Map as MapIcon, PlusSquare, User, Heart, LogIn } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -6,7 +7,21 @@ import clsx from 'clsx';
 
 export function BottomNav() {
   const user = useAuthStore((state) => state.user);
-  const unreadCount = useNotificationStore((state) => state.unreadCount);
+  const { unreadCount, fetchNotifications } = useNotificationStore();
+
+  useEffect(() => {
+    if (user?.id) {
+      // 초기 로드
+      fetchNotifications(user.id);
+      
+      // 1분마다 새로운 알림 체크 (실시간성 부여)
+      const interval = setInterval(() => {
+        fetchNotifications(user.id);
+      }, 60000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [user?.id, fetchNotifications]);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 max-w-[640px] mx-auto bg-black/80 backdrop-blur-xl border-t border-white/10 pb-safe z-[90]">

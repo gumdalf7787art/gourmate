@@ -1,14 +1,41 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Heart, MessageCircle, UserPlus, Bell, Sparkles } from 'lucide-react';
+import { ChevronLeft, Heart, MessageCircle, UserPlus, Bell, Sparkles, Loader2 } from 'lucide-react';
 import { useNotificationStore } from '@/store/useNotificationStore';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function Notifications() {
   const navigate = useNavigate();
-  const { notifications, markAsRead } = useNotificationStore();
+  const user = useAuthStore((state) => state.user);
+  const { notifications, fetchNotifications, markAsRead, isLoading } = useNotificationStore();
 
-  const handleNotificationClick = (id: number) => {
-    markAsRead(id);
-    // 필요시 관련 페이지로 이동 로직 추가 가능
+  useEffect(() => {
+    if (user?.id) {
+      fetchNotifications(user.id);
+    }
+  }, [user?.id, fetchNotifications]);
+
+  const handleNotificationClick = (noti: any) => {
+    markAsRead(noti.id);
+    if (noti.link) {
+      navigate(noti.link);
+    }
+  };
+
+  const formatTime = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (minutes < 1) return '방금 전';
+    if (minutes < 60) return `${minutes}분 전`;
+    if (hours < 24) return `${hours}시간 전`;
+    if (days < 7) return `${days}일 전`;
+    return date.toLocaleDateString();
   };
 
   const getIcon = (type: string) => {
@@ -42,26 +69,44 @@ export function Notifications() {
         <span className="text-sm font-bold text-gray-400 mr-2">알림</span>
       </header>
 
-      <div className="flex flex-col divide-y divide-white/5">
-        {notifications.map(noti => (
-          <div 
-            key={noti.id} 
-            onClick={() => handleNotificationClick(noti.id)}
-            className={`p-5 flex gap-4 cursor-pointer hover:bg-white/5 transition-colors ${noti.isRead ? 'opacity-60' : 'bg-[#111]'}`}
-          >
-            <div className="w-10 h-10 rounded-full bg-black border border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-inner">
-              {getIcon(noti.type)}
+      {isLoading ? (
+        <div className="flex-1 flex flex-col items-center justify-center text-gray-600">
+          <Loader2 className="w-8 h-8 animate-spin mb-4 opacity-20" />
+          <p className="text-sm font-medium">알림을 불러오는 중...</p>
+        </div>
+      ) : notifications.length > 0 ? (
+        <div className="flex flex-col divide-y divide-white/5">
+          {notifications.map(noti => (
+            <div 
+              key={noti.id} 
+              onClick={() => handleNotificationClick(noti)}
+              className={`p-5 flex gap-4 cursor-pointer hover:bg-white/5 transition-colors ${noti.isRead ? 'opacity-60' : 'bg-[#111]'}`}
+            >
+              <div className="w-10 h-10 rounded-full bg-black border border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-inner">
+                {getIcon(noti.type)}
+              </div>
+              <div className="flex flex-col gap-1 flex-1">
+                <p className="text-sm font-medium text-white leading-snug">{noti.message}</p>
+                <span className="text-[10px] text-gray-500 font-bold">{formatTime(noti.createdAt)}</span>
+              </div>
+              {!noti.isRead && (
+                <div className="w-2 h-2 rounded-full bg-primary-500 mt-2 flex-shrink-0"></div>
+              )}
             </div>
-            <div className="flex flex-col gap-1 flex-1">
-              <p className="text-sm font-medium text-white leading-snug">{noti.message}</p>
-              <span className="text-[10px] text-gray-500 font-bold">{noti.time}</span>
-            </div>
-            {!noti.isRead && (
-              <div className="w-2 h-2 rounded-full bg-primary-500 mt-2 flex-shrink-0"></div>
-            )}
+          ))}
+        </div>
+      ) : (
+        <div className="flex-1 flex flex-col items-center justify-center text-gray-600 p-10 text-center">
+          <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
+            <Bell className="w-10 h-10 opacity-10" />
           </div>
-        ))}
-      </div>
+          <h3 className="text-white font-bold mb-2">새로운 알림이 없습니다</h3>
+          <p className="text-xs leading-relaxed opacity-60">
+            가이드들의 소식이나 회원님의 활동에 대한<br />
+            새로운 알림이 도착하면 여기에 표시됩니다.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

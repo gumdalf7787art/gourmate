@@ -52,9 +52,23 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       return Response.json({ success: false, error: 'Cannot follow yourself' }, { status: 400 });
     }
 
+    // 1. Get follower's nickname to create message
+    const follower = await context.env.DB.prepare(
+      'SELECT nickname FROM users WHERE id = ?'
+    ).bind(followerId).first() as { nickname: string } | null;
+
+    // 2. Insert follow record
     await context.env.DB.prepare(
       'INSERT OR IGNORE INTO follows (follower_id, following_id) VALUES (?, ?)'
     ).bind(followerId, followingId).run();
+
+    // 3. Create notification for the target user (followingId)
+    if (follower) {
+      const message = `${follower.nickname}님이 회원님을 팔로우하기 시작했습니다. 👤`;
+      await context.env.DB.prepare(
+        'INSERT INTO notifications (user_id, type, from_user_id, message, link) VALUES (?, ?, ?, ?, ?)'
+      ).bind(followingId, 'follow', followerId, message, `/guide/${followerId}`).run();
+    }
 
     return Response.json({ success: true });
   } catch (error: any) {
