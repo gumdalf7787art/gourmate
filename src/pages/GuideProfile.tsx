@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Plus, Heart, Info, Map as MapIcon, X } from 'lucide-react';
+import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Plus, Heart, Info, Map as MapIcon, X, Flame, MapPin } from 'lucide-react';
 import { TrustScoreModal } from '../components/TrustScoreModal';
 import { KakaoMap } from '../components/KakaoMap';
 import { postService } from '@/services/postService';
@@ -402,43 +402,49 @@ export function GuideProfile() {
               </Link>
             </div>
 
-            {/* Preview Grid (Show 2 items) */}
-            <div className="grid grid-cols-2 gap-4">
-              {filteredPosts.slice(0, 2).map((post: any) => (
+            {/* Preview Grid (Show 4 items) */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
+              {filteredPosts.slice(0, 4).map((post: any) => (
                 <Link 
                   key={post.id} 
                   to={`/post/${post.id}`}
-                  className="bg-[#111] rounded-[24px] overflow-hidden border border-white/10 group flex flex-col shadow-xl"
+                  className="group cursor-pointer flex flex-col"
                 >
-                  {/* Top Image (4:3) */}
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img src={post.images[0]} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="" />
-                    <div className="absolute top-2 right-2 px-1.5 py-0.5 bg-black/40 backdrop-blur-md rounded-md flex items-center gap-1">
-                      <Star className="w-2 h-2 text-yellow-500 fill-yellow-500" />
-                      <span className="text-[9px] font-black text-white">{post.rating}</span>
+                  {/* Thumbnail (Square) */}
+                  <div className="aspect-square w-full rounded-xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
+                    <img src={post.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                    <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-white">
+                        <Flame className="w-2.5 h-2.5 text-primary-500" />
+                        <span className="text-[10px] font-bold">{(post.likes || 0).toLocaleString()}</span>
+                      </div>
+                      <span className="text-[9px] text-gray-400 font-medium">{post.place.category}</span>
                     </div>
                   </div>
 
-                  {/* Bottom Content */}
-                  <div className="p-3.5 flex flex-col flex-1 justify-between gap-2.5">
-                    <div>
-                      <h3 className="text-[14px] font-black text-white truncate mb-1 group-hover:text-primary-500 transition-colors">
-                        {post.place.name}
-                      </h3>
-                      <p className="text-[11px] text-gray-400 font-medium leading-relaxed line-clamp-2 italic">
-                        "{post.review || post.content}"
-                      </p>
-                    </div>
+                  {/* Info */}
+                  <h3 className="text-white text-[13px] font-bold truncate mb-1 group-hover:text-primary-400 transition-colors">
+                    {post.place.name}
+                  </h3>
+                  
+                  {/* Keywords/Tags */}
+                  <div className="flex flex-wrap gap-1 mb-1.5">
+                    {post.tags?.slice(0, 3).map((tag: string, idx: number) => (
+                      <span key={idx} className="text-[9px] text-primary-500/80 font-medium">#{tag}</span>
+                    ))}
+                  </div>
 
-                    <div className="flex items-center justify-between pt-1 border-t border-white/5">
-                      <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tight">
-                        {post.place.category}
-                      </span>
-                      <div className="flex items-center gap-1 text-primary-500">
-                        <Heart className="w-2.5 h-2.5 fill-primary-500" />
-                        <span className="text-[10px] font-black">{(post.likes || 0).toLocaleString()}</span>
-                      </div>
-                    </div>
+                  {/* 한줄평 */}
+                  <p className="text-[10px] text-gray-300 font-medium line-clamp-1 mb-2 italic opacity-80">
+                    "{post.review || post.content}"
+                  </p>
+
+                  <div className="flex items-center gap-1 text-gray-500 mt-auto">
+                    <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
+                    <span className="text-[10px] truncate leading-none">
+                      {post.place.address.split(' ')[0].replace('서울특별시', '서울')} {post.place.address.split(' ')[1]}
+                    </span>
                   </div>
                 </Link>
               ))}
