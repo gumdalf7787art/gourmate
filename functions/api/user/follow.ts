@@ -62,12 +62,17 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       'INSERT OR IGNORE INTO follows (follower_id, following_id) VALUES (?, ?)'
     ).bind(followerId, followingId).run();
 
-    // 3. Create notification for the target user (followingId)
-    if (follower) {
-      const message = `${follower.nickname}님이 회원님을 팔로우하기 시작했습니다. 👤`;
-      await context.env.DB.prepare(
-        'INSERT INTO notifications (user_id, type, from_user_id, message, link) VALUES (?, ?, ?, ?, ?)'
-      ).bind(followingId, 'follow', followerId, message, `/guide/${followerId}`).run();
+    // 3. Create notification for the target user (followingId) - Wrap in try-catch to be resilient
+    try {
+      if (follower) {
+        const message = `${follower.nickname}님이 회원님을 팔로우하기 시작했습니다. 👤`;
+        await context.env.DB.prepare(
+          'INSERT INTO notifications (user_id, type, from_user_id, message, link) VALUES (?, ?, ?, ?, ?)'
+        ).bind(followingId, 'follow', followerId, message, `/guide/${followerId}`).run();
+      }
+    } catch (notifError) {
+      console.error('Failed to create notification:', notifError);
+      // We don't return error here because follow itself was successful
     }
 
     return Response.json({ success: true });
