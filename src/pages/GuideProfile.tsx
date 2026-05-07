@@ -81,13 +81,23 @@ export function GuideProfile() {
     }
 
     try {
+      let res;
       if (previousFollowing) {
-        await postService.removeFollow(user.id, id!);
+        res = await postService.removeFollow(user.id, id!);
       } else {
-        await postService.addFollow(user.id, id!);
+        res = await postService.addFollow(user.id, id!);
       }
-    } catch (err) {
-      // 에러 발생 시 롤백
+      
+      // apiFetch returns the JSON data. Let's explicitly check success.
+      if (res && res.success === false) {
+        throw new Error(res.error || '팔로우 서버 처리 실패');
+      }
+      
+      // 성공했을 경우를 위해 콘솔 로그 추가 (디버깅용)
+      console.log('Follow API Success:', res);
+      
+    } catch (err: any) {
+      // 에러 발생 시 롤백 및 알림창 띄우기
       setIsFollowing(previousFollowing);
       if (guide) {
         setGuide((prev: any) => ({
@@ -97,6 +107,7 @@ export function GuideProfile() {
             : Math.max(0, (prev.followers || 0) - 1)
         }));
       }
+      alert(`[오류 발생] 팔로우 처리에 실패했습니다.\n상세: ${err.message}`);
       console.error('Failed to update follow:', err);
     } finally {
       setIsFollowLoading(false);
