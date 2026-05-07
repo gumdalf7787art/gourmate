@@ -192,49 +192,59 @@ export function Home() {
       <div className="w-full h-[1px] bg-white/5 px-5 mx-auto max-w-[calc(100%-40px)]"></div>
 
       {/* 3. Recommended Themes */}
-      <section className="py-8">
-        <div className="px-5 mb-5 flex justify-between items-end">
-          <div>
-          <h2 className="text-lg font-bold text-white tracking-tight">추천 테마</h2>
-            <p className="text-[11px] text-gray-500 mt-0.5">믿고 보는 미식가들의 큐레이션</p>
+      <section className="py-12 bg-white/2">
+        <div className="px-5 mb-8 flex justify-between items-end">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-black text-white tracking-tighter italic uppercase">Recommended Themes</h2>
+            <p className="text-sm text-gray-500 font-medium">믿고 보는 미식가들의 큐레이션</p>
           </div>
-          <Link to="/popular-themes" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
+          <Link to="/popular-themes" className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[11px] font-black text-gray-400 hover:text-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter">View All</Link>
         </div>
         
-        <div className="flex flex-col gap-3 px-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 px-5">
           {filteredCollections.length > 0 ? (
-            filteredCollections.map((c) => (
+            filteredCollections.map((c, idx) => (
               <Link 
                 key={c.id} 
                 to={`/theme/${c.id}`}
-                className="bg-[#111] border border-white/30 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24"
+                className="group flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
+                style={{ animationDelay: `${idx * 100}ms` }}
               >
-                <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
-                  <img src={c.image_url || c.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                  <div className="absolute inset-0 bg-black/10"></div>
-                </div>
-                <div className="flex-1 p-3 flex flex-col justify-between">
-                  <div>
-                    <h4 className="text-[13px] font-bold text-white group-hover:text-primary-400 transition-colors pr-6 leading-tight line-clamp-2">
-                      {c.title}
-                    </h4>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[9px] text-gray-500 font-medium">{c.guide_nickname || c.userId}</span>
-                      <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
-                        {c.post_count || c.places?.length || 0} SPOTS
-                      </span>
-                    </div>
+                <div className="relative aspect-[4/5] rounded-[24px] overflow-hidden mb-4 border border-white/10 shadow-2xl shadow-black/50">
+                  <img 
+                    src={c.image_url || c.thumbnail} 
+                    alt="" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                  
+                  <div className="absolute top-3 left-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg border border-white/10 flex items-center gap-1.5">
+                    <Layers className="w-3 h-3 text-primary-500" />
+                    <span className="text-[10px] font-black text-white">{c.post_count || c.places?.length || 0}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-primary-500">
-                    <Heart className="w-2.5 h-2.5 fill-primary-500" />
-                    <span className="text-[10px] font-black">{(c.likes || 0).toLocaleString()}</span>
+
+                  <div className="absolute bottom-3 right-3 flex items-center gap-1.5 px-2 py-1 bg-primary-500/90 rounded-lg shadow-lg">
+                    <Heart className="w-2.5 h-2.5 fill-white" />
+                    <span className="text-[10px] font-black text-white">{(c.likes || 0).toLocaleString()}</span>
+                  </div>
+                </div>
+                
+                <div className="px-1">
+                  <h4 className="text-[15px] font-black text-white group-hover:text-primary-500 transition-colors leading-tight line-clamp-2 mb-1.5">
+                    {c.title}
+                  </h4>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-gray-500 font-bold">{c.guide_nickname || '익명 가이드'}</span>
+                    <span className="w-1 h-1 bg-gray-800 rounded-full"></span>
+                    <span className="text-[10px] text-gray-700 font-black uppercase tracking-tighter italic">Theme</span>
                   </div>
                 </div>
               </Link>
             ))
           ) : (
-            <div className="py-10 text-center border border-dashed border-white/10 rounded-xl bg-white/5">
-              <p className="text-gray-500 text-xs font-bold">해당 카테고리의 추천 테마가 없습니다.</p>
+            <div className="col-span-full py-16 text-center border-2 border-dashed border-white/5 rounded-[32px] bg-white/2">
+              <span className="text-4xl mb-4 block opacity-30">🍽️</span>
+              <p className="text-gray-500 text-sm font-bold">해당 카테고리의 추천 테마가 없습니다.</p>
             </div>
           )}
         </div>
@@ -243,41 +253,56 @@ export function Home() {
       <div className="w-full h-[1px] bg-white/5 px-5 mx-auto max-w-[calc(100%-40px)]"></div>
 
       {/* 4. Popular Guides */}
-      <section className="py-8">
-        <div className="px-5 mb-5 flex justify-between items-end">
-          <div>
-            <h2 className="text-lg font-bold text-white tracking-tight">오늘의 인기 가이드 추천</h2>
-            <p className="text-[11px] text-gray-500 mt-0.5">가장 신뢰받는 미식가들의 지도를 구독해보세요</p>
+      <section className="py-12">
+        <div className="px-5 mb-8 flex justify-between items-end">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-black text-white tracking-tighter italic uppercase">Popular Guides</h2>
+            <p className="text-sm text-gray-500 font-medium">가장 신뢰받는 미식가들의 지도를 구독해보세요</p>
           </div>
-          <Link to="/popular-guides" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">더보기</Link>
+          <Link to="/popular-guides" className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[11px] font-black text-gray-400 hover:text-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter">More</Link>
         </div>
 
-        <div className="flex flex-col gap-3 px-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-5">
           {popularGuides.map((guide) => (
-            <div key={guide.id} className="flex items-center justify-between p-4 bg-[#0f0f0f] border border-white/30 rounded-2xl group hover:border-white/40 transition-all shadow-xl">
-              <Link to={`/guide/${guide.id}`} className="flex items-center gap-3 flex-1">
+            <div key={guide.id} className="flex items-center justify-between p-5 bg-[#111] border border-white/10 rounded-[28px] group hover:border-primary-500/30 transition-all shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+              
+              <Link to={`/guide/${guide.id}`} className="flex items-center gap-4 flex-1 min-w-0">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-primary-500 to-orange-300 shadow-lg group-hover:scale-105 transition-transform">
+                  <div className="w-14 h-14 rounded-full p-1 bg-gradient-to-tr from-primary-500 to-orange-400 shadow-xl group-hover:scale-105 transition-transform duration-500">
                     <img src={guide.profileImageUrl} alt="" className="w-full h-full rounded-full object-cover border-2 border-black" />
                   </div>
                   {guide.trustScore > 90 && (
-                    <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 border border-white/30">
-                      <BadgeCheck className="w-3.5 h-3.5 text-primary-500" />
+                    <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-1 border border-white/20 shadow-lg">
+                      <BadgeCheck className="w-4 h-4 text-primary-500" />
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors truncate mb-0.5">{guide.nickname}</p>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <p className="text-[16px] font-black text-white group-hover:text-primary-400 transition-colors truncate tracking-tight">{guide.nickname}</p>
+                    <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[9px] font-black rounded uppercase">Lv.{Math.floor(guide.trustScore / 10)}</span>
+                  </div>
                   {guide.bio && (
-                    <p className="text-[10px] text-gray-500 font-medium line-clamp-1 italic mb-0.5 opacity-70">
+                    <p className="text-[11px] text-gray-500 font-medium line-clamp-1 italic mb-2 opacity-80">
                       "{guide.bio}"
                     </p>
                   )}
-                  <p className="text-[10px] text-gray-500 font-medium">신뢰지수 {guide.trustScore} • 포스트 {guide.postCount || 0}개</p>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">Trust</span>
+                      <span className="text-[11px] text-white font-black">{guide.trustScore}</span>
+                    </div>
+                    <span className="w-1 h-1 bg-gray-800 rounded-full"></span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">Posts</span>
+                      <span className="text-[11px] text-white font-black">{guide.postCount || 0}</span>
+                    </div>
+                  </div>
                 </div>
               </Link>
-              <button className="px-4 py-2 bg-white/5 border border-white/30 text-white text-[11px] font-black rounded-xl hover:bg-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter shadow-inner">
-                팔로우
+              <button className="ml-4 px-5 py-2 bg-white text-black text-[11px] font-black rounded-xl hover:bg-primary-500 hover:text-white transition-all uppercase tracking-tighter shadow-xl active:scale-90">
+                Follow
               </button>
             </div>
           ))}
