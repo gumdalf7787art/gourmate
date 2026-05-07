@@ -1,13 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Heart, MessageCircle, UserPlus, Bell, Sparkles, Loader2 } from 'lucide-react';
+import { ChevronLeft, Heart, MessageCircle, UserPlus, Bell, Sparkles, Loader2, Trash2, CheckCircle2, Circle } from 'lucide-react';
 import { useNotificationStore } from '@/store/useNotificationStore';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export function Notifications() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
-  const { notifications, fetchNotifications, markAsRead, clearNotifications, isLoading } = useNotificationStore();
+  const { notifications, fetchNotifications, markAsRead, clearNotifications, setNotifications, isLoading } = useNotificationStore();
+  
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   useEffect(() => {
     if (user?.id) {
@@ -16,12 +19,34 @@ export function Notifications() {
   }, [user?.id, fetchNotifications]);
 
   const handleClearAll = () => {
-    if (window.confirm('모든 알림 내역을 지우시겠습니까?')) {
+    if (window.confirm('모든 알림 내역을 완전히 지우시겠습니까?')) {
       clearNotifications();
+      setIsEditMode(false);
+      setSelectedIds([]);
     }
   };
 
+  const handleDeleteSelected = () => {
+    if (selectedIds.length === 0) return;
+    if (window.confirm(`${selectedIds.length}개의 알림을 삭제하시겠습니까?`)) {
+      const remaining = notifications.filter(n => !selectedIds.includes(n.id));
+      setNotifications(remaining);
+      setSelectedIds([]);
+      if (remaining.length === 0) setIsEditMode(false);
+    }
+  };
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
   const handleNotificationClick = (noti: any) => {
+    if (isEditMode) {
+      toggleSelect(noti.id);
+      return;
+    }
     markAsRead(noti.id);
     if (noti.link) {
       navigate(noti.link);
@@ -59,7 +84,7 @@ export function Notifications() {
 
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
-      <header className="sticky top-0 z-40 bg-black/70 backdrop-blur-2xl px-5 py-4 border-b border-white/5 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-2xl px-5 py-4 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-white/70 hover:text-white transition-colors">
             <ChevronLeft className="w-6 h-6" />
@@ -75,18 +100,54 @@ export function Notifications() {
             </h1>
           </div>
         </div>
+        
         <div className="flex items-center gap-3">
           {notifications.length > 0 && (
             <button 
-              onClick={handleClearAll}
-              className="text-[11px] font-bold text-gray-500 hover:text-red-400 transition-colors uppercase tracking-widest"
+              onClick={() => {
+                setIsEditMode(!isEditMode);
+                setSelectedIds([]);
+              }}
+              className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all ${
+                isEditMode ? 'bg-white text-black' : 'text-gray-400 hover:text-white bg-white/5'
+              }`}
             >
-              지우기
+              {isEditMode ? '완료' : '편집'}
             </button>
           )}
-          <span className="text-sm font-bold text-gray-400 mr-2">알림</span>
+          <span className="text-sm font-bold text-gray-400">알림</span>
         </div>
       </header>
+
+      {isEditMode && notifications.length > 0 && (
+        <div className="bg-primary-500/10 border-b border-primary-500/20 px-5 py-3 flex items-center justify-between animate-in slide-in-from-top duration-300">
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setSelectedIds(selectedIds.length === notifications.length ? [] : notifications.map(n => n.id))}
+              className="text-xs font-bold text-primary-500"
+            >
+              {selectedIds.length === notifications.length ? '선택 해제' : '전체 선택'}
+            </button>
+            <span className="text-[10px] text-gray-500">({selectedIds.length}개 선택됨)</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={handleClearAll}
+              className="text-xs font-bold text-gray-500 hover:text-white transition-colors"
+            >
+              전체삭제
+            </button>
+            <button 
+              onClick={handleDeleteSelected}
+              disabled={selectedIds.length === 0}
+              className="flex items-center gap-1.5 text-xs font-bold text-red-500 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-all"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              선택삭제
+            </button>
+          </div>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="flex-1 flex flex-col items-center justify-center text-gray-600">
@@ -99,8 +160,19 @@ export function Notifications() {
             <div 
               key={noti.id} 
               onClick={() => handleNotificationClick(noti)}
-              className={`p-5 flex gap-4 cursor-pointer hover:bg-white/5 transition-colors ${noti.isRead ? 'opacity-60' : 'bg-[#111]'}`}
+              className={`p-5 flex gap-4 cursor-pointer hover:bg-white/5 transition-colors relative ${
+                noti.isRead ? 'opacity-60' : 'bg-[#111]'
+              } ${selectedIds.includes(noti.id) ? 'bg-primary-500/5' : ''}`}
             >
+              {isEditMode && (
+                <div className="flex items-center pr-1 animate-in zoom-in duration-200">
+                  {selectedIds.includes(noti.id) ? (
+                    <CheckCircle2 className="w-5 h-5 text-primary-500" />
+                  ) : (
+                    <Circle className="w-5 h-5 text-gray-700" />
+                  )}
+                </div>
+              )}
               <div className="w-10 h-10 rounded-full bg-black border border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-inner">
                 {getIcon(noti.type)}
               </div>
@@ -108,7 +180,7 @@ export function Notifications() {
                 <p className="text-sm font-medium text-white leading-snug">{noti.message}</p>
                 <span className="text-[10px] text-gray-500 font-bold">{formatTime(noti.createdAt)}</span>
               </div>
-              {!noti.isRead && (
+              {!noti.isRead && !isEditMode && (
                 <div className="w-2 h-2 rounded-full bg-primary-500 mt-2 flex-shrink-0"></div>
               )}
             </div>
