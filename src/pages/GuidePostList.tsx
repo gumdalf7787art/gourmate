@@ -4,7 +4,7 @@ import { ChevronLeft, Star, Heart, Map as MapIcon, X } from 'lucide-react';
 import { KakaoMap } from '../components/KakaoMap';
 import { postService } from '@/services/postService';
 
-const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
+const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비', '배달맛집', '기타'];
 
 export function GuidePostList() {
   const { id } = useParams<{ id: string }>();

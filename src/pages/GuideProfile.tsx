@@ -6,7 +6,7 @@ import { KakaoMap } from '../components/KakaoMap';
 import { postService } from '@/services/postService';
 import { useAuthStore } from '@/store/useAuthStore';
 
-const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
+const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비', '배달맛집', '기타'];
 
 export function GuideProfile() {
   const { id } = useParams<{ id: string }>();
