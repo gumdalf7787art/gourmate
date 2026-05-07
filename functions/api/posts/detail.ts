@@ -71,8 +71,8 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       editor_mode: row.editor_mode || 'simple',
       story_blocks: row.story_blocks ? JSON.parse(row.story_blocks) : [],
       menu_items: row.menu_items ? JSON.parse(row.menu_items) : [],
-      isPaid: row.is_paid === '1' || row.is_paid === 1 || row.is_paid === 'true' || row.is_paid === true,
-      is_paid: row.is_paid === '1' || row.is_paid === 1 || row.is_paid === 'true' || row.is_paid === true,
+      isPaid: Boolean(row.is_paid == 1 || row.is_paid == '1' || row.is_paid === 'true' || row.is_paid === true),
+      is_paid: Boolean(row.is_paid == 1 || row.is_paid == '1' || row.is_paid === 'true' || row.is_paid === true),
       topRank: row.top_rank ? parseInt(row.top_rank) : null,
       createdAt: row.created_at
     };

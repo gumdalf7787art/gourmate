@@ -307,7 +307,7 @@ export function RegisterPlace() {
     <div className="flex flex-col min-h-screen bg-black pb-24">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl px-5 py-4 border-b border-white/5 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
+        <button type="button" onClick={() => navigate(-1)} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
           <ArrowLeft className="w-6 h-6" />
         </button>
         <h1 className="text-lg font-bold text-white flex-1">맛집 등록</h1>
@@ -432,6 +432,7 @@ export function RegisterPlace() {
                 <h3 className="text-sm font-bold text-white tracking-tight">가이드 추천 메뉴</h3>
               </div>
               <button 
+                type="button"
                 onClick={() => setMenuItems([...menuItems, { name: '', price: '', isSignature: false }])}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[11px] font-black text-gray-300 hover:text-white transition-all active:scale-95"
               >
@@ -455,6 +456,7 @@ export function RegisterPlace() {
                       className="flex-1 bg-black/40 border border-white/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-500/50 transition-all"
                     />
                     <button 
+                      type="button"
                       onClick={() => setMenuItems(menuItems.filter((_, i) => i !== idx))}
                       className="p-2 text-gray-500 hover:text-red-500 transition-colors"
                     >
@@ -580,6 +582,7 @@ export function RegisterPlace() {
           {/* 내돈내산 Toggle */}
           <div className="pt-2">
             <button
+              type="button"
               onClick={() => setIsPaid(!isPaid)}
               className={`w-full flex items-center justify-between p-5 rounded-2xl border transition-all duration-500 ${
                 isPaid 

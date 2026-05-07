@@ -303,7 +303,7 @@ export function EditPost() {
   return (
     <div className="flex flex-col min-h-screen bg-black pb-24">
       <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl px-5 py-4 border-b border-white/5 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
+        <button type="button" onClick={() => navigate(-1)} className="p-2 -ml-2 text-white hover:bg-white/10 rounded-full transition-colors">
           <ArrowLeft className="w-6 h-6" />
         </button>
         <h1 className="text-lg font-bold text-white flex-1">포스팅 수정</h1>
@@ -432,6 +432,7 @@ export function EditPost() {
                 <h3 className="text-sm font-bold text-white tracking-tight">가이드 추천 메뉴</h3>
               </div>
               <button 
+                type="button"
                 onClick={() => setMenuItems([...menuItems, { name: '', price: '', isSignature: false }])}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[11px] font-black text-gray-300 hover:text-white transition-all active:scale-95"
               >
@@ -455,6 +456,7 @@ export function EditPost() {
                       className="flex-1 bg-black/40 border border-white/30 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-500/50 transition-all"
                     />
                     <button 
+                      type="button"
                       onClick={() => setMenuItems(menuItems.filter((_, i) => i !== idx))}
                       className="p-2 text-gray-500 hover:text-red-500 transition-colors"
                     >
@@ -513,6 +515,7 @@ export function EditPost() {
           {/* 내돈내산 Toggle */}
           <div className="pt-2">
             <button
+              type="button"
               onClick={() => setIsPaid(!is_paid)}
               className={`w-full flex items-center gap-3 px-5 py-4 rounded-2xl border transition-all duration-500 relative overflow-hidden group/btn ${
                 is_paid 
@@ -545,8 +548,8 @@ export function EditPost() {
           {/* Editor Mode */}
           <div className="pt-4">
             <div className="flex items-center gap-2 mb-6 p-1 bg-[#111] rounded-2xl border border-white/5">
-              <button onClick={() => setEditorMode('simple')} className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${editorMode === 'simple' ? 'bg-white/10 text-white' : 'text-gray-500'}`}>간편 작성</button>
-              <button onClick={() => setEditorMode('story')} className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${editorMode === 'story' ? 'bg-white/10 text-white' : 'text-gray-500'}`}>스토리 작성</button>
+              <button type="button" onClick={() => setEditorMode('simple')} className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${editorMode === 'simple' ? 'bg-white/10 text-white' : 'text-gray-500'}`}>간편 작성</button>
+              <button type="button" onClick={() => setEditorMode('story')} className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${editorMode === 'story' ? 'bg-white/10 text-white' : 'text-gray-500'}`}>스토리 작성</button>
             </div>
 
             {editorMode === 'simple' ? (
@@ -564,13 +567,13 @@ export function EditPost() {
                     onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
                     className={`flex gap-3 overflow-x-auto pb-4 no-scrollbar rounded-2xl ${isDragging ? 'bg-primary-500/10 ring-2 ring-primary-500 ring-dashed p-4' : ''}`}
                   >
-                    <button onClick={() => fileInputRef.current?.click()} className="flex-shrink-0 w-32 h-32 bg-[#141414] border-2 border-dashed border-white/30 rounded-2xl flex flex-col items-center justify-center">
+                    <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-shrink-0 w-32 h-32 bg-[#141414] border-2 border-dashed border-white/30 rounded-2xl flex flex-col items-center justify-center">
                       <Plus className="w-6 h-6 text-gray-400" /><span className="text-[10px] text-gray-500">추가</span>
                     </button>
                     {mediaFiles.map((media, index) => (
                       <div key={index} className="flex-shrink-0 w-32 h-32 relative rounded-2xl overflow-hidden border border-white/30">
                         <img src={media.preview} className="w-full h-full object-cover" />
-                        <button onClick={() => removeMedia(index)} className="absolute top-1 right-1 p-1 bg-black/60 rounded-full text-white"><X className="w-3 h-3" /></button>
+                        <button type="button" onClick={() => removeMedia(index)} className="absolute top-1 right-1 p-1 bg-black/60 rounded-full text-white"><X className="w-3 h-3" /></button>
                       </div>
                     ))}
                   </div>
