@@ -21,6 +21,23 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         )
       `).run();
     } catch (e) {}
+
+    // likes 테이블이 없을 경우 생성
+    try {
+      await DB.prepare(`
+        CREATE TABLE IF NOT EXISTS likes (
+          user_id TEXT NOT NULL,
+          post_id TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY(user_id, post_id)
+        )
+      `).run();
+    } catch (e) {}
+
+    // 기존 포스트의 NULL likes를 0으로 업데이트
+    try {
+      await DB.prepare('UPDATE posts SET likes = 0 WHERE likes IS NULL').run();
+    } catch (e) {}
     
     // JOIN을 통해 작성자 정보를 포함하여 최신순으로 가져옴
     const { results } = await DB.prepare(`

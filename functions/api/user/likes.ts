@@ -29,7 +29,7 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
     // Use a transaction to update both the likes table and the post's like count
     await context.env.DB.batch([
       context.env.DB.prepare('INSERT OR IGNORE INTO likes (user_id, post_id) VALUES (?, ?)').bind(userId, postId),
-      context.env.DB.prepare('UPDATE posts SET likes = likes + 1 WHERE id = ?').bind(postId)
+      context.env.DB.prepare('UPDATE posts SET likes = COALESCE(likes, 0) + 1 WHERE id = ?').bind(postId)
     ]);
 
     return Response.json({ success: true });
@@ -54,7 +54,7 @@ export const onRequestDelete: PagesFunction<{ DB: D1Database }> = async (context
     if (exists) {
       await context.env.DB.batch([
         context.env.DB.prepare('DELETE FROM likes WHERE user_id = ? AND post_id = ?').bind(userId, postId),
-        context.env.DB.prepare('UPDATE posts SET likes = MAX(0, likes - 1) WHERE id = ?').bind(postId)
+        context.env.DB.prepare('UPDATE posts SET likes = MAX(0, COALESCE(likes, 0) - 1) WHERE id = ?').bind(postId)
       ]);
     }
 
