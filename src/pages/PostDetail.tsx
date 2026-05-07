@@ -421,11 +421,7 @@ export function PostDetail() {
             }`}
           >
             <Flame className={`w-5 h-5 ${isLiked ? 'fill-primary-500' : ''}`} />
-            <span className="font-bold">
-              좋아요 {Number(post.likes || 0) + (isLiked && !post.userLiked ? 1 : (!isLiked && post.userLiked ? -1 : 0)) > 0 
-                ? (Number(post.likes || 0) + (isLiked && !post.userLiked ? 1 : (!isLiked && post.userLiked ? -1 : 0))) 
-                : ''}
-            </span>
+            <span className="font-bold">좋아요</span>
           </button>
           <button 
             onClick={handleBookmark}
@@ -784,11 +780,7 @@ export function PostDetail() {
             className="flex flex-col items-center gap-1.5 active:scale-90 transition-all"
           >
             <Flame className={`w-7 h-7 transition-all ${isLiked ? 'text-primary-500 fill-primary-500 scale-110' : 'text-gray-400'}`} />
-            <span className="text-[11px] font-bold text-gray-500">
-              {Number(post.likes || 0) + (isLiked && !post.userLiked ? 1 : (!isLiked && post.userLiked ? -1 : 0)) > 0 
-                ? (Number(post.likes || 0) + (isLiked && !post.userLiked ? 1 : (!isLiked && post.userLiked ? -1 : 0))) 
-                : '좋아요'}
-            </span>
+            <span className="text-[11px] font-bold text-gray-500">좋아요</span>
           </button>
           <button 
             onClick={handleBookmark}
