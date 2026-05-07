@@ -92,7 +92,12 @@ export default function Wishlist() {
       </header>
 
       <main className="px-5 py-8">
-        {activeTab === 'places' ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-24">
+            <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-500 font-medium">관심 목록을 불러오는 중...</p>
+          </div>
+        ) : activeTab === 'places' ? (
           <>
             {/* Places View */}
             <div className="mb-6">
