@@ -56,18 +56,32 @@ export function Home() {
     return allPosts.filter(post => {
       // 1. 지역 필터링
       const address = post.place?.address || '';
-      const matchesLocation = selectedLocation === '전국' || 
-        address.includes(selectedLocation === '서울' ? '서울특별시' : 
-                        selectedLocation === '경기' ? '경기도' : 
-                        selectedLocation === '부산' ? '부산광역시' :
-                        selectedLocation === '인천' ? '인천광역시' :
-                        selectedLocation === '대구' ? '대구광역시' :
-                        selectedLocation === '광주' ? '광주광역시' :
-                        selectedLocation === '대전' ? '대전광역시' :
-                        selectedLocation === '울산' ? '울산광역시' :
-                        selectedLocation === '제주' ? '제주특별자치도' :
-                        selectedLocation === '세종' ? '세종특별자치시' :
-                        selectedLocation);
+      
+      const getSearchTerms = (region: string) => {
+        const mapping: { [key: string]: string[] } = {
+          '서울': ['서울', '서울특별시'],
+          '경기': ['경기', '경기도'],
+          '인천': ['인천', '인천광역시'],
+          '부산': ['부산', '부산광역시'],
+          '대구': ['대구', '대구광역시'],
+          '광주': ['광주', '광주광역시'],
+          '대전': ['대전', '대전광역시'],
+          '울산': ['울산', '울산광역시'],
+          '세종': ['세종', '세종특별자치시'],
+          '강원': ['강원', '강원도'],
+          '충북': ['충북', '충청북도'],
+          '충남': ['충남', '충청남도'],
+          '전북': ['전북', '전라북도', '전북특별자치도'],
+          '전남': ['전남', '전라남도'],
+          '경북': ['경북', '경상북도'],
+          '경남': ['경남', '경상남도'],
+          '제주': ['제주', '제주특별자치도']
+        };
+        return mapping[region] || [region];
+      };
+
+      const terms = getSearchTerms(selectedLocation);
+      const matchesLocation = selectedLocation === '전국' || terms.some(term => address.includes(term));
       
       if (!matchesLocation) return false;
 
