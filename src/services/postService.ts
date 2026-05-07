@@ -207,5 +207,23 @@ export const postService = {
     return apiFetch(`/user/maps?action=remove_item&mapId=${mapId}&postId=${postId}`, {
       method: 'DELETE'
     });
+  },
+
+  // Theme Follow functions
+  async checkThemeFollow(userId: string, themeId: string) {
+    return apiFetch(`/themes/follow?userId=${userId}&themeId=${themeId}`);
+  },
+
+  async addThemeFollow(userId: string, themeId: string) {
+    return apiFetch('/themes/follow', {
+      method: 'POST',
+      body: JSON.stringify({ userId, themeId })
+    });
+  },
+
+  async removeThemeFollow(userId: string, themeId: string) {
+    return apiFetch(`/themes/follow?userId=${userId}&themeId=${themeId}`, {
+      method: 'DELETE'
+    });
   }
 };

@@ -165,6 +165,29 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       (is_paid === true || is_paid === 1 || is_paid === '1' || is_paid === 'true' || body.isPaid === true || body.isPaid === 1 || body.isPaid === '1' || body.isPaid === 'true') ? 1 : 0
     ).run();
 
+    // Send notification to all followers
+    try {
+      // 1. Get guide's nickname
+      const guide = await DB.prepare(
+        'SELECT nickname FROM users WHERE id = ?'
+      ).bind(guide_id).first() as { nickname: string } | null;
+
+      if (guide) {
+        const guideNickname = guide.nickname;
+        const message = `${guideNickname}님이 새로운 맛집 '${restaurant_name}' 포스팅을 올렸습니다. ✨`;
+        
+        // 2. Insert notifications for all followers in one go using subquery
+        await DB.prepare(`
+          INSERT INTO notifications (user_id, type, from_user_id, message, link, created_at)
+          SELECT follower_id, 'new_post', ?, ?, ?, DATETIME('now', '+9 hours')
+          FROM follows
+          WHERE following_id = ?
+        `).bind(guide_id, message, `/post/${id}`, guide_id).run();
+      }
+    } catch (notifError) {
+      console.error('Failed to create new post notifications:', notifError);
+    }
+
     return new Response(JSON.stringify({ success: true, id }), {
       status: 201,
       headers: { 'Content-Type': 'application/json' }

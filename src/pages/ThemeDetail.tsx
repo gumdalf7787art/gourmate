@@ -8,7 +8,10 @@ export default function ThemeDetail() {
   const navigate = useNavigate();
   const [theme, setTheme] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFollowed, setIsFollowed] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = user.id;
 
   useEffect(() => {
     const fetchThemeDetail = async () => {
@@ -20,6 +23,14 @@ export default function ThemeDetail() {
         const res = await postService.getTheme(id);
         if (res.success) {
           setTheme(res.data);
+          
+          // Check if followed
+          if (userId) {
+            const followRes = await postService.checkThemeFollow(userId, id);
+            if (followRes.success) {
+              setIsFollowed(followRes.isFollowed);
+            }
+          }
         } else {
           setError(res.error || '테마를 불러오지 못했습니다.');
         }
@@ -31,7 +42,29 @@ export default function ThemeDetail() {
       }
     };
     fetchThemeDetail();
-  }, [id]);
+  }, [id, userId]);
+
+  const handleFollow = async () => {
+    if (!userId) {
+      alert('로그인이 필요한 기능입니다.');
+      navigate('/login');
+      return;
+    }
+
+    if (!id) return;
+
+    try {
+      if (isFollowed) {
+        const res = await postService.removeThemeFollow(userId, id);
+        if (res.success) setIsFollowed(false);
+      } else {
+        const res = await postService.addThemeFollow(userId, id);
+        if (res.success) setIsFollowed(true);
+      }
+    } catch (err) {
+      console.error('Follow error:', err);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -111,23 +144,48 @@ export default function ThemeDetail() {
           </p>
         </div>
         
-        <div className="flex items-center gap-4 pb-8 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full overflow-hidden border border-white/20 bg-gray-800 shadow-lg">
-              {theme.guide_image ? (
-                <img src={theme.guide_image} alt="" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-primary-500/10">
-                  <span className="text-[10px] font-black text-primary-500 uppercase">GM</span>
+        <div className="flex items-center justify-between gap-4 pb-8 border-b border-white/10">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-full overflow-hidden border border-white/20 bg-gray-800 shadow-lg">
+                {theme.guide_image ? (
+                  <img src={theme.guide_image} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-primary-500/10">
+                    <span className="text-[10px] font-black text-primary-500 uppercase">GM</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-black text-white">{theme.guide_nickname || '익명 가이드'}</span>
+                <div className="flex items-center gap-1.5 text-gray-500">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-bold">{formattedDate}</span>
                 </div>
-              )}
+              </div>
             </div>
-            <span className="text-sm font-black text-white">{theme.guide_nickname || '익명 가이드'}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-gray-500">
-            <Clock className="w-3.5 h-3.5" />
-            <span className="text-[11px] font-bold">{formattedDate}</span>
-          </div>
+
+          <button 
+            onClick={handleFollow}
+            className={`px-5 py-2.5 rounded-xl font-black text-xs transition-all active:scale-95 flex items-center gap-2 ${
+              isFollowed 
+                ? 'bg-white/10 text-white border border-white/10' 
+                : 'bg-primary-500 text-white shadow-[0_0_20px_rgba(255,107,0,0.3)]'
+            }`}
+          >
+            {isFollowed ? (
+              <>
+                <Layers className="w-3.5 h-3.5" />
+                <span>구독 중</span>
+              </>
+            ) : (
+              <>
+                <Layers className="w-3.5 h-3.5" />
+                <span>테마 구독하기</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
 

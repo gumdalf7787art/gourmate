@@ -32,6 +32,30 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       context.env.DB.prepare('UPDATE posts SET likes = COALESCE(likes, 0) + 1 WHERE id = ?').bind(postId)
     ]);
 
+    // Send notification to post owner
+    try {
+      // 1. Get post owner and restaurant name
+      const postInfo = await context.env.DB.prepare(
+        'SELECT guide_id, restaurant_name FROM posts WHERE id = ?'
+      ).bind(postId).first() as { guide_id: string, restaurant_name: string } | null;
+
+      // 2. Get liker's nickname
+      const liker = await context.env.DB.prepare(
+        'SELECT nickname FROM users WHERE id = ?'
+      ).bind(userId).first() as { nickname: string } | null;
+
+      if (postInfo && postInfo.guide_id !== userId) {
+        const likerNickname = liker?.nickname || '새로운 미식가';
+        const message = `${likerNickname}님이 회원님의 '${postInfo.restaurant_name}' 포스팅을 좋아합니다. ❤️`;
+        
+        await context.env.DB.prepare(
+          "INSERT INTO notifications (user_id, type, from_user_id, message, link, created_at) VALUES (?, ?, ?, ?, ?, DATETIME('now', '+9 hours'))"
+        ).bind(postInfo.guide_id, 'like', userId, message, `/post/${postId}`).run();
+      }
+    } catch (notifError) {
+      console.error('Failed to create like notification:', notifError);
+    }
+
     return Response.json({ success: true });
   } catch (error: any) {
     return Response.json({ success: false, error: error.message }, { status: 500 });
