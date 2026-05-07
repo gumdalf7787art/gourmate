@@ -107,7 +107,7 @@ export default function PopularRestaurants() {
         </div>
 
         {/* Post Grid */}
-        <div className="px-6 grid grid-cols-2 gap-4">
+        <div className="px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {displayedPosts.length > 0 ? (
             displayedPosts.map((post, idx) => (
               <Link 
@@ -117,38 +117,38 @@ export default function PopularRestaurants() {
                 style={{ animationDelay: `${idx * 50}ms` }}
               >
                 {/* Image */}
-                <div className="relative aspect-[4/3] overflow-hidden">
+                <div className="relative aspect-square overflow-hidden">
                   <img src={post.images[0]} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="" />
-                  <div className="absolute top-2 left-2 w-6 h-6 bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-[10px] font-black text-primary-500 border border-primary-500/30">
+                  <div className="absolute top-3 left-3 w-7 h-7 bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center text-[11px] font-black text-primary-500 border border-primary-500/30">
                     {idx + 1}
                   </div>
-                  <div className="absolute top-2 right-2 px-1.5 py-0.5 bg-black/40 backdrop-blur-md rounded-md flex items-center gap-1">
-                    <Heart className="w-2.5 h-2.5 text-primary-500 fill-primary-500" />
-                    <span className="text-[9px] font-black text-white">{(post.likes || 0).toLocaleString()}</span>
+                  <div className="absolute top-3 right-3 px-2 py-1 bg-black/40 backdrop-blur-md rounded-lg flex items-center gap-1.5">
+                    <Heart className="w-3 h-3 text-primary-500 fill-primary-500" />
+                    <span className="text-[10px] font-black text-white">{(post.likes || 0).toLocaleString()}</span>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-3.5 flex flex-col flex-1 justify-between gap-2.5">
+                <div className="p-4 flex flex-col flex-1 justify-between gap-3">
                   <div>
-                    <h3 className="text-[13px] font-black text-white truncate mb-1 group-hover:text-primary-500 transition-colors">
+                    <h3 className="text-[14px] font-black text-white truncate mb-1 group-hover:text-primary-500 transition-colors">
                       {post.place.name}
                     </h3>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tight mb-2">
+                    <p className="text-[11px] text-gray-500 font-bold uppercase tracking-tight mb-2 opacity-70">
                       {post.place.category} · {post.guide.nickname}
                     </p>
-                    <p className="text-[11px] text-gray-400 font-medium leading-relaxed line-clamp-2 italic">
+                    <p className="text-[12px] text-gray-400 font-medium leading-relaxed line-clamp-2 italic opacity-80">
                       "{post.review || post.content}"
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-1 border-t border-white/5">
-                    <span className="text-[9px] text-gray-600 font-bold">
+                  <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                    <span className="text-[10px] text-gray-600 font-bold">
                       {(post.bookmarks || 0).toLocaleString()} 저장
                     </span>
                     <div className="flex items-center gap-1 text-primary-500">
-                      <Heart className="w-2.5 h-2.5 fill-primary-500" />
-                      <span className="text-[10px] font-black">{(post.likes || 0).toLocaleString()}</span>
+                      <Heart className="w-3 h-3 fill-primary-500" />
+                      <span className="text-[11px] font-black">{(post.likes || 0).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
