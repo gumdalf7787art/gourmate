@@ -57,30 +57,6 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       VALUES (?, ?, ?, ?, ?, DATETIME('now', '+9 hours'))
     `).bind(id, post_id, user_id, content, parent_id || null).run();
 
-    // Send notification to post owner
-    try {
-      // 1. Get post owner and restaurant name
-      const postInfo = await DB.prepare(
-        'SELECT guide_id, restaurant_name FROM posts WHERE id = ?'
-      ).bind(post_id).first() as { guide_id: string, restaurant_name: string } | null;
-
-      // 2. Get reviewer's nickname
-      const reviewer = await DB.prepare(
-        'SELECT nickname FROM users WHERE id = ?'
-      ).bind(user_id).first() as { nickname: string } | null;
-
-      if (postInfo && postInfo.guide_id !== user_id) {
-        const reviewerNickname = reviewer?.nickname || '새로운 미식가';
-        const message = `${reviewerNickname}님이 회원님의 '${postInfo.restaurant_name}' 포스팅에 댓글을 남겼습니다. 💬`;
-        
-        await DB.prepare(
-          "INSERT INTO notifications (user_id, type, from_user_id, message, link, created_at) VALUES (?, ?, ?, ?, ?, DATETIME('now', '+9 hours'))"
-        ).bind(postInfo.guide_id, 'review', user_id, message, `/post/${post_id}`).run();
-      }
-    } catch (notifError) {
-      console.error('Failed to create review notification:', notifError);
-    }
-
     return new Response(JSON.stringify({ success: true, id }), {
       status: 201,
       headers: { 'Content-Type': 'application/json' }
