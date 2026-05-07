@@ -15,27 +15,25 @@ export function MyPage() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    if (window.confirm('로그아웃 하시겠습니까?')) {
-      logout();
-      navigate('/login', { replace: true });
-    }
+    logout();
+    navigate('/login', { replace: true });
   };
 
   const handleWithdraw = async () => {
     if (!user) return;
-    if (window.confirm('정말로 탈퇴하시겠습니까?\n작성하신 모든 데이터가 삭제되며 복구할 수 없습니다.')) {
-      try {
-        const res = await authService.withdraw(user.id);
-        if (res.success) {
-          alert('회원 탈퇴가 완료되었습니다. 그동안 이용해주셔서 감사합니다.');
-          logout();
-          navigate('/login', { replace: true });
-        } else {
-          alert(res.error || '탈퇴 처리 중 오류가 발생했습니다.');
-        }
-      } catch (err) {
-        alert('탈퇴 처리 중 오류가 발생했습니다.');
+    
+    // 탈퇴 처리
+    try {
+      const res = await authService.withdraw(user.id);
+      if (res.success) {
+        alert('회원 탈퇴가 완료되었습니다. 그동안 이용해주셔서 감사합니다.');
+        logout();
+        navigate('/login', { replace: true });
+      } else {
+        alert(res.error || '탈퇴 처리 중 오류가 발생했습니다.');
       }
+    } catch (err) {
+      alert('탈퇴 처리 중 오류가 발생했습니다.');
     }
   };
 
