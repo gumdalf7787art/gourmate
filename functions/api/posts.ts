@@ -9,14 +9,15 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       } catch (e) {}
     }
 
-    // followers 테이블이 없을 경우 생성
+    // follows 테이블이 없을 경우 생성
     try {
       await DB.prepare(`
-        CREATE TABLE IF NOT EXISTS followers (
+        CREATE TABLE IF NOT EXISTS follows (
           id TEXT PRIMARY KEY,
           follower_id TEXT NOT NULL,
           following_id TEXT NOT NULL,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(follower_id, following_id)
         )
       `).run();
     } catch (e) {}
@@ -33,7 +34,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
         u.trust_score as guide_trust_score,
         u.bio as guide_bio,
         (SELECT COUNT(*) FROM posts WHERE guide_id = p.guide_id) as guide_post_count,
-        (SELECT COUNT(*) FROM followers WHERE following_id = p.guide_id) as guide_follower_count
+        (SELECT COUNT(*) FROM follows WHERE following_id = p.guide_id) as guide_follower_count
       FROM posts p
       JOIN users u ON p.guide_id = u.id
       ORDER BY p.created_at DESC

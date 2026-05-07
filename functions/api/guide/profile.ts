@@ -12,7 +12,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
     const user = await DB.prepare(`
       SELECT 
         u.id, u.email, u.nickname, u.profile_image_url, u.trust_score, u.is_official, u.created_at, u.bio,
-        (SELECT COUNT(*) FROM followers WHERE following_id = u.id) as follower_count,
+        (SELECT COUNT(*) FROM follows WHERE following_id = u.id) as follower_count,
         (SELECT COALESCE(SUM(likes), 0) FROM posts WHERE guide_id = u.id) as total_likes
       FROM users u
       WHERE u.id = ?
