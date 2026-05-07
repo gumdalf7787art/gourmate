@@ -230,11 +230,16 @@ export function Home() {
                 </div>
                 
                 <div className="px-1">
-                  <h4 className="text-[15px] font-black text-white group-hover:text-primary-500 transition-colors leading-tight line-clamp-2 mb-1.5">
+                  <h4 className="text-[15px] font-black text-white group-hover:text-primary-500 transition-colors leading-tight line-clamp-1 mb-1">
                     {c.title}
                   </h4>
+                  {c.description && (
+                    <p className="text-[11px] text-gray-500 font-medium line-clamp-1 mb-2 opacity-80">
+                      {c.description.split('\n')[0]}
+                    </p>
+                  )}
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-gray-500 font-bold">{c.guide_nickname || '익명 가이드'}</span>
+                    <span className="text-[11px] text-gray-400 font-bold">{c.guide_nickname || '익명 가이드'}</span>
                     <span className="w-1 h-1 bg-gray-800 rounded-full"></span>
                     <span className="text-[10px] text-gray-700 font-black uppercase tracking-tighter italic">Theme</span>
                   </div>
