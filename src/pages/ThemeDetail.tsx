@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Share2, MapPin, Heart, Clock, ChevronRight, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Share2, MapPin, Heart, Clock, ChevronRight, AlertCircle, Layers } from 'lucide-react';
 import { postService } from '@/services/postService';
 
 export default function ThemeDetail() {
