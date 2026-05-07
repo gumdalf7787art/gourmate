@@ -63,10 +63,11 @@ export function PostDetail() {
         
         // If user is logged in, check if they liked/bookmarked this post and followed the guide
         if (user) {
+          const guideId = postData.guide_id || postData.guide?.id || postData.guideId;
           const [likeRes, bookmarkRes, followRes] = await Promise.all([
             postService.checkLike(user.id, id),
             postService.checkBookmark(user.id, id),
-            postService.checkFollow(user.id, postData.guide_id || postData.guide?.id)
+            postService.checkFollow(user.id, guideId)
           ]);
           if (likeRes.success) setIsLiked(likeRes.isLiked);
           if (bookmarkRes.success) setIsBookmarked(bookmarkRes.isBookmarked);
@@ -169,22 +170,40 @@ export function PostDetail() {
       return;
     }
 
-    const guideId = post?.guide?.id || post?.guide_id;
+    // guide_id 추출 로직 강화
+    const guideId = post?.guide?.id || post?.guide_id || post?.guideId;
+    
+    if (!guideId) {
+      console.error('Guide ID not found:', post);
+      return;
+    }
+
     if (user.id === guideId) {
       alert('자기 자신은 팔로우할 수 없습니다.');
       return;
     }
 
     const previousFollowing = isFollowingGuide;
-    setIsFollowingGuide(!previousFollowing);
+    const newFollowingState = !previousFollowing;
+    
+    // UI 우선 업데이트 (Optimistic Update)
+    setIsFollowingGuide(newFollowingState);
 
     try {
+      let res;
       if (previousFollowing) {
-        await postService.removeFollow(user.id, guideId!);
+        res = await postService.removeFollow(user.id, guideId);
       } else {
-        await postService.addFollow(user.id, guideId!);
+        res = await postService.addFollow(user.id, guideId);
+      }
+      
+      // API 응답이 실패한 경우에만 롤백
+      if (res && res.success === false) {
+        setIsFollowingGuide(previousFollowing);
+        console.error('Follow API returned failure:', res.error);
       }
     } catch (err) {
+      // 네트워크 에러 등 발생 시 롤백
       setIsFollowingGuide(previousFollowing);
       console.error('Failed to update follow:', err);
     }
