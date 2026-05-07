@@ -126,7 +126,18 @@ export default function Wishlist() {
                       <div>
                         <div className="flex items-center justify-between mb-0.5">
                           <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest">{post.place.category}</span>
-                          <Heart className="w-3.5 h-3.5 text-primary-500 fill-primary-500" />
+                          <button 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              postService.removeBookmark(user.id, post.id).then(() => {
+                                setWishlistedPosts(prev => prev.filter(p => p.id !== post.id));
+                              });
+                            }}
+                            className="p-1.5 hover:bg-white/10 rounded-full transition-colors group/btn"
+                          >
+                            <Heart className="w-4 h-4 text-primary-500 fill-primary-500 group-hover/btn:scale-110 transition-transform" />
+                          </button>
                         </div>
                         <h3 className="text-sm font-bold text-white truncate mb-0.5 group-hover:text-primary-400 transition-colors">{post.place.name}</h3>
                         <p className="text-[11px] text-gray-500 truncate">{post.place.address.split(' ').slice(0, 3).join(' ')}</p>
