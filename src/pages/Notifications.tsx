@@ -7,13 +7,19 @@ import { useAuthStore } from '@/store/useAuthStore';
 export function Notifications() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
-  const { notifications, fetchNotifications, markAsRead, isLoading } = useNotificationStore();
+  const { notifications, fetchNotifications, markAsRead, clearNotifications, isLoading } = useNotificationStore();
 
   useEffect(() => {
     if (user?.id) {
       fetchNotifications(user.id);
     }
   }, [user?.id, fetchNotifications]);
+
+  const handleClearAll = () => {
+    if (window.confirm('모든 알림 내역을 지우시겠습니까?')) {
+      clearNotifications();
+    }
+  };
 
   const handleNotificationClick = (noti: any) => {
     markAsRead(noti.id);
@@ -69,7 +75,17 @@ export function Notifications() {
             </h1>
           </div>
         </div>
-        <span className="text-sm font-bold text-gray-400 mr-2">알림</span>
+        <div className="flex items-center gap-3">
+          {notifications.length > 0 && (
+            <button 
+              onClick={handleClearAll}
+              className="text-[11px] font-bold text-gray-500 hover:text-red-400 transition-colors uppercase tracking-widest"
+            >
+              지우기
+            </button>
+          )}
+          <span className="text-sm font-bold text-gray-400 mr-2">알림</span>
+        </div>
       </header>
 
       {isLoading ? (
