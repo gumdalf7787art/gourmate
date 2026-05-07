@@ -11,6 +11,7 @@ export function ProfileSettings() {
   const [profileImage, setProfileImage] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [nickname, setNickname] = useState('');
+  const [bio, setBio] = useState('');
   
   const [oldPassword, setOldPassword] = useState('');
   const [isOldPasswordValid, setIsOldPasswordValid] = useState<boolean | null>(null);
@@ -44,6 +45,7 @@ export function ProfileSettings() {
   useEffect(() => {
     if (user) {
       setNickname(user.nickname);
+      setBio(user.bio || '');
       setProfileImage(user.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nickname)}&background=333&color=fff`);
     }
   }, [user]);
@@ -86,6 +88,7 @@ export function ProfileSettings() {
       const response = await authService.updateSettings({
         userId: user?.id,
         nickname,
+        bio,
         profileImageUrl: finalProfileImageUrl,
         oldPassword: oldPassword || undefined,
         newPassword: newPassword || undefined
@@ -95,7 +98,8 @@ export function ProfileSettings() {
         setUser({
           ...user!,
           nickname: response.user.nickname,
-          profileImageUrl: response.user.profileImageUrl
+          profileImageUrl: response.user.profileImageUrl,
+          bio: response.user.bio
         });
         alert('정보가 성공적으로 저장되었습니다.');
         navigate(-1);
@@ -156,6 +160,18 @@ export function ProfileSettings() {
             onChange={(e) => setNickname(e.target.value)}
             placeholder="사용하실 닉네임을 입력해주세요" 
             className="w-full px-4 py-3.5 bg-[#111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors"
+          />
+        </section>
+
+        {/* 3. 소개글 설정 */}
+        <section className="flex flex-col gap-2">
+          <label className="text-sm font-bold text-white">나를 소개합니다</label>
+          <textarea 
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            placeholder="가이드로서 자신을 소개해주세요 (예: 맛집 탐방을 좋아하는 미식가입니다)" 
+            rows={3}
+            className="w-full px-4 py-3.5 bg-[#111] border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 transition-colors resize-none"
           />
         </section>
 

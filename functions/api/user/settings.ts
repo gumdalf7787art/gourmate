@@ -2,7 +2,7 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
   try {
     const { DB } = context.env;
     const body = await context.request.json() as any;
-    const { userId, nickname, profileImageUrl, oldPassword, newPassword } = body;
+    const { userId, nickname, profileImageUrl, bio, oldPassword, newPassword } = body;
 
     if (!userId) {
       return new Response(JSON.stringify({ error: '사용자 ID가 필요합니다.' }), { 
@@ -10,6 +10,11 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
         headers: { 'Content-Type': 'application/json' }
       });
     }
+
+    // Ensure bio column exists
+    try {
+      await DB.prepare('ALTER TABLE users ADD COLUMN bio TEXT').run();
+    } catch (e) {}
 
     // 1. Get current user
     const user: any = await DB.prepare('SELECT * FROM users WHERE id = ?').bind(userId).first();
@@ -45,8 +50,8 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
     }
 
     // 3. Update DB
-    await DB.prepare('UPDATE users SET nickname = ?, profile_image_url = ?, password_hash = ? WHERE id = ?')
-      .bind(nickname || user.nickname, profileImageUrl || user.profile_image_url, passwordHash, userId)
+    await DB.prepare('UPDATE users SET nickname = ?, profile_image_url = ?, bio = ?, password_hash = ? WHERE id = ?')
+      .bind(nickname || user.nickname, profileImageUrl || user.profile_image_url, bio !== undefined ? bio : user.bio, passwordHash, userId)
       .run();
 
     return new Response(JSON.stringify({ 
@@ -55,7 +60,8 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       user: {
         id: userId,
         nickname: nickname || user.nickname,
-        profileImageUrl: profileImageUrl || user.profile_image_url
+        profileImageUrl: profileImageUrl || user.profile_image_url,
+        bio: bio !== undefined ? bio : user.bio
       }
     }), {
       status: 200,

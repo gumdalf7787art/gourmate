@@ -6,6 +6,7 @@ interface User {
   email: string;
   nickname: string;
   profileImageUrl?: string;
+  bio?: string;
   trustScore: number;
   isOfficial: boolean;
 }
