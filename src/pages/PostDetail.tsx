@@ -92,18 +92,22 @@ export function PostDetail() {
         setOtherGuidePosts(others);
 
         // 2. 비슷한 다른 식당 (카테고리 동일, 이름 다름)
-        const currentDistrict = currentPost.place.address.split(' ')[1]; // '강남구' 등
+        const currentTags = currentPost.tags || [];
         const similar = all.filter((p: any) => 
           p.id !== currentPost.id && 
           p.place.name !== currentPost.place.name &&
           p.place.category === currentPost.place.category
         ).sort((a: any, b: any) => {
-          // 같은 구에 있는 식당을 우선순위로
-          const aInSameDistrict = a.place.address.includes(currentDistrict);
-          const bInSameDistrict = b.place.address.includes(currentDistrict);
-          if (aInSameDistrict && !bInSameDistrict) return -1;
-          if (!aInSameDistrict && bInSameDistrict) return 1;
-          return (b.likes || 0) - (a.likes || 0);
+          // 태그 일치도 계산 (교집합 개수)
+          const aTags = a.tags || [];
+          const bTags = b.tags || [];
+          const aIntersection = aTags.filter((t: string) => currentTags.includes(t)).length;
+          const bIntersection = bTags.filter((t: string) => currentTags.includes(t)).length;
+          
+          if (aIntersection !== bIntersection) {
+            return bIntersection - aIntersection; // 태그가 많이 겹치는 순서대로
+          }
+          return (b.likes || 0) - (a.likes || 0); // 그 다음은 인기순
         });
         setSimilarPosts(similar.slice(0, 8));
       }
