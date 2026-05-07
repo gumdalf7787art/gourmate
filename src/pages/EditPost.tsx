@@ -338,7 +338,10 @@ export function EditPost() {
         <section className="px-5 mt-8 space-y-8">
           {/* Category */}
           <div>
-            <h3 className="text-sm font-bold text-white mb-4">카테고리</h3>
+            <div className="flex items-center gap-2 mb-4">
+              <Tag className="w-4 h-4 text-primary-500" />
+              <h3 className="text-sm font-bold text-white">카테고리</h3>
+            </div>
             <div className="flex flex-wrap gap-2">
               {CUSTOM_TAGS.map((tag) => (
                 <button
@@ -356,7 +359,10 @@ export function EditPost() {
 
           {/* Keywords */}
           <div>
-            <h3 className="text-sm font-bold text-white mb-4">키워드 (#태그)</h3>
+            <div className="flex items-center gap-2 mb-4">
+              <Hash className="w-4 h-4 text-primary-500" />
+              <h3 className="text-sm font-bold text-white">키워드 (#태그)</h3>
+            </div>
             <div className="flex gap-2 mb-3">
               <div className="relative flex-1">
                 <span className="absolute inset-y-0 left-3 flex items-center text-gray-500 text-sm">#</span>
