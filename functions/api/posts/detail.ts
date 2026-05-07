@@ -118,7 +118,7 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
     } = body;
 
     // PATCH 시에도 컬럼 누락 대비
-    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude', 'phone', 'is_paid'];
+    const columns = ['review', 'tags', 'editor_mode', 'story_blocks', 'menu_items', 'likes', 'latitude', 'longitude', 'phone', 'is_paid', 'top_rank'];
     for (const col of columns) {
       try {
         await DB.prepare(`ALTER TABLE posts ADD COLUMN ${col} TEXT`).run();
@@ -145,7 +145,7 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       latitude ? String(latitude) : null,
       longitude ? String(longitude) : null,
       phone ? String(phone) : null,
-      ((is_paid !== undefined ? is_paid : isPaid) === true || (is_paid !== undefined ? is_paid : isPaid) === 1 || (is_paid !== undefined ? is_paid : isPaid) === '1' || (is_paid !== undefined ? is_paid : isPaid) === 'true') ? 1 : 0,
+      (is_paid === true || is_paid === 1 || is_paid === '1' || is_paid === 'true' || isPaid === true || isPaid === 1 || isPaid === '1' || isPaid === 'true') ? 1 : 0,
       top_rank ? parseInt(top_rank) : null,
       id
     ).run();

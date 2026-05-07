@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, CheckCircle2, MapPin, Image as ImageIcon, 
-  X, Plus, Type, Star, Utensils, Tag, Hash
+  X, Plus, Type, Star, Utensils, Tag, Hash, BadgeCheck
 } from 'lucide-react';
 import { postService } from '@/services/postService';
 import { uploadService } from '@/services/uploadService';
@@ -29,7 +29,7 @@ export function EditPost() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [menuItems, setMenuItems] = useState<{ name: string; price: string; isSignature: boolean }[]>([]);
-  const [isPaid, setIsPaid] = useState(false);
+  const [is_paid, setIsPaid] = useState(false);
 
   // 스토리 에디터 관련 상태
   const [editorMode, setEditorMode] = useState<'simple' | 'story'>('simple');
@@ -61,8 +61,8 @@ export function EditPost() {
           setTags(foundPost.tags || []);
           setMenuItems(foundPost.menu_items || []);
           setEditorMode(foundPost.editor_mode || 'simple');
-          const isPaidVal = foundPost.isPaid !== undefined ? foundPost.isPaid : foundPost.is_paid;
-          setIsPaid(isPaidVal === true || isPaidVal === 1 || isPaidVal === '1' || isPaidVal === 'true');
+          const isPaidRaw = foundPost.is_paid !== undefined ? foundPost.is_paid : foundPost.isPaid;
+          setIsPaid(isPaidRaw === true || isPaidRaw === 1 || isPaidRaw === '1' || isPaidRaw === 'true');
           
           if (foundPost.story_blocks && foundPost.story_blocks.length > 0) {
             setStoryBlocks(foundPost.story_blocks);
@@ -266,8 +266,8 @@ export function EditPost() {
         latitude: post?.place?.latitude || post?.latitude || null,
         longitude: post?.place?.longitude || post?.longitude || null,
         phone: post?.place?.phone || post?.phone || null,
-        is_paid: isPaid,
-        isPaid: isPaid
+        is_paid: is_paid,
+        isPaid: is_paid
       };
 
       console.log('Updating post with data:', updateData);
@@ -513,28 +513,31 @@ export function EditPost() {
           {/* 내돈내산 Toggle */}
           <div className="pt-2">
             <button
-              onClick={() => setIsPaid(!isPaid)}
-              className={`w-full flex items-center justify-between p-5 rounded-2xl border transition-all duration-500 ${
-                isPaid 
+              onClick={() => setIsPaid(!is_paid)}
+              className={`w-full flex items-center gap-3 px-5 py-4 rounded-2xl border transition-all duration-500 relative overflow-hidden group/btn ${
+                is_paid 
                   ? 'bg-primary-500/10 border-primary-500 shadow-[0_0_20px_rgba(249,115,22,0.15)]' 
                   : 'bg-[#111] border-white/30 text-gray-500'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 ${
-                  isPaid ? 'bg-primary-500 text-white rotate-[360deg]' : 'bg-white/5 text-gray-700'
+              <div className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-500 ${
+                  is_paid ? 'bg-primary-500 text-white rotate-[360deg]' : 'bg-white/5 text-gray-700'
                 }`}>
-                  <CheckCircle2 className="w-5 h-5" />
-                </div>
-                <div className="text-left">
-                  <p className={`text-sm font-black tracking-tight ${isPaid ? 'text-white' : 'text-gray-500'}`}>
+                <BadgeCheck className={`w-5 h-5 ${is_paid ? 'animate-pulse' : ''}`} />
+              </div>
+              <div className="flex-1 text-left">
+                <div className="flex items-center gap-2">
+                  <p className={`text-sm font-black tracking-tight ${is_paid ? 'text-white' : 'text-gray-500'}`}>
                     내돈내산 리뷰인가요?
                   </p>
-                  <p className="text-[10px] font-medium opacity-60">직접 결제하고 이용한 솔직한 후기임을 인증합니다.</p>
+                  {is_paid && (
+                    <span className="px-1.5 py-0.5 bg-primary-500 text-white text-[8px] font-black rounded uppercase animate-bounce">Verified</span>
+                  )}
                 </div>
+                <p className="text-[10px] text-gray-600 font-medium mt-0.5">인증된 리뷰는 가이드 신뢰도가 상승합니다</p>
               </div>
-              <div className={`w-12 h-6 rounded-full relative transition-all duration-500 ${isPaid ? 'bg-primary-500' : 'bg-white/10'}`}>
-                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-500 ${isPaid ? 'left-7 shadow-lg' : 'left-1'}`} />
+              <div className={`w-12 h-6 rounded-full relative transition-all duration-500 ${is_paid ? 'bg-primary-500' : 'bg-white/10'}`}>
+                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-500 ${is_paid ? 'left-7 shadow-lg' : 'left-1'}`} />
               </div>
             </button>
           </div>
