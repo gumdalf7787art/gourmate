@@ -136,7 +136,7 @@ export default function ThemeDetail() {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-6 bg-primary-500 rounded-full shadow-[0_0_15px_rgba(255,107,0,0.5)]"></div>
-            <h2 className="text-xl font-black text-white tracking-tighter italic uppercase">Theme Spots <span className="text-primary-500 ml-1">{theme.posts?.length || 0}</span></h2>
+            <h2 className="text-xl font-black text-white tracking-tighter italic uppercase">테마 속 맛집 <span className="text-primary-500 ml-1">{theme.posts?.length || 0}</span></h2>
           </div>
         </div>
 
@@ -185,7 +185,7 @@ export default function ThemeDetail() {
                     <span className="text-[10px] font-bold truncate max-w-[80px]">{post.address?.split(' ')[1] || '서울'}</span>
                   </div>
                   <div className="flex items-center gap-1 text-primary-500 text-[10px] font-black uppercase tracking-tighter group-hover:translate-x-1 transition-transform">
-                    View Detail
+                    자세히 보기
                     <ChevronRight className="w-3 h-3" />
                   </div>
                 </div>

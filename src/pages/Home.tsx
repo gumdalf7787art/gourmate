@@ -195,10 +195,10 @@ export function Home() {
       <section className="py-12 bg-white/2">
         <div className="px-5 mb-8 flex justify-between items-end">
           <div className="space-y-1">
-            <h2 className="text-2xl font-black text-white tracking-tighter italic uppercase">Recommended Themes</h2>
+            <h2 className="text-2xl font-black text-white tracking-tighter italic uppercase">추천 테마</h2>
             <p className="text-sm text-gray-500 font-medium">믿고 보는 미식가들의 큐레이션</p>
           </div>
-          <Link to="/popular-themes" className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[11px] font-black text-gray-400 hover:text-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter">View All</Link>
+          <Link to="/popular-themes" className="text-[11px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 px-5">
@@ -256,10 +256,10 @@ export function Home() {
       <section className="py-12">
         <div className="px-5 mb-8 flex justify-between items-end">
           <div className="space-y-1">
-            <h2 className="text-2xl font-black text-white tracking-tighter italic uppercase">Popular Guides</h2>
+            <h2 className="text-2xl font-black text-white tracking-tighter italic uppercase">인기 가이드 추천</h2>
             <p className="text-sm text-gray-500 font-medium">가장 신뢰받는 미식가들의 지도를 구독해보세요</p>
           </div>
-          <Link to="/popular-guides" className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[11px] font-black text-gray-400 hover:text-primary-500 hover:border-primary-500 transition-all uppercase tracking-tighter">More</Link>
+          <Link to="/popular-guides" className="text-[11px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-5">
@@ -290,19 +290,19 @@ export function Home() {
                   )}
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
-                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">Trust</span>
+                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">신뢰도</span>
                       <span className="text-[11px] text-white font-black">{guide.trustScore}</span>
                     </div>
                     <span className="w-1 h-1 bg-gray-800 rounded-full"></span>
                     <div className="flex items-center gap-1">
-                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">Posts</span>
+                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">포스트</span>
                       <span className="text-[11px] text-white font-black">{guide.postCount || 0}</span>
                     </div>
                   </div>
                 </div>
               </Link>
               <button className="ml-4 px-5 py-2 bg-white text-black text-[11px] font-black rounded-xl hover:bg-primary-500 hover:text-white transition-all uppercase tracking-tighter shadow-xl active:scale-90">
-                Follow
+                팔로우
               </button>
             </div>
           ))}
