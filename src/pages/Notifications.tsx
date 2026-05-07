@@ -120,27 +120,27 @@ export function Notifications() {
       </header>
 
       {isEditMode && notifications.length > 0 && (
-        <div className="bg-primary-500/10 border-b border-primary-500/20 px-5 py-3 flex items-center justify-between animate-in slide-in-from-top duration-300">
-          <div className="flex items-center gap-2">
+        <div className="sticky top-[73px] z-40 bg-[#111] border-b border-white/10 px-5 py-4 flex items-center justify-between shadow-xl animate-in slide-in-from-top duration-300">
+          <div className="flex items-center gap-3">
             <button 
               onClick={() => setSelectedIds(selectedIds.length === notifications.length ? [] : notifications.map(n => n.id))}
-              className="text-xs font-bold text-primary-500"
+              className="text-xs font-bold text-primary-500 bg-primary-500/10 px-3 py-2 rounded-xl active:scale-95 transition-all"
             >
               {selectedIds.length === notifications.length ? '선택 해제' : '전체 선택'}
             </button>
-            <span className="text-[10px] text-gray-500">({selectedIds.length}개 선택됨)</span>
+            <span className="text-[10px] text-gray-500 font-bold">{selectedIds.length}개 선택됨</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button 
               onClick={handleClearAll}
-              className="text-xs font-bold text-gray-500 hover:text-white transition-colors"
+              className="text-[11px] font-bold text-gray-400 hover:text-white px-3 py-2 active:scale-95 transition-all"
             >
               전체삭제
             </button>
             <button 
               onClick={handleDeleteSelected}
               disabled={selectedIds.length === 0}
-              className="flex items-center gap-1.5 text-xs font-bold text-red-500 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-all"
+              className="flex items-center gap-2 text-xs font-black bg-red-500 text-white px-4 py-2 rounded-xl disabled:opacity-20 disabled:grayscale shadow-lg shadow-red-500/20 active:scale-95 transition-all"
             >
               <Trash2 className="w-3.5 h-3.5" />
               선택삭제
