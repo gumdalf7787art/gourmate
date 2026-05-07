@@ -9,17 +9,31 @@ export function Home() {
   const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비', '배달맛집', '기타'];
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [realPosts, setRealPosts] = useState<any[]>([]);
+  const [realThemes, setRealThemes] = useState<any[]>([]);
+  const [randomThemes, setRandomThemes] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchData = async () => {
       try {
-        const data = await postService.getPosts();
-        setRealPosts(data);
+        const [postsRes, themesRes] = await Promise.all([
+          postService.getPosts(),
+          postService.getThemes()
+        ]);
+        
+        setRealPosts(postsRes || []);
+        
+        if (themesRes.success) {
+          const themes = themesRes.data || [];
+          setRealThemes(themes);
+          // Pick 4 random themes
+          const shuffled = [...themes].sort(() => 0.5 - Math.random());
+          setRandomThemes(shuffled.slice(0, 4));
+        }
       } catch (err) {
-        console.error('Failed to fetch posts:', err);
+        console.error('Failed to fetch data:', err);
       }
     };
-    fetchPosts();
+    fetchData();
   }, []);
 
   const allPosts = [...realPosts, ...MOCK_POSTS];
@@ -40,13 +54,17 @@ export function Home() {
       });
 
   // 필터링된 테마 데이터
-  const filteredCollections = selectedCategory === '전체'
-    ? MOCK_COLLECTIONS
-    : MOCK_COLLECTIONS.filter(c => {
-        if (selectedCategory === '파인다이닝') return c.keywords?.includes('파인다이닝') || c.keywords?.includes('양식');
-        if (selectedCategory === '가성비') return c.keywords?.includes('가성비');
-        return c.keywords?.includes(selectedCategory);
-      });
+  const filteredCollections = useMemo(() => {
+    const baseThemes = selectedCategory === '전체' ? randomThemes : realThemes;
+    if (selectedCategory === '전체') return baseThemes;
+
+    return baseThemes.filter(c => {
+      const keywords = c.keywords || [];
+      if (selectedCategory === '파인다이닝') return keywords.includes('파인다이닝') || keywords.includes('양식');
+      if (selectedCategory === '가성비') return keywords.includes('가성비');
+      return keywords.includes(selectedCategory);
+    });
+  }, [selectedCategory, realThemes, randomThemes]);
 
   // 인기 가이드 중복 제거 및 실시간 포스트 수 포함 추출
   const popularGuides = useMemo(() => {
@@ -177,22 +195,22 @@ export function Home() {
       <section className="py-8">
         <div className="px-5 mb-5 flex justify-between items-end">
           <div>
-            <h2 className="text-lg font-bold text-white tracking-tight">추천 테마</h2>
+          <h2 className="text-lg font-bold text-white tracking-tight">추천 테마</h2>
             <p className="text-[11px] text-gray-500 mt-0.5">믿고 보는 미식가들의 큐레이션</p>
           </div>
-          <span className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</span>
+          <Link to="/guide/themes" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
         </div>
         
         <div className="flex flex-col gap-3 px-5">
           {filteredCollections.length > 0 ? (
-            filteredCollections.slice(0, 3).map((c) => (
+            filteredCollections.map((c) => (
               <Link 
                 key={c.id} 
                 to={`/theme/${c.id}`}
                 className="bg-[#111] border border-white/30 rounded-xl relative overflow-hidden group hover:border-primary-500/30 transition-all shadow-lg flex h-24"
               >
                 <div className="w-24 h-full relative overflow-hidden flex-shrink-0">
-                  <img src={c.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={c.image_url || c.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-black/10"></div>
                 </div>
                 <div className="flex-1 p-3 flex flex-col justify-between">
@@ -201,15 +219,15 @@ export function Home() {
                       {c.title}
                     </h4>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[9px] text-gray-500 font-medium">{c.userId}</span>
+                      <span className="text-[9px] text-gray-500 font-medium">{c.guide_nickname || c.userId}</span>
                       <span className="text-[8px] text-primary-500 font-black px-1 py-0.5 bg-primary-500/10 rounded uppercase">
-                        {c.places.length} SPOTS
+                        {c.post_count || c.places?.length || 0} SPOTS
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-primary-500">
                     <Heart className="w-2.5 h-2.5 fill-primary-500" />
-                    <span className="text-[10px] font-black">{c.likes?.toLocaleString()}</span>
+                    <span className="text-[10px] font-black">{(c.likes || 0).toLocaleString()}</span>
                   </div>
                 </div>
               </Link>
