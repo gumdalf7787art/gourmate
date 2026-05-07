@@ -34,6 +34,7 @@ export function PostDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isFollowingGuide, setIsFollowingGuide] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const imageContainerRef = useRef<HTMLDivElement>(null);
@@ -51,14 +52,16 @@ export function PostDetail() {
       if (postData && postData.id) {
         setPost(postData);
         
-        // If user is logged in, check if they liked/bookmarked this post
+        // If user is logged in, check if they liked/bookmarked this post and followed the guide
         if (user) {
-          const [likeRes, bookmarkRes] = await Promise.all([
+          const [likeRes, bookmarkRes, followRes] = await Promise.all([
             postService.checkLike(user.id, id),
-            postService.checkBookmark(user.id, id)
+            postService.checkBookmark(user.id, id),
+            postService.checkFollow(user.id, postData.guide_id || postData.guide?.id)
           ]);
           if (likeRes.success) setIsLiked(likeRes.isLiked);
           if (bookmarkRes.success) setIsBookmarked(bookmarkRes.isBookmarked);
+          if (followRes.success) setIsFollowingGuide(followRes.isFollowing);
         }
       }
 
@@ -113,6 +116,34 @@ export function PostDetail() {
     } catch (err) {
       setIsBookmarked(previousBookmarked);
       console.error('Failed to update bookmark:', err);
+    }
+  };
+
+  const handleFollowGuide = async () => {
+    if (!user) {
+      alert('로그인이 필요한 기능입니다.');
+      navigate('/login');
+      return;
+    }
+
+    const guideId = post?.guide?.id || post?.guide_id;
+    if (user.id === guideId) {
+      alert('자기 자신은 팔로우할 수 없습니다.');
+      return;
+    }
+
+    const previousFollowing = isFollowingGuide;
+    setIsFollowingGuide(!previousFollowing);
+
+    try {
+      if (previousFollowing) {
+        await postService.removeFollow(user.id, guideId!);
+      } else {
+        await postService.addFollow(user.id, guideId!);
+      }
+    } catch (err) {
+      setIsFollowingGuide(previousFollowing);
+      console.error('Failed to update follow:', err);
     }
   };
 
@@ -412,6 +443,18 @@ export function PostDetail() {
                 </div>
               </div>
             </div>
+            {user?.id !== post.guide.id && (
+              <button 
+                onClick={handleFollowGuide}
+                className={`px-4 py-2 rounded-xl text-[13px] font-black transition-all active:scale-95 shadow-lg ${
+                  isFollowingGuide
+                    ? 'bg-primary-500/10 border border-primary-500 text-primary-500'
+                    : 'bg-white text-black'
+                }`}
+              >
+                {isFollowingGuide ? '팔로잉' : '+ 팔로우'}
+              </button>
+            )}
           </div>
 
           <div className="bg-[#111] rounded-2xl p-6 border border-white/30 relative shadow-2xl">
