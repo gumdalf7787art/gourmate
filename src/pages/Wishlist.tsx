@@ -13,31 +13,36 @@ export default function Wishlist() {
   const [activeTab, setActiveTab] = useState<'places' | 'guides'>('places');
   const [showMap, setShowMap] = useState(false);
   const [wishlistedPosts, setWishlistedPosts] = useState<any[]>([]);
+  const [followedGuides, setFollowedGuides] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Simulated Data for guides for now (Follow functionality might need separate implementation)
-  const followedGuides: any[] = []; 
-
   useEffect(() => {
-    const fetchWishlist = async () => {
+    const fetchData = async () => {
       if (!user) {
         setIsLoading(false);
         return;
       }
       setIsLoading(true);
       try {
-        const res = await postService.getBookmarks(user.id);
-        if (res.success) {
-          setWishlistedPosts(res.data);
+        const [bookmarksRes, followsRes] = await Promise.all([
+          postService.getBookmarks(user.id),
+          postService.getFollowedGuides(user.id)
+        ]);
+        
+        if (bookmarksRes.success) {
+          setWishlistedPosts(bookmarksRes.data);
+        }
+        if (followsRes.success) {
+          setFollowedGuides(followsRes.data);
         }
       } catch (err) {
-        console.error('Failed to fetch wishlist:', err);
+        console.error('Failed to fetch wishlist data:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchWishlist();
+    fetchData();
   }, [user]);
 
   if (!user) {
@@ -198,8 +203,16 @@ export default function Wishlist() {
                       </div>
                     </div>
 
-                    <button className="w-9 h-9 bg-primary-500 text-white rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition-all">
-                      <Heart className="w-4 h-4 fill-white" />
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        postService.removeFollow(user.id, guide.id).then(() => {
+                          setFollowedGuides(prev => prev.filter(g => g.id !== guide.id));
+                        });
+                      }}
+                      className="w-9 h-9 bg-primary-500/10 border border-primary-500 text-primary-500 rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition-all hover:bg-primary-500 hover:text-white"
+                    >
+                      <Heart className="w-4 h-4 fill-current" />
                     </button>
                   </div>
                 ))

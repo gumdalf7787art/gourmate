@@ -147,5 +147,27 @@ export const postService = {
     return apiFetch(`/user/likes?userId=${userId}&postId=${postId}`, {
       method: 'DELETE'
     });
+  },
+
+  // Follow functions
+  async checkFollow(followerId: string, followingId: string) {
+    return apiFetch(`/user/follow?followerId=${followerId}&followingId=${followingId}`);
+  },
+
+  async addFollow(followerId: string, followingId: string) {
+    return apiFetch('/user/follow', {
+      method: 'POST',
+      body: JSON.stringify({ followerId, followingId })
+    });
+  },
+
+  async removeFollow(followerId: string, followingId: string) {
+    return apiFetch(`/user/follow?followerId=${followerId}&followingId=${followingId}`, {
+      method: 'DELETE'
+    });
+  },
+
+  async getFollowedGuides(userId: string) {
+    return apiFetch(`/user/follow?followerId=${userId}`);
   }
 };

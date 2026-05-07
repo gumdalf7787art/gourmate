@@ -4,6 +4,7 @@ import { ChevronLeft, Share2, Star, BadgeCheck, Utensils, Medal, Plus, Heart, In
 import { TrustScoreModal } from '../components/TrustScoreModal';
 import { KakaoMap } from '../components/KakaoMap';
 import { postService } from '@/services/postService';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비'];
 
@@ -17,6 +18,8 @@ export function GuideProfile() {
   const [showTrustModal, setShowTrustModal] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const user = useAuthStore((state) => state.user);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
     const fetchGuideData = async () => {
@@ -28,6 +31,14 @@ export function GuideProfile() {
         if (res.success) {
           setGuide(res.data);
           setTop20Posts(res.data.top20Posts || []);
+          
+          // Check follow status if logged in
+          if (user && user.id !== id) {
+            const followRes = await postService.checkFollow(user.id, id);
+            if (followRes.success) {
+              setIsFollowing(followRes.isFollowing);
+            }
+          }
         } else {
           setError(res.error || '가이드 정보를 불러오지 못했습니다.');
         }
@@ -38,7 +49,34 @@ export function GuideProfile() {
       }
     };
     fetchGuideData();
-  }, [id]);
+  }, [id, user]);
+
+  const handleFollow = async () => {
+    if (!user) {
+      alert('로그인이 필요한 기능입니다.');
+      navigate('/login');
+      return;
+    }
+
+    if (user.id === id) {
+      alert('자기 자신은 팔로우할 수 없습니다.');
+      return;
+    }
+
+    const previousFollowing = isFollowing;
+    setIsFollowing(!previousFollowing);
+
+    try {
+      if (previousFollowing) {
+        await postService.removeFollow(user.id, id!);
+      } else {
+        await postService.addFollow(user.id, id!);
+      }
+    } catch (err) {
+      setIsFollowing(previousFollowing);
+      console.error('Failed to update follow:', err);
+    }
+  };
 
   const guidePosts = useMemo(() => guide?.posts || [], [guide]);
   const guideCollections = useMemo(() => guide?.themes || [], [guide]);
@@ -172,9 +210,24 @@ export function GuideProfile() {
             <p className="text-[15px] text-gray-300 leading-relaxed font-medium italic">
               "{guide.bio || '맛있는 음식과 멋진 공간을 기록합니다.'}"
             </p>
-            <button className="w-full mt-5 bg-white text-black font-black py-3 rounded-2xl active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xl">
-              <Plus className="w-5 h-5" /> 팔로우 하기
-            </button>
+            {user?.id !== id && (
+              <button 
+                onClick={handleFollow}
+                className={`w-full mt-5 font-black py-3 rounded-2xl active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xl ${
+                  isFollowing 
+                    ? 'bg-primary-500/10 border border-primary-500 text-primary-500' 
+                    : 'bg-white text-black'
+                }`}
+              >
+                {isFollowing ? (
+                  <>팔로잉</>
+                ) : (
+                  <>
+                    <Plus className="w-5 h-5" /> 팔로우 하기
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </section>
 
