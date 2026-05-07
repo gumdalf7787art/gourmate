@@ -259,7 +259,12 @@ export function GuideProfile() {
                 <Medal className="w-5 h-5 text-yellow-500" />
                 가이드 추천 Top 20
               </h2>
-              <button className="text-[11px] font-bold text-primary-500 uppercase tracking-widest">전체보기</button>
+              <Link 
+                to={`/guide/${id}/top20`}
+                className="text-[11px] font-bold text-primary-500 uppercase tracking-widest hover:text-primary-400 transition-colors"
+              >
+                전체보기
+              </Link>
             </div>
             <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 snap-x pb-4">
               {top20Posts.map((post: any, idx: number) => (

@@ -7,6 +7,7 @@ import { SearchPlace } from '@/pages/SearchPlace';
 import { RegisterPlace } from '@/pages/RegisterPlace';
 import { GuideProfile } from '@/pages/GuideProfile';
 import { GuidePostList } from '@/pages/GuidePostList';
+import { GuideTop20 } from '@/pages/GuideTop20';
 import { PopularGuides } from './pages/PopularGuides';
 import GuideCollectionList from './pages/GuideCollectionList';
 import ThemeDetail from './pages/ThemeDetail';
@@ -92,6 +93,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/post/:id" element={<PostDetail />} />
           <Route path="/guide/:id" element={<GuideProfile />} />
+          <Route path="/guide/:id/top20" element={<GuideTop20 />} />
           <Route path="/guide/:id/posts" element={<GuidePostList />} />
           <Route path="/guide/:id/themes" element={<GuideCollectionList />} />
           <Route path="/popular-guides" element={<PopularGuides />} />
