@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, MessageSquare, Reply, ExternalLink, Check, Clock } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Reply, ExternalLink, Clock } from 'lucide-react';
 import { postService } from '@/services/postService';
 import { useAuthStore } from '@/store/useAuthStore';
 
