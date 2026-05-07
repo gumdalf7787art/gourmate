@@ -165,15 +165,16 @@ export function GeneralSearch() {
                 {Array.from(new Set(filteredPosts.map(p => p.place.id))).map(placeId => {
                   const placePosts = filteredPosts.filter(p => p.place.id === placeId);
                   const place = placePosts[0].place;
+                  const firstPost = placePosts[0];
                   
                   return (
                     <div 
                       key={placeId} 
-                      onClick={() => navigate(`/post/${placePosts[0].id}`)}
+                      onClick={() => navigate(`/post/${firstPost.id}`)}
                       className="bg-[#111] border border-white/20 rounded-[24px] overflow-hidden shadow-2xl flex flex-col cursor-pointer group hover:border-primary-500/30 transition-all"
                     >
-                      <div className="aspect-square relative overflow-hidden">
-                        <img src={placePosts[0].images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <div className="aspect-[4/3] relative overflow-hidden">
+                        <img src={firstPost.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                         <div className="absolute top-3 left-3">
                           <span className="text-[9px] font-black text-white uppercase tracking-tighter px-1.5 py-0.5 bg-primary-500 rounded-md shadow-lg">
                             {place.category}
@@ -183,17 +184,23 @@ export function GeneralSearch() {
                       <div className="p-4 flex-1 flex flex-col justify-between">
                         <div>
                           <h4 className="text-[15px] font-black text-white truncate leading-tight mb-1 group-hover:text-primary-500 transition-colors">{place.name}</h4>
-                          <p className="text-[11px] text-gray-500 truncate font-medium">{place.address.split(' ').slice(0, 2).join(' ')}</p>
+                          <p className="text-[11px] text-gray-500 truncate font-medium mb-1">{place.address.split(' ').slice(0, 2).join(' ')}</p>
+                          {firstPost.review && (
+                            <p className="text-[11px] text-gray-400 line-clamp-1 italic font-light opacity-80">
+                              "{firstPost.review}"
+                            </p>
+                          )}
                         </div>
                         <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
-                          <div className="flex -space-x-2">
-                            {placePosts.slice(0, 3).map((p, i) => (
-                              <img key={i} src={p.guide.profileImageUrl} className="w-5 h-5 rounded-full border border-black object-cover" />
-                            ))}
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <div className="flex -space-x-2 shrink-0">
+                              <img src={firstPost.guide.profileImageUrl} className="w-5 h-5 rounded-full border border-black object-cover" />
+                            </div>
+                            <span className="text-[10px] font-bold text-gray-400 truncate">{firstPost.guide.nickname}</span>
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 shrink-0">
                             <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
-                            <span className="text-[10px] font-black text-white">{placePosts[0].rating}</span>
+                            <span className="text-[10px] font-black text-white">{firstPost.rating}</span>
                           </div>
                         </div>
                       </div>
@@ -225,7 +232,7 @@ export function GeneralSearch() {
                     onClick={() => navigate(`/post/${post.id}`)} 
                     className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden cursor-pointer group hover:border-primary-500/30 transition-all flex flex-col"
                   >
-                    <div className="aspect-square relative overflow-hidden">
+                    <div className="aspect-[4/3] relative overflow-hidden">
                       <img src={post.images[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
                       <div className="absolute bottom-2 left-3 right-3">
@@ -237,7 +244,7 @@ export function GeneralSearch() {
                         {post.menu_items?.[0]?.name || post.place.name}
                       </h4>
                       <p className="text-[11px] text-gray-500 leading-snug line-clamp-2 font-medium italic opacity-80">
-                        "{post.review || post.content}"
+                        "{post.review || post.content.split('.')[0]}"
                       </p>
                     </div>
                   </div>
