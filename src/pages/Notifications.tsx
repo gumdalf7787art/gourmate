@@ -9,7 +9,6 @@ export function Notifications() {
   const user = useAuthStore((state) => state.user);
   const { notifications, fetchNotifications, markAsRead, clearNotifications, setNotifications, isLoading } = useNotificationStore();
   
-  const [isEditMode, setIsEditMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   useEffect(() => {
@@ -19,34 +18,32 @@ export function Notifications() {
   }, [user?.id, fetchNotifications]);
 
   const handleClearAll = () => {
-    if (window.confirm('모든 알림 내역을 완전히 지우시겠습니까?')) {
+    // confirmation is better, but making it more reliable
+    const confirmed = window.confirm('모든 알림 내역을 완전히 지우시겠습니까?');
+    if (confirmed) {
       clearNotifications();
-      setIsEditMode(false);
       setSelectedIds([]);
     }
   };
 
   const handleDeleteSelected = () => {
     if (selectedIds.length === 0) return;
-    if (window.confirm(`${selectedIds.length}개의 알림을 삭제하시겠습니까?`)) {
+    const confirmed = window.confirm(`${selectedIds.length}개의 알림을 삭제하시겠습니까?`);
+    if (confirmed) {
       const remaining = notifications.filter(n => !selectedIds.includes(n.id));
       setNotifications(remaining);
       setSelectedIds([]);
-      if (remaining.length === 0) setIsEditMode(false);
     }
   };
 
-  const toggleSelect = (id: number) => {
+  const toggleSelect = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent navigating to link when selecting
     setSelectedIds(prev => 
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
   };
 
   const handleNotificationClick = (noti: any) => {
-    if (isEditMode) {
-      toggleSelect(noti.id);
-      return;
-    }
     markAsRead(noti.id);
     if (noti.link) {
       navigate(noti.link);
@@ -100,47 +97,34 @@ export function Notifications() {
             </h1>
           </div>
         </div>
-        
-        <div className="flex items-center gap-3">
-          {notifications.length > 0 && (
-            <button 
-              onClick={() => {
-                setIsEditMode(!isEditMode);
-                setSelectedIds([]);
-              }}
-              className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all ${
-                isEditMode ? 'bg-white text-black' : 'text-gray-400 hover:text-white bg-white/5'
-              }`}
-            >
-              {isEditMode ? '완료' : '편집'}
-            </button>
-          )}
-          <span className="text-sm font-bold text-gray-400">알림</span>
-        </div>
+        <span className="text-sm font-bold text-gray-400 mr-2">알림</span>
       </header>
 
-      {isEditMode && notifications.length > 0 && (
-        <div className="sticky top-[73px] z-40 bg-[#111] border-b border-white/10 px-5 py-4 flex items-center justify-between shadow-xl animate-in slide-in-from-top duration-300">
+      {notifications.length > 0 && (
+        <div className="sticky top-[73px] z-40 bg-[#0a0a0a] border-b border-white/5 px-5 py-3.5 flex items-center justify-between shadow-2xl">
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setSelectedIds(selectedIds.length === notifications.length ? [] : notifications.map(n => n.id))}
-              className="text-xs font-bold text-primary-500 bg-primary-500/10 px-3 py-2 rounded-xl active:scale-95 transition-all"
+              className="flex items-center gap-2 text-[11px] font-black text-white bg-white/5 px-3 py-2 rounded-xl border border-white/10 hover:bg-white/10 transition-all"
             >
+              {selectedIds.length === notifications.length ? <CheckCircle2 className="w-3.5 h-3.5 text-primary-500" /> : <Circle className="w-3.5 h-3.5 text-gray-600" />}
               {selectedIds.length === notifications.length ? '선택 해제' : '전체 선택'}
             </button>
-            <span className="text-[10px] text-gray-500 font-bold">{selectedIds.length}개 선택됨</span>
+            {selectedIds.length > 0 && (
+              <span className="text-[11px] text-primary-500 font-black animate-pulse">{selectedIds.length}개 선택됨</span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button 
               onClick={handleClearAll}
-              className="text-[11px] font-bold text-gray-400 hover:text-white px-3 py-2 active:scale-95 transition-all"
+              className="text-[11px] font-bold text-gray-500 hover:text-white px-3 py-2 transition-colors"
             >
               전체삭제
             </button>
             <button 
               onClick={handleDeleteSelected}
               disabled={selectedIds.length === 0}
-              className="flex items-center gap-2 text-xs font-black bg-red-500 text-white px-4 py-2 rounded-xl disabled:opacity-20 disabled:grayscale shadow-lg shadow-red-500/20 active:scale-95 transition-all"
+              className="flex items-center gap-2 text-[11px] font-black bg-red-500 text-white px-4 py-2.5 rounded-xl disabled:opacity-10 disabled:grayscale shadow-lg shadow-red-500/20 active:scale-90 transition-all cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
               선택삭제
@@ -164,23 +148,24 @@ export function Notifications() {
                 noti.isRead ? 'opacity-60' : 'bg-[#111]'
               } ${selectedIds.includes(noti.id) ? 'bg-primary-500/5' : ''}`}
             >
-              {isEditMode && (
-                <div className="flex items-center pr-1 animate-in zoom-in duration-200">
-                  {selectedIds.includes(noti.id) ? (
-                    <CheckCircle2 className="w-5 h-5 text-primary-500" />
-                  ) : (
-                    <Circle className="w-5 h-5 text-gray-700" />
-                  )}
-                </div>
-              )}
+              <div 
+                onClick={(e) => toggleSelect(noti.id, e)}
+                className="flex items-center pr-1 transition-transform active:scale-125"
+              >
+                {selectedIds.includes(noti.id) ? (
+                  <CheckCircle2 className="w-5.5 h-5.5 text-primary-500 fill-primary-500/10" />
+                ) : (
+                  <Circle className="w-5.5 h-5.5 text-white/10" strokeWidth={1.5} />
+                )}
+              </div>
               <div className="w-10 h-10 rounded-full bg-black border border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-inner">
                 {getIcon(noti.type)}
               </div>
-              <div className="flex flex-col gap-1 flex-1">
-                <p className="text-sm font-medium text-white leading-snug">{noti.message}</p>
+              <div className="flex flex-col gap-1 flex-1 min-w-0">
+                <p className="text-sm font-medium text-white leading-snug truncate-2-lines">{noti.message}</p>
                 <span className="text-[10px] text-gray-500 font-bold">{formatTime(noti.createdAt)}</span>
               </div>
-              {!noti.isRead && !isEditMode && (
+              {!noti.isRead && (
                 <div className="w-2 h-2 rounded-full bg-primary-500 mt-2 flex-shrink-0"></div>
               )}
             </div>
