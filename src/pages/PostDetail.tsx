@@ -44,6 +44,8 @@ export function PostDetail() {
   const [newMapName, setNewMapName] = useState('');
   const [isCreatingMap, setIsCreatingMap] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [otherGuidePosts, setOtherGuidePosts] = useState<any[]>([]);
+  const [similarPosts, setSimilarPosts] = useState<any[]>([]);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
   const fetchPost = async () => {
@@ -74,6 +76,36 @@ export function PostDetail() {
 
       if (reviewsRes.success) {
         setReviews(reviewsRes.data);
+      }
+
+      // 추천 섹션을 위한 모든 포스트 가져오기
+      const allPostsRes = await postService.getPosts();
+      if (allPostsRes && Array.from(allPostsRes).length > 0) {
+        const all = Array.from(allPostsRes);
+        const currentPost = postData;
+        
+        // 1. 이 집을 리뷰한 다른 가이드 (이름 동일, 현재 글 제외)
+        const others = all.filter((p: any) => 
+          p.id !== currentPost.id && 
+          p.place.name === currentPost.place.name
+        );
+        setOtherGuidePosts(others);
+
+        // 2. 비슷한 다른 식당 (카테고리 동일, 이름 다름)
+        const currentDistrict = currentPost.place.address.split(' ')[1]; // '강남구' 등
+        const similar = all.filter((p: any) => 
+          p.id !== currentPost.id && 
+          p.place.name !== currentPost.place.name &&
+          p.place.category === currentPost.place.category
+        ).sort((a: any, b: any) => {
+          // 같은 구에 있는 식당을 우선순위로
+          const aInSameDistrict = a.place.address.includes(currentDistrict);
+          const bInSameDistrict = b.place.address.includes(currentDistrict);
+          if (aInSameDistrict && !bInSameDistrict) return -1;
+          if (!aInSameDistrict && bInSameDistrict) return 1;
+          return (b.likes || 0) - (a.likes || 0);
+        });
+        setSimilarPosts(similar.slice(0, 8));
       }
     } catch (err) {
       console.error('Failed to fetch post or reviews:', err);
@@ -770,6 +802,74 @@ export function PostDetail() {
             )}
           </div>
         </section>
+
+        {/* 이 집을 리뷰한 다른 가이드 */}
+        {otherGuidePosts.length > 0 && (
+          <section className="py-12 border-b border-white/5">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-xl font-black text-white tracking-tighter">이 집을 리뷰한 다른 가이드</h3>
+                <p className="text-[12px] text-gray-500 font-medium mt-1">서로 다른 시선으로 본 이 식당의 매력</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {otherGuidePosts.slice(0, 4).map((p) => (
+                <Link to={`/post/${p.id}`} key={p.id} className="group">
+                  <div className="aspect-square rounded-2xl overflow-hidden mb-3 border border-white/10 relative bg-[#111]">
+                    <img src={p.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                    <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-white">
+                        <Flame className="w-2.5 h-2.5 text-primary-500" />
+                        <span className="text-[10px] font-bold">{p.likes || 0}</span>
+                      </div>
+                      <span className="text-[10px] text-gray-200 font-bold">{p.guide.nickname}</span>
+                    </div>
+                  </div>
+                  <p className="text-[13px] text-gray-300 line-clamp-2 leading-relaxed italic opacity-90">
+                    "{p.review || p.content.substring(0, 30)}..."
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 이 집과 비슷한 다른 식당 */}
+        {similarPosts.length > 0 && (
+          <section className="py-12 pb-20">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-xl font-black text-white tracking-tighter">이 집과 비슷한 다른 식당</h3>
+                <p className="text-[12px] text-gray-500 font-medium mt-1">가이드들이 추천하는 비슷한 스타일의 맛집</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {similarPosts.map((p) => (
+                <Link to={`/post/${p.id}`} key={p.id} className="group">
+                  <div className="aspect-square rounded-2xl overflow-hidden mb-3 border border-white/10 relative bg-[#111]">
+                    <img src={p.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                    <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-white">
+                        <Flame className="w-2.5 h-2.5 text-primary-500" />
+                        <span className="text-[10px] font-bold">{p.likes || 0}</span>
+                      </div>
+                      <span className="text-[9px] text-gray-400 font-medium">{p.place.category}</span>
+                    </div>
+                  </div>
+                  <h4 className="text-white text-[13px] font-bold truncate mb-1 group-hover:text-primary-400 transition-colors">{p.place.name}</h4>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
+                    <span className="text-[10px] truncate">
+                      {p.place.address.split(' ')[0].replace('서울특별시', '서울')} {p.place.address.split(' ')[1]}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
 
       {/* Bottom Action Bar (Mobile Only) */}
