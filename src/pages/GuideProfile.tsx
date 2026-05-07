@@ -66,6 +66,16 @@ export function GuideProfile() {
     const previousFollowing = isFollowing;
     setIsFollowing(!previousFollowing);
 
+    // Update follower count in UI immediately
+    if (guide) {
+      setGuide({
+        ...guide,
+        followers: previousFollowing 
+          ? Math.max(0, (guide.followers || 0) - 1) 
+          : (guide.followers || 0) + 1
+      });
+    }
+
     try {
       if (previousFollowing) {
         await postService.removeFollow(user.id, id!);
@@ -73,7 +83,16 @@ export function GuideProfile() {
         await postService.addFollow(user.id, id!);
       }
     } catch (err) {
+      // Rollback on error
       setIsFollowing(previousFollowing);
+      if (guide) {
+        setGuide({
+          ...guide,
+          followers: previousFollowing 
+            ? (guide.followers || 0) + 1 
+            : Math.max(0, (guide.followers || 0) - 1)
+        });
+      }
       console.error('Failed to update follow:', err);
     }
   };
@@ -81,10 +100,11 @@ export function GuideProfile() {
   const guidePosts = useMemo(() => guide?.posts || [], [guide]);
   const guideCollections = useMemo(() => guide?.themes || [], [guide]);
 
-  // Calculate total likes from all posts
-  const totalLikes = useMemo(() => {
+  // Use likes from guide object (backend sum) or fallback to calculated
+  const displayLikes = useMemo(() => {
+    if (guide?.likes !== undefined) return guide.likes;
     return guidePosts.reduce((sum: number, post: any) => sum + (post.likes || 0), 0);
-  }, [guidePosts]);
+  }, [guide?.likes, guidePosts]);
 
   const filteredPosts = useMemo(() => {
     if (activeCategory === '전체') return guidePosts;
@@ -200,7 +220,7 @@ export function GuideProfile() {
                 <div className="w-px h-6 bg-white/10" />
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest opacity-80">좋아요</span>
-                  <span className="text-lg font-black leading-none mt-1">{totalLikes > 1000 ? `${(totalLikes / 1000).toFixed(1)}k` : totalLikes}</span>
+                  <span className="text-lg font-black leading-none mt-1">{displayLikes > 1000 ? `${(displayLikes / 1000).toFixed(1)}k` : displayLikes}</span>
                 </div>
               </div>
             </div>

@@ -10,9 +10,12 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
 
     // 1. 가이드 기본 정보 조회
     const user = await DB.prepare(`
-      SELECT id, email, nickname, profile_image_url, trust_score, is_official, created_at, bio
-      FROM users
-      WHERE id = ?
+      SELECT 
+        u.id, u.email, u.nickname, u.profile_image_url, u.trust_score, u.is_official, u.created_at, u.bio,
+        (SELECT COUNT(*) FROM followers WHERE following_id = u.id) as follower_count,
+        (SELECT COALESCE(SUM(likes), 0) FROM posts WHERE guide_id = u.id) as total_likes
+      FROM users u
+      WHERE u.id = ?
     `).bind(id).first() as any;
 
     if (!user) {
@@ -89,7 +92,8 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       trustScore: user.trust_score || 0,
       isOfficial: user.is_official === 1,
       createdAt: user.created_at,
-      followers: 0, // 추후 팔로우 기능 연동
+      followers: user.follower_count || 0,
+      likes: user.total_likes || 0,
       bio: user.bio || '맛있는 음식과 멋진 공간을 기록합니다.'
     };
 
