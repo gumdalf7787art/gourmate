@@ -28,7 +28,7 @@ import { Notifications } from '@/pages/Notifications';
 import { MyThemes } from '@/pages/MyThemes';
 import { ThemeEditor } from '@/pages/ThemeEditor';
 import { Analytics } from '@/pages/Analytics';
-import { AllComments } from '@/pages/AllComments';
+import ManageComments from '@/pages/ManageComments';
 import { Notice } from '@/pages/Notice';
 import { CustomerCenter } from '@/pages/CustomerCenter';
 import { KakaoCallback } from '@/pages/KakaoCallback';
@@ -140,7 +140,7 @@ function App() {
           <Route path="/my/themes/create" element={<ThemeEditor />} />
           <Route path="/my/themes/edit/:id" element={<ThemeEditor />} />
           <Route path="/my/analytics" element={<Analytics />} />
-          <Route path="/my/analytics/comments" element={<AllComments />} />
+          <Route path="/my/comments" element={<ManageComments />} />
           <Route path="/my/notice" element={<Notice />} />
           <Route path="/my/support" element={<CustomerCenter />} />
           <Route path="/admin" element={<AdminDashboard />} />

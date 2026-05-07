@@ -3,11 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { 
   Settings, Users, Bell, Heart, Map as MapIcon,
   FileText, Medal, FolderPlus, BarChart2, 
-  HelpCircle, Megaphone, LogOut, UserX, ChevronRight 
+  HelpCircle, Megaphone, LogOut, UserX, ChevronRight,
+  MessageSquare
 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useNotificationStore } from '@/store/useNotificationStore';
 import { authService } from '@/services/authService';
+import { postService } from '@/services/postService';
 
 export function MyPage() {
   const { user, logout } = useAuthStore();
@@ -16,6 +18,24 @@ export function MyPage() {
   
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [unreadCommentsCount, setUnreadCommentsCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnreadComments = async () => {
+      if (user?.id) {
+        try {
+          const res = await postService.getReceivedComments(user.id);
+          if (res.success) {
+            const count = res.data.filter((c: any) => !c.is_read).length;
+            setUnreadCommentsCount(count);
+          }
+        } catch (err) {
+          console.error('Failed to fetch unread comments:', err);
+        }
+      }
+    };
+    fetchUnreadComments();
+  }, [user?.id]);
 
   const handleLogout = () => {
     logout();
@@ -65,7 +85,14 @@ export function MyPage() {
         { icon: <FileText className="w-5 h-5" />, label: '나의 포스팅 관리', desc: '작성한 포스팅 조회/수정/삭제', link: '/my/posts' },
         { icon: <Medal className="w-5 h-5" />, label: '가이드 추천 Top 20 설정', desc: '나의 대표 맛집 순위 관리', link: '/my/top20' },
         { icon: <FolderPlus className="w-5 h-5" />, label: '나의 테마 관리', desc: '나만의 맛집 지도 만들기', link: '/my/themes' },
-        { icon: <BarChart2 className="w-5 h-5" />, label: '접속 및 통계 관리', desc: '조회수 및 댓글 확인', link: '/my/analytics' },
+        { 
+          icon: <MessageSquare className="w-5 h-5" />, 
+          label: '댓글 관리', 
+          desc: '내가 받은 모든 댓글 확인 및 답글', 
+          link: '/my/comments',
+          badge: unreadCommentsCount > 0 ? unreadCommentsCount : null 
+        },
+        { icon: <BarChart2 className="w-5 h-5" />, label: '접속 및 통계 관리', desc: '조회수 및 성과 분석', link: '/my/analytics' },
       ]
     },
     {
@@ -141,9 +168,16 @@ export function MyPage() {
                         {item.icon}
                       </div>
                       <div className="flex flex-col">
-                        <span className={`text-sm font-bold text-white ${item.textClass || ''}`}>
-                          {item.label}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-sm font-bold text-white ${item.textClass || ''}`}>
+                            {item.label}
+                          </span>
+                          {item.badge && (
+                            <span className="flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-primary-500 text-black text-[9px] font-black rounded-full shadow-[0_0_10px_rgba(255,107,0,0.5)]">
+                              {item.badge}
+                            </span>
+                          )}
+                        </div>
                         {item.desc && (
                           <span className="text-[10px] text-gray-500">{item.desc}</span>
                         )}

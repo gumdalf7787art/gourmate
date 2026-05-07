@@ -225,5 +225,17 @@ export const postService = {
     return apiFetch(`/themes/follow?userId=${userId}&themeId=${themeId}`, {
       method: 'DELETE'
     });
+  },
+
+  // Comment Management functions
+  async getReceivedComments(guideId: string) {
+    return apiFetch(`/user/comments?guideId=${guideId}`);
+  },
+
+  async markCommentsAsRead(reviewIds: string[]) {
+    return apiFetch('/user/comments', {
+      method: 'PATCH',
+      body: JSON.stringify({ reviewIds })
+    });
   }
 };
