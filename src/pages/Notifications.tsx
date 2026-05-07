@@ -23,7 +23,10 @@ export function Notifications() {
   };
 
   const formatTime = (dateStr: string) => {
+    if (!dateStr) return '';
     const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '방금 전';
+    
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     

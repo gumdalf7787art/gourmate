@@ -11,15 +11,7 @@ export function BottomNav() {
 
   useEffect(() => {
     if (user?.id) {
-      // 초기 로드
       fetchNotifications(user.id);
-      
-      // 1분마다 새로운 알림 체크 (실시간성 부여)
-      const interval = setInterval(() => {
-        fetchNotifications(user.id);
-      }, 60000);
-      
-      return () => clearInterval(interval);
     }
   }, [user?.id, fetchNotifications]);
 

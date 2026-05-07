@@ -35,10 +35,19 @@ export const useNotificationStore = create<NotificationState>()(
           const response = await fetch(`/api/notifications?userId=${userId}`);
           const result = await response.json();
           if (result.success) {
-            const notifications = result.data.map((n: any) => ({
-              ...n,
-              isRead: Boolean(n.isRead)
-            }));
+            const notifications = result.data.map((n: any) => {
+              // SQLite date strings (YYYY-MM-DD HH:MM:SS) need a 'T' for ISO compliance in some JS environments
+              let dateStr = n.createdAt;
+              if (dateStr && !dateStr.includes('T') && dateStr.includes(' ')) {
+                dateStr = dateStr.replace(' ', 'T');
+              }
+              return {
+                ...n,
+                createdAt: dateStr,
+                isRead: Boolean(n.isRead)
+              };
+            }).filter((n: any) => n.createdAt && !isNaN(new Date(n.createdAt).getTime()));
+
             set({ 
               notifications, 
               unreadCount: notifications.filter((n: any) => !n.isRead).length,

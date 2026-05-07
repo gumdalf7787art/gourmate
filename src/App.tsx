@@ -41,6 +41,8 @@ import { AdminPosts } from '@/pages/AdminPosts';
 import { AdminCampaigns } from '@/pages/AdminCampaigns';
 import { BottomNav } from '@/components/BottomNav';
 import { Sidebar } from '@/components/Sidebar';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useNotificationStore } from '@/store/useNotificationStore';
 
 // 똑똑한 스크롤 관리 컴포넌트
 function ScrollToTop() {
@@ -60,6 +62,22 @@ function ScrollToTop() {
 function Layout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith('/admin');
+  const user = useAuthStore((state) => state.user);
+  const { fetchNotifications } = useNotificationStore();
+
+  useEffect(() => {
+    if (user?.id) {
+      // Initial fetch
+      fetchNotifications(user.id);
+      
+      // Poll every 60 seconds
+      const interval = setInterval(() => {
+        fetchNotifications(user.id);
+      }, 60000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [user?.id, fetchNotifications]);
 
   if (isAdmin) {
     return <div className="w-full min-h-screen bg-black">{children}</div>;
