@@ -133,12 +133,12 @@ export function Home() {
         </div>
 
         {/* 2. 인기 추천맛집 (2x2 Grid) */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-5">
           <div>
-            <h2 className="text-lg font-bold text-white tracking-tight">인기 추천맛집</h2>
-            <p className="text-[11px] text-gray-500 mt-0.5">오늘 가장 많은 좋아요를 받은 가이드의 선택</p>
+            <h2 className="text-xl font-black text-white tracking-tighter">인기 추천맛집</h2>
+            <p className="text-[13px] text-gray-500 font-medium mt-1">오늘 가장 많은 좋아요를 받은 가이드의 선택</p>
           </div>
-          <Link to="/popular-restaurants" className="text-[10px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
+          <Link to="/popular-restaurants" className="text-[12px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-6">
@@ -194,11 +194,11 @@ export function Home() {
       {/* 3. Recommended Themes */}
       <section className="py-12 bg-white/2">
         <div className="px-5 mb-8 flex justify-between items-end">
-          <div className="space-y-1">
-            <h2 className="text-2xl font-black text-white tracking-tighter italic uppercase">추천 테마</h2>
-            <p className="text-sm text-gray-500 font-medium">믿고 보는 미식가들의 큐레이션</p>
+          <div>
+            <h2 className="text-xl font-black text-white tracking-tighter">추천 테마</h2>
+            <p className="text-[13px] text-gray-500 font-medium mt-1">믿고 보는 미식가들의 큐레이션</p>
           </div>
-          <Link to="/popular-themes" className="text-[11px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
+          <Link to="/popular-themes" className="text-[12px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 px-5">
@@ -255,11 +255,11 @@ export function Home() {
       {/* 4. Popular Guides */}
       <section className="py-12">
         <div className="px-5 mb-8 flex justify-between items-end">
-          <div className="space-y-1">
-            <h2 className="text-2xl font-black text-white tracking-tighter italic uppercase">인기 가이드 추천</h2>
-            <p className="text-sm text-gray-500 font-medium">가장 신뢰받는 미식가들의 지도를 구독해보세요</p>
+          <div>
+            <h2 className="text-xl font-black text-white tracking-tighter">인기 가이드 추천</h2>
+            <p className="text-[13px] text-gray-500 font-medium mt-1">가장 신뢰받는 미식가들의 지도를 구독해보세요</p>
           </div>
-          <Link to="/popular-guides" className="text-[11px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
+          <Link to="/popular-guides" className="text-[12px] font-bold text-primary-500 cursor-pointer hover:text-primary-400 transition-colors">전체보기</Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-5">
@@ -313,9 +313,9 @@ export function Home() {
 
       {/* 5. 실시간 트렌딩 */}
       <section className="py-8 flex-1">
-        <div className="px-5 mb-6 space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight">실시간 트렌딩</h2>
-          <p className="text-sm text-gray-500">지금 가이드들이 가장 많이 추천하는 곳</p>
+        <div className="px-5 mb-6">
+          <h2 className="text-xl font-black text-white tracking-tighter">실시간 트렌딩</h2>
+          <p className="text-[13px] text-gray-500 font-medium mt-1">지금 가이드들이 가장 많이 추천하는 곳</p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-12 px-5">
