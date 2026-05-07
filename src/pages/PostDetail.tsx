@@ -50,6 +50,16 @@ export function PostDetail() {
       const postData = postRes.data || postRes;
       if (postData && postData.id) {
         setPost(postData);
+        
+        // If user is logged in, check if they liked/bookmarked this post
+        if (user) {
+          const [likeRes, bookmarkRes] = await Promise.all([
+            postService.checkLike(user.id, id),
+            postService.checkBookmark(user.id, id)
+          ]);
+          if (likeRes.success) setIsLiked(likeRes.isLiked);
+          if (bookmarkRes.success) setIsBookmarked(bookmarkRes.isBookmarked);
+        }
       }
 
       if (reviewsRes.success) {
@@ -59,6 +69,50 @@ export function PostDetail() {
       console.error('Failed to fetch post or reviews:', err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleLike = async () => {
+    if (!user) {
+      alert('로그인이 필요한 기능입니다.');
+      navigate('/login');
+      return;
+    }
+
+    const previousLiked = isLiked;
+    setIsLiked(!previousLiked);
+
+    try {
+      if (previousLiked) {
+        await postService.removeLike(user.id, id!);
+      } else {
+        await postService.addLike(user.id, id!);
+      }
+    } catch (err) {
+      setIsLiked(previousLiked);
+      console.error('Failed to update like:', err);
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (!user) {
+      alert('로그인이 필요한 기능입니다.');
+      navigate('/login');
+      return;
+    }
+
+    const previousBookmarked = isBookmarked;
+    setIsBookmarked(!previousBookmarked);
+
+    try {
+      if (previousBookmarked) {
+        await postService.removeBookmark(user.id, id!);
+      } else {
+        await postService.addBookmark(user.id, id!);
+      }
+    } catch (err) {
+      setIsBookmarked(previousBookmarked);
+      console.error('Failed to update bookmark:', err);
     }
   };
 
@@ -272,16 +326,16 @@ export function PostDetail() {
         {/* Action Buttons */}
         <div className="flex gap-4 py-8 border-b border-white/5">
           <button 
-            onClick={() => setIsLiked(!isLiked)}
+            onClick={handleLike}
             className={`flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
               isLiked ? 'bg-primary-500/10 border-primary-500 text-primary-500' : 'bg-[#111] border-white/10 text-gray-400 hover:text-white'
             }`}
           >
             <Flame className={`w-5 h-5 ${isLiked ? 'fill-primary-500' : ''}`} />
-            <span className="font-bold">좋아요 {post.likes + (isLiked ? 1 : 0)}</span>
+            <span className="font-bold">좋아요 {post.likes + (isLiked && !post.userLiked ? 1 : (!isLiked && post.userLiked ? -1 : 0))}</span>
           </button>
           <button 
-            onClick={() => setIsBookmarked(!isBookmarked)}
+            onClick={handleBookmark}
             className={`flex-1 h-14 flex items-center justify-center gap-2 rounded-2xl border transition-all ${
               isBookmarked ? 'bg-primary-500/10 border-primary-500 text-primary-500' : 'bg-[#111] border-white/10 text-gray-400 hover:text-white'
             }`}
@@ -610,14 +664,14 @@ export function PostDetail() {
       <footer className="fixed bottom-0 z-50 w-full max-w-[640px] lg:hidden bg-black/90 backdrop-blur-3xl border-t border-white/10 px-8 py-5 flex items-center justify-between">
         <div className="flex items-center gap-12">
           <button 
-            onClick={() => setIsLiked(!isLiked)}
+            onClick={handleLike}
             className="flex flex-col items-center gap-1.5 active:scale-90 transition-all"
           >
             <Flame className={`w-7 h-7 transition-all ${isLiked ? 'text-primary-500 fill-primary-500 scale-110' : 'text-gray-400'}`} />
-            <span className="text-[11px] font-bold text-gray-500">{post.likes + (isLiked ? 1 : 0)}</span>
+            <span className="text-[11px] font-bold text-gray-500">{post.likes + (isLiked && !post.userLiked ? 1 : (!isLiked && post.userLiked ? -1 : 0))}</span>
           </button>
           <button 
-            onClick={() => setIsBookmarked(!isBookmarked)}
+            onClick={handleBookmark}
             className="flex flex-col items-center gap-1.5 active:scale-90 transition-all"
           >
             <Heart className={`w-7 h-7 transition-all ${isBookmarked ? 'fill-primary-500 text-primary-500 scale-110' : 'text-gray-400'}`} />

@@ -1,18 +1,60 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, Heart, Map as MapIcon, X, Search, Users, BadgeCheck, UserPlus } from 'lucide-react';
-import { MOCK_POSTS, MOCK_GUIDES } from '@/data/mock';
 import { KakaoMap } from '@/components/KakaoMap';
+import { useAuthStore } from '@/store/useAuthStore';
+import { postService } from '@/services/postService';
+import { useEffect } from 'react';
 import clsx from 'clsx';
 
 export default function Wishlist() {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
   const [activeTab, setActiveTab] = useState<'places' | 'guides'>('places');
   const [showMap, setShowMap] = useState(false);
+  const [wishlistedPosts, setWishlistedPosts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Simulated Data
-  const wishlistedPosts = MOCK_POSTS.slice(0, 5);
-  const followedGuides = MOCK_GUIDES.slice(0, 3); // Simulating 3 followed guides
+  // Simulated Data for guides for now (Follow functionality might need separate implementation)
+  const followedGuides: any[] = []; 
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const res = await postService.getBookmarks(user.id);
+        if (res.success) {
+          setWishlistedPosts(res.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch wishlist:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchWishlist();
+  }, [user]);
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-5 text-center">
+        <Heart className="w-16 h-16 text-gray-800 mb-6" />
+        <h2 className="text-xl font-bold text-white mb-2">로그인이 필요합니다</h2>
+        <p className="text-gray-500 mb-8">관심 있는 맛집을 저장하려면 로그인해 주세요.</p>
+        <button 
+          onClick={() => navigate('/login')}
+          className="w-full max-w-xs py-4 bg-primary-500 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition-all"
+        >
+          로그인하러 가기
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black pb-32">

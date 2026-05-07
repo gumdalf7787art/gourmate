@@ -61,3 +61,23 @@ CREATE TABLE IF NOT EXISTS follows (
   FOREIGN KEY (follower_id) REFERENCES users(id),
   FOREIGN KEY (following_id) REFERENCES users(id)
 );
+
+-- Bookmarks Table (Wishlist)
+CREATE TABLE IF NOT EXISTS bookmarks (
+  user_id TEXT NOT NULL,
+  post_id TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, post_id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (post_id) REFERENCES posts(id)
+);
+
+-- Likes Table
+CREATE TABLE IF NOT EXISTS likes (
+  user_id TEXT NOT NULL,
+  post_id TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, post_id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (post_id) REFERENCES posts(id)
+);

@@ -107,5 +107,45 @@ export const postService = {
 
   async getAnalytics(userId: string) {
     return apiFetch(`/analytics?userId=${userId}`);
+  },
+
+  // Bookmark (Wishlist) functions
+  async getBookmarks(userId: string) {
+    return apiFetch(`/user/bookmarks?userId=${userId}`);
+  },
+
+  async checkBookmark(userId: string, postId: string) {
+    return apiFetch(`/user/bookmarks?userId=${userId}&postId=${postId}`);
+  },
+
+  async addBookmark(userId: string, postId: string) {
+    return apiFetch('/user/bookmarks', {
+      method: 'POST',
+      body: JSON.stringify({ userId, postId })
+    });
+  },
+
+  async removeBookmark(userId: string, postId: string) {
+    return apiFetch(`/user/bookmarks?userId=${userId}&postId=${postId}`, {
+      method: 'DELETE'
+    });
+  },
+
+  // Like functions
+  async checkLike(userId: string, postId: string) {
+    return apiFetch(`/user/likes?userId=${userId}&postId=${postId}`);
+  },
+
+  async addLike(userId: string, postId: string) {
+    return apiFetch('/user/likes', {
+      method: 'POST',
+      body: JSON.stringify({ userId, postId })
+    });
+  },
+
+  async removeLike(userId: string, postId: string) {
+    return apiFetch(`/user/likes?userId=${userId}&postId=${postId}`, {
+      method: 'DELETE'
+    });
   }
 };
