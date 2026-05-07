@@ -331,90 +331,41 @@ export function Home() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 px-5">
           {allPosts.map((post) => (
-            <article key={post.id} className="flex flex-col relative group">
-              {/* Guide Info */}
-              <div className="flex items-center justify-between mb-4">
-                <Link to={`/guide/${post.guide.id}`} className="flex items-center gap-3">
-                  <div className="relative">
-                    <img src={post.guide.profileImageUrl} alt={post.guide.nickname} className="w-10 h-10 rounded-full object-cover border border-white/10" />
-                    {post.guide.trustScore > 90 && (
-                      <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5">
-                        <BadgeCheck className="w-4 h-4 text-primary-500" />
-                      </div>
-                    )}
+            <Link to={`/post/${post.id}`} key={post.id} className="group cursor-pointer">
+              <div className="aspect-square w-full rounded-xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
+                <img src={post.images[0]} alt={post.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-white">
+                    <Flame className="w-2.5 h-2.5 text-primary-500" />
+                    <span className="text-[10px] font-bold">{post.likes}</span>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="font-bold text-[14px] text-white leading-none mb-1.5">{post.guide.nickname}</span>
-                    <span className="text-[11px] text-gray-500 leading-none font-medium">Top Guide • 신뢰지수 {post.guide.trustScore}</span>
-                  </div>
-                </Link>
+                  <span className="text-[9px] text-gray-400 font-medium">{post.place.category}</span>
+                </div>
               </div>
+              <h4 className="text-white text-[13px] font-bold truncate mb-1 group-hover:text-primary-400 transition-colors">{post.place.name}</h4>
               
-              {/* Image Card (4:3 Aspect Ratio with Horizontal Slider) */}
-              <div className="relative aspect-[4/3] w-full rounded-[24px] overflow-hidden bg-[#111] mb-4 
-                            ring-1 ring-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] group-hover:ring-white/25 transition-all duration-700 ease-in-out">
-                
-                {/* Horizontal Image Slider */}
-                <div className="flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar">
-                  {post.images.map((img: string, idx: number) => (
-                    <div key={idx} className="flex-none w-full h-full snap-start">
-                      <img 
-                        src={img} 
-                        alt={`${post.place.name} ${idx + 1}`} 
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-                
-                {/* Image Overlay Info (Fixed on top of slider) */}
-                <div className="absolute bottom-5 left-5 right-5 pointer-events-none">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <span className="px-2 py-0.5 bg-primary-500 text-white text-[9px] font-black rounded-md uppercase tracking-tight">
-                          {post.place.category}
-                        </span>
-                        <div className="flex items-center gap-1 px-2 py-0.5 bg-black/50 backdrop-blur-md rounded-md border border-white/10">
-                          <Heart className="w-2.5 h-2.5 text-primary-500 fill-primary-500" />
-                          <span className="text-[10px] font-black text-white">{(post.likes || 0).toLocaleString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <h3 className="text-2xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl">
-                      {post.place.name}
-                    </h3>
-                    <div className="flex items-center gap-1.5 text-gray-400 font-medium">
-                      <MapPin className="w-3.5 h-3.5 text-primary-500/70" />
-                      <span className="text-[12px]">{post.place.address}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Detail Link (Absolute Overlay) */}
-                <Link to={`/post/${post.id}`} className="absolute inset-0 z-10 opacity-0">상세보기</Link>
+              {/* Keywords/Tags */}
+              <div className="flex flex-wrap gap-1 mb-1.5">
+                {post.tags?.slice(0, 3).map((tag: string, idx: number) => (
+                  <span key={idx} className="text-[9px] text-primary-500/80 font-medium">#{tag}</span>
+                ))}
               </div>
-              
-              {/* Content Description & Keywords */}
-              <div className="px-1">
-                {/* Keywords/Tags */}
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  {post.tags?.map((tag: string, idx: number) => (
-                    <span key={idx} className="text-[11px] text-primary-500 font-bold px-2 py-1 bg-primary-500/5 rounded-lg border border-primary-500/10">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
 
-                <p className="text-[14px] text-gray-300 line-clamp-3 leading-relaxed font-light mb-4">
-                  <span className="text-white font-bold mr-2 text-lg">“</span>
-                  {post.review || post.content}
-                  <span className="text-white font-bold ml-0.5 text-lg">”</span>
+              {/* 한줄평 */}
+              {post.review && (
+                <p className="text-[10px] text-gray-300 font-medium line-clamp-1 mb-2 italic opacity-80">
+                  "{post.review}"
                 </p>
+              )}
+
+              <div className="flex items-center gap-1 text-gray-500">
+                <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
+                <span className="text-[10px] truncate leading-none">
+                  {post.place.address.split(' ')[0].replace('서울특별시', '서울').replace('부산광역시', '부산').replace('대구광역시', '대구').replace('인천광역시', '인천').replace('광주광역시', '광주').replace('대전광역시', '대전').replace('울산광역시', '울산').replace('세종특별자치시', '세종')} {post.place.address.split(' ')[1]}
+                </span>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </section>
