@@ -329,7 +329,7 @@ export function Home() {
           <p className="text-[13px] text-gray-500 font-medium mt-1">지금 가이드들이 가장 많이 추천하는 곳</p>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-12 px-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 px-5">
           {allPosts.map((post) => (
             <article key={post.id} className="flex flex-col relative group">
               {/* Guide Info */}
