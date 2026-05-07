@@ -389,12 +389,15 @@ export function GuideProfile() {
           </nav>
           
           <div className="flex-1 relative">
-            {console.log('GuideProfile FilteredPosts:', filteredPosts)}
             <KakaoMap 
               places={filteredPosts
-                .filter((p: any) => p.place?.latitude != null && p.place?.longitude != null && String(p.place.latitude) !== "" && String(p.place.longitude) !== "")
+                .filter((p: any) => {
+                  const lat = Number(p.place?.latitude);
+                  const lng = Number(p.place?.longitude);
+                  return lat !== 0 && !isNaN(lat) && lng !== 0 && !isNaN(lng);
+                })
                 .map((p: any) => ({
-                  id: p.place.id,
+                  id: `marker-${p.id}-${p.place?.id || 'no-place'}`, // Ensure unique ID
                   postId: p.id,
                   lat: Number(p.place.latitude),
                   lng: Number(p.place.longitude),

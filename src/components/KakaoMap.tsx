@@ -23,8 +23,6 @@ interface KakaoMapProps {
 export function KakaoMap({ center, places, level = 3, onSelect, onBoundsChange }: KakaoMapProps) {
   const [map, setMap] = useState<kakao.maps.Map>();
 
-  console.log('KakaoMap Places:', places);
-
   const mapCenter = useMemo(() => {
     // 1. Explicit center provided
     if (center && Number(center.lat) !== 0 && !isNaN(Number(center.lat))) {
@@ -73,16 +71,16 @@ export function KakaoMap({ center, places, level = 3, onSelect, onBoundsChange }
   return (
     <div className="w-full h-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#111]">
       <Map
-        key={places.length > 0 ? `${places[0].id}-${places.length}` : 'empty-map'}
+        key={places.length > 0 ? `map-${places.length}-${places[0].id}` : 'empty-map'}
         center={mapCenter}
         style={{ width: '100%', height: '100%' }}
         level={level}
         onCreate={setMap}
         onBoundsChanged={onBoundsChange}
       >
-        {places.map((place) => (
+        {places.map((place, index) => (
           <MapMarker 
-            key={place.id} 
+            key={`${place.id}-${index}`} 
             position={{ lat: Number(place.lat), lng: Number(place.lng) }}
             onClick={() => place.postId && onSelect?.(place.postId)}
           >
