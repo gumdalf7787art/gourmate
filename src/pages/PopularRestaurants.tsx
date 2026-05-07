@@ -16,8 +16,9 @@ export default function PopularRestaurants() {
   const [displayLimit, setDisplayLimit] = useState(20);
 
   useEffect(() => {
-    postService.getPosts().then(data => {
-      setRealPosts(data || []);
+    postService.getPosts().then(res => {
+      const data = res.success ? res.data : (Array.isArray(res) ? res : []);
+      setRealPosts(data);
     });
   }, []);
 
@@ -39,12 +40,12 @@ export default function PopularRestaurants() {
 
     return [...result].sort((a, b) => {
       if (sortOrder === 'popular') {
-        const scoreA = (a.likes || 0) * 1.5 + (a.bookmarks || 0) + (new Date(a.createdAt || a.created_at).getTime() / 1000000000);
-        const scoreB = (b.likes || 0) * 1.5 + (b.bookmarks || 0) + (new Date(b.createdAt || b.created_at).getTime() / 1000000000);
+        const scoreA = (a.likes || 0) * 1.5 + (a.bookmarks || 0) + (new Date(a.createdAt || a.created_at || 0).getTime() / 1000000000);
+        const scoreB = (b.likes || 0) * 1.5 + (b.bookmarks || 0) + (new Date(b.createdAt || b.created_at || 0).getTime() / 1000000000);
         return scoreB - scoreA;
       }
       if (sortOrder === 'likes') return (b.likes || 0) - (a.likes || 0);
-      return new Date(b.createdAt || b.created_at).getTime() - new Date(a.createdAt || a.created_at).getTime();
+      return new Date(b.createdAt || b.created_at || 0).getTime() - new Date(a.createdAt || a.created_at || 0).getTime();
     });
   }, [allPosts, activeCategory, sortOrder]);
 

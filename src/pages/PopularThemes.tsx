@@ -13,8 +13,10 @@ export default function PopularThemes() {
     const fetchThemes = async () => {
       setIsLoading(true);
       try {
-        const data = await postService.getThemes();
-        setThemes(data || []);
+        const res = await postService.getThemes();
+        // Backend returns { success: true, data: [...] }
+        const data = res.success ? res.data : (Array.isArray(res) ? res : []);
+        setThemes(data);
       } catch (err) {
         console.error('Failed to fetch themes:', err);
       } finally {
@@ -31,7 +33,7 @@ export default function PopularThemes() {
         const scoreB = (b.likes || 0) * 2 + (b.post_count || 0);
         return scoreB - scoreA;
       }
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
     });
   }, [themes, sortOrder]);
 
@@ -112,7 +114,7 @@ export default function PopularThemes() {
                       <span className="text-[11px] text-gray-500 font-bold">{theme.guide_nickname || '익명 가이드'}</span>
                       <span className="w-1 h-1 bg-gray-700 rounded-full"></span>
                       <span className="text-[10px] text-gray-600 font-medium">
-                        {theme.keywords?.split(',')[0]}
+                        {theme.keywords && typeof theme.keywords === 'string' ? theme.keywords.split(',')[0] : ''}
                       </span>
                     </div>
                   </div>
