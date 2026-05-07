@@ -38,6 +38,7 @@ export function PostDetail() {
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isFollowingGuide, setIsFollowingGuide] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
   const [userMaps, setUserMaps] = useState<any[]>([]);
@@ -61,7 +62,6 @@ export function PostDetail() {
       if (postData && postData.id) {
         setPost(postData);
         
-        // If user is logged in, check if they liked/bookmarked this post and followed the guide
         if (user) {
           const guideId = postData.guide_id || postData.guide?.id || postData.guideId;
           const [likeRes, bookmarkRes, followRes] = await Promise.all([
@@ -79,36 +79,32 @@ export function PostDetail() {
         setReviews(reviewsRes.data);
       }
 
-      // 추천 섹션을 위한 모든 포스트 가져오기
       const allPostsRes = await postService.getPosts();
       if (allPostsRes && Array.from(allPostsRes).length > 0) {
         const all = Array.from(allPostsRes);
         const currentPost = postData;
         
-        // 1. 이 집을 리뷰한 다른 가이드 (이름 동일, 현재 글 제외)
         const others = all.filter((p: any) => 
           p.id !== currentPost.id && 
           p.place.name === currentPost.place.name
         );
         setOtherGuidePosts(others);
 
-        // 2. 비슷한 다른 식당 (카테고리 동일, 이름 다름)
         const currentTags = currentPost.tags || [];
         const similar = all.filter((p: any) => 
           p.id !== currentPost.id && 
           p.place.name !== currentPost.place.name &&
           p.place.category === currentPost.place.category
         ).sort((a: any, b: any) => {
-          // 태그 일치도 계산 (교집합 개수)
           const aTags = a.tags || [];
           const bTags = b.tags || [];
           const aIntersection = aTags.filter((t: string) => currentTags.includes(t)).length;
           const bIntersection = bTags.filter((t: string) => currentTags.includes(t)).length;
           
           if (aIntersection !== bIntersection) {
-            return bIntersection - aIntersection; // 태그가 많이 겹치는 순서대로
+            return bIntersection - aIntersection;
           }
-          return (b.likes || 0) - (a.likes || 0); // 그 다음은 인기순
+          return (b.likes || 0) - (a.likes || 0);
         });
         setSimilarPosts(similar.slice(0, 8));
       }
@@ -125,10 +121,8 @@ export function PostDetail() {
       navigate('/login');
       return;
     }
-
     const previousLiked = isLiked;
     setIsLiked(!previousLiked);
-
     try {
       if (previousLiked) {
         await postService.removeLike(user.id, id!);
@@ -147,10 +141,8 @@ export function PostDetail() {
       navigate('/login');
       return;
     }
-
     const previousBookmarked = isBookmarked;
     setIsBookmarked(!previousBookmarked);
-
     try {
       if (previousBookmarked) {
         await postService.removeBookmark(user.id, id!);
@@ -170,42 +162,31 @@ export function PostDetail() {
       return;
     }
 
-    // guide_id 추출 로직 강화
     const guideId = post?.guide?.id || post?.guide_id || post?.guideId;
-    
-    if (!guideId) {
-      console.error('Guide ID not found:', post);
-      return;
-    }
+    if (!guideId || isFollowLoading) return;
 
     if (user.id === guideId) {
       alert('자기 자신은 팔로우할 수 없습니다.');
       return;
     }
 
+    setIsFollowLoading(true);
     const previousFollowing = isFollowingGuide;
-    const newFollowingState = !previousFollowing;
     
     // UI 우선 업데이트 (Optimistic Update)
-    setIsFollowingGuide(newFollowingState);
+    setIsFollowingGuide(prev => !prev);
 
     try {
-      let res;
       if (previousFollowing) {
-        res = await postService.removeFollow(user.id, guideId);
+        await postService.removeFollow(user.id, guideId);
       } else {
-        res = await postService.addFollow(user.id, guideId);
-      }
-      
-      // API 응답이 실패한 경우에만 롤백
-      if (res && res.success === false) {
-        setIsFollowingGuide(previousFollowing);
-        console.error('Follow API returned failure:', res.error);
+        await postService.addFollow(user.id, guideId);
       }
     } catch (err) {
-      // 네트워크 에러 등 발생 시 롤백
       setIsFollowingGuide(previousFollowing);
       console.error('Failed to update follow:', err);
+    } finally {
+      setIsFollowLoading(false);
     }
   };
 
@@ -291,7 +272,6 @@ export function PostDetail() {
       return;
     }
     if (!newReview.trim()) return;
-
     try {
       const res = await postService.addReview({
         post_id: id!,
@@ -299,11 +279,9 @@ export function PostDetail() {
         content: newReview,
         parent_id: parentId
       });
-
       if (res.success) {
         setNewReview('');
         setReplyTo(null);
-        // 리뷰 다시 불러오기
         const reviewsRes = await postService.getReviews(id!);
         if (reviewsRes.success) setReviews(reviewsRes.data);
       }
@@ -389,7 +367,6 @@ export function PostDetail() {
           ))}
         </div>
 
-        {/* Navigation Arrows */}
         {post.images.length > 1 && (
           <>
             <button 
@@ -407,10 +384,8 @@ export function PostDetail() {
           </>
         )}
         
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none z-10" />
         
-        {/* Pagination Dots */}
         {post.images.length > 1 && (
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
             {post.images.map((_: any, i: number) => (
@@ -426,7 +401,6 @@ export function PostDetail() {
       {/* Content Area */}
       <main className="w-full max-w-[640px] px-6 lg:px-10 -mt-8 relative z-30 rounded-t-[32px] bg-black border-t border-white/10 lg:border-t-0">
         
-        {/* Place Header Info */}
         <div className="pt-10 pb-8 border-b border-white/5">
           <div className="flex items-center gap-2 mb-4">
             <span className="px-2 py-0.5 bg-primary-500 text-white text-[9px] font-black rounded-md uppercase tracking-tight">
@@ -452,7 +426,6 @@ export function PostDetail() {
             <span className="text-[13px] font-medium">{post.place.address}</span>
           </div>
 
-          {/* Keywords/Tags */}
           {post.tags && post.tags.length > 0 && (
             <div className="flex items-start gap-2">
               <span className="text-[11px] text-gray-500 font-bold mt-1.5 shrink-0">키워드 :</span>
@@ -467,7 +440,6 @@ export function PostDetail() {
           )}
         </div>
 
-        {/* One-liner Review (한줄평) - MOVED TO TOP */}
         <div className="py-8 border-b border-white/5">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -505,11 +477,12 @@ export function PostDetail() {
             {user?.id !== post.guide.id && (
               <button 
                 onClick={handleFollowGuide}
+                disabled={isFollowLoading}
                 className={`px-4 py-2 rounded-xl text-[13px] font-black transition-all active:scale-95 shadow-lg ${
                   isFollowingGuide
                     ? 'bg-primary-500/10 border border-primary-500 text-primary-500'
                     : 'bg-white text-black'
-                }`}
+                } ${isFollowLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isFollowingGuide ? '팔로잉' : '+ 팔로우'}
               </button>
@@ -535,7 +508,6 @@ export function PostDetail() {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-4 py-8 border-b border-white/5">
           <button 
             onClick={handleLike}
@@ -557,7 +529,6 @@ export function PostDetail() {
           </button>
         </div>
 
-        {/* Add to My Map Button */}
         <div className="py-8 border-b border-white/5">
           <button 
             onClick={openMapModal}
@@ -568,7 +539,6 @@ export function PostDetail() {
           </button>
         </div>
 
-        {/* Recommended Menu (Reordered) */}
         {(post.menu_items || post.menuItems) && (post.menu_items || post.menuItems).length > 0 && (
           <div className="py-8 border-b border-white/5">
             <h3 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 mb-6">
@@ -600,13 +570,11 @@ export function PostDetail() {
           </div>
         )}
 
-        {/* Detailed Content (상세내용) */}
         <section className="py-12 border-b border-white/5">
           <h3 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 mb-8">
             <LayoutGrid className="w-3.5 h-3.5 text-primary-500" />
             상세 후기
           </h3>
-          
           <div className="prose prose-invert max-w-none">
             {post.editor_mode === 'story' && post.story_blocks ? (
               <div className="space-y-8">
@@ -632,13 +600,11 @@ export function PostDetail() {
           </div>
         </section>
 
-        {/* Detailed Info (Map, etc.) */}
         <section className="py-12 space-y-8">
           <h2 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
             <Info className="w-3.5 h-3.5 text-primary-500" />
             상세 정보
           </h2>
-
           <div className="w-full aspect-video bg-[#141414] rounded-3xl overflow-hidden relative border border-white/30 shadow-2xl">
             <KakaoMap 
               places={[{
@@ -649,7 +615,6 @@ export function PostDetail() {
               }]}
             />
           </div>
-          
           <div className="grid grid-cols-1 gap-3">
             {[
               { icon: MapPin, label: '주소', value: post.place.address, copy: true },
@@ -671,7 +636,6 @@ export function PostDetail() {
           </div>
         </section>
 
-        {/* Reviews Section */}
         <section className="py-12">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80">
@@ -679,8 +643,6 @@ export function PostDetail() {
               리뷰 {reviews.filter(r => !r.parent_id).length}
             </h3>
           </div>
-
-          {/* Review Input */}
           <div className="mb-10 bg-[#111] border border-white/10 rounded-3xl p-5 focus-within:border-primary-500/50 transition-all shadow-2xl">
             <div className="flex gap-4">
               <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
@@ -697,11 +659,6 @@ export function PostDetail() {
                   placeholder={user ? "맛있게 드셨나요? 후기를 남겨주세요." : "로그인 후 리뷰를 남길 수 있습니다."}
                   readOnly={!user || !!replyTo}
                   className="w-full bg-transparent border-none p-0 text-[14px] text-white placeholder-gray-600 focus:ring-0 resize-none min-h-[40px]"
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = 'auto';
-                    target.style.height = `${target.scrollHeight}px`;
-                  }}
                 />
                 {!replyTo && newReview.trim() && (
                   <div className="flex justify-end mt-4 animate-in fade-in slide-in-from-top-2">
@@ -727,7 +684,6 @@ export function PostDetail() {
             ) : (
               reviews.filter(r => !r.parent_id).map((review: any) => (
                 <div key={review.id} className="space-y-4">
-                  {/* Top Level Review */}
                   <div className="p-6 bg-[#111] border border-white/10 rounded-2xl shadow-xl">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
@@ -745,8 +701,6 @@ export function PostDetail() {
                           </span>
                         </div>
                       </div>
-                      
-                      {/* 가이드(작성자)만 답글 달기 버튼 노출 */}
                       {user?.id === post.guide.id && (
                         <button 
                           onClick={() => setReplyTo(replyTo === review.id ? null : review.id)}
@@ -761,39 +715,8 @@ export function PostDetail() {
                     <p className="text-[14px] text-gray-300 leading-relaxed font-light">
                       {review.content}
                     </p>
-
-                    {/* Reply Input (when active) */}
-                    {replyTo === review.id && (
-                      <div className="mt-6 pl-4 border-l-2 border-primary-500/30 animate-in slide-in-from-left-2">
-                        <div className="flex gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center shrink-0 overflow-hidden">
-                            {user?.profileImageUrl ? <img src={user.profileImageUrl} alt="" className="w-full h-full object-cover" /> : <CornerDownRight className="w-4 h-4 text-white" />}
-                          </div>
-                          <div className="flex-1">
-                            <textarea
-                              value={newReview}
-                              onChange={(e) => setNewReview(e.target.value)}
-                              placeholder="가이드님의 답글을 남겨주세요."
-                              className="w-full bg-transparent border-none p-0 text-[14px] text-white placeholder-gray-600 focus:ring-0 resize-none min-h-[32px]"
-                              autoFocus
-                            />
-                            {newReview.trim() && (
-                              <div className="flex justify-end mt-2">
-                                <button 
-                                  onClick={() => handleReviewSubmit(review.id)}
-                                  className="px-4 py-2 bg-primary-500 text-white rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg active:scale-95"
-                                >
-                                  답글 등록
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
 
-                  {/* Nested Replies */}
                   {reviews.filter(r => r.parent_id === review.id).map((reply: any) => (
                     <div key={reply.id} className="pl-8 flex gap-3 animate-in fade-in slide-in-from-left-4">
                       <CornerDownRight className="w-4 h-4 text-gray-700 mt-2 shrink-0" />
@@ -810,9 +733,6 @@ export function PostDetail() {
                             )}
                           </div>
                           <span className="text-[11px] font-bold text-gray-300">{reply.nickname}</span>
-                          <span className="text-[9px] text-gray-700 font-medium ml-auto">
-                            {new Date(reply.created_at).toLocaleDateString()}
-                          </span>
                         </div>
                         <p className="text-[13px] text-gray-400 leading-relaxed font-light italic">
                           {reply.content}
@@ -826,180 +746,96 @@ export function PostDetail() {
           </div>
         </section>
 
-        {/* 이 집을 리뷰한 다른 가이드 */}
-        {otherGuidePosts.length > 0 && (
-          <section className="py-12 border-b border-white/5">
-            <div className="flex items-center justify-between mb-8">
+        {/* Similar Posts/Recommendations Section (Re-implemented) */}
+        {(otherGuidePosts.length > 0 || similarPosts.length > 0) && (
+          <section className="py-12 space-y-12">
+            {otherGuidePosts.length > 0 && (
               <div>
-                <h2 className="text-xl font-black text-white tracking-tighter">이 집을 리뷰한 다른 가이드</h2>
-                <p className="text-[13px] text-gray-500 font-medium mt-1">서로 다른 시선으로 본 이 식당의 매력</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-              {otherGuidePosts.slice(0, 4).map((p) => (
-                <Link to={`/post/${p.id}`} key={p.id} className="group cursor-pointer">
-                  <div className="aspect-square w-full rounded-xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
-                    <img src={p.images[0]} alt={p.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
-                    <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-white">
-                        <Flame className="w-2.5 h-2.5 text-primary-500" />
-                        <span className="text-[10px] font-bold">{p.likes || 0}</span>
+                <h3 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 mb-6">
+                  <Star className="w-3.5 h-3.5 text-primary-500" />
+                  이 집을 리뷰한 다른 가이드
+                </h3>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {otherGuidePosts.map((p: any) => (
+                    <Link key={p.id} to={`/post/${p.id}`} className="flex flex-col group active:scale-95 transition-all">
+                      <div className="aspect-square rounded-2xl overflow-hidden border border-white/10 mb-3 bg-[#111]">
+                        <img src={p.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                       </div>
-                      <span className="text-[9px] text-gray-400 font-medium">{p.guide.nickname}</span>
-                    </div>
-                  </div>
-                  <h4 className="text-white text-[13px] font-bold truncate mb-1 group-hover:text-primary-400 transition-colors">{p.place.name}</h4>
-                  
-                  {/* Keywords/Tags */}
-                  <div className="flex flex-wrap gap-1 mb-1.5">
-                    {p.tags?.slice(0, 3).map((tag: string, idx: number) => (
-                      <span key={idx} className="text-[9px] text-primary-500/80 font-medium">#{tag}</span>
-                    ))}
-                  </div>
+                      <div className="flex items-center gap-2">
+                        <img src={p.guide.profileImageUrl} alt="" className="w-5 h-5 rounded-full object-cover border border-white/10" />
+                        <span className="text-[11px] font-bold text-gray-300 truncate">{p.guide.nickname}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
-                  {/* 한줄평 */}
-                  {p.review && (
-                    <p className="text-[10px] text-gray-300 font-medium line-clamp-1 mb-2 italic opacity-80">
-                      "{p.review}"
-                    </p>
-                  )}
-
-                  <div className="flex items-center gap-1 text-gray-500">
-                    <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
-                    <span className="text-[10px] truncate leading-none">
-                      {p.place.address.split(' ')[0].replace('서울특별시', '서울').replace('부산광역시', '부산').replace('대구광역시', '대구').replace('인천광역시', '인천').replace('광주광역시', '광주').replace('대전광역시', '대전').replace('울산광역시', '울산').replace('세종특별자치시', '세종')} {p.place.address.split(' ')[1]}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 이 집과 비슷한 다른 식당 */}
-        {similarPosts.length > 0 && (
-          <section className="py-12 pb-24">
-            <div className="flex items-center justify-between mb-8">
+            {similarPosts.length > 0 && (
               <div>
-                <h2 className="text-xl font-black text-white tracking-tighter">이 집과 비슷한 다른 식당</h2>
-                <p className="text-[13px] text-gray-500 font-medium mt-1">가이드들이 추천하는 비슷한 스타일의 맛집</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8">
-              {similarPosts.map((p) => (
-                <Link to={`/post/${p.id}`} key={p.id} className="group cursor-pointer">
-                  <div className="aspect-square w-full rounded-xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
-                    <img src={p.images[0]} alt={p.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
-                    <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-white">
-                        <Flame className="w-2.5 h-2.5 text-primary-500" />
-                        <span className="text-[10px] font-bold">{p.likes || 0}</span>
+                <h3 className="text-xs font-black text-white flex items-center gap-2 uppercase tracking-widest opacity-80 mb-6">
+                  <Flame className="w-3.5 h-3.5 text-primary-500" />
+                  이 집과 비슷한 다른 식당
+                </h3>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {similarPosts.map((p: any) => (
+                    <Link key={p.id} to={`/post/${p.id}`} className="flex flex-col group active:scale-95 transition-all">
+                      <div className="aspect-square rounded-2xl overflow-hidden border border-white/10 mb-3 bg-[#111] relative">
+                        <img src={p.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute top-2 right-2 px-1.5 py-0.5 bg-primary-500 rounded-lg flex items-center gap-1 shadow-lg">
+                          <Star className="w-2 h-2 text-white fill-white" />
+                          <span className="text-[9px] font-black text-white">{p.rating}</span>
+                        </div>
                       </div>
-                      <span className="text-[9px] text-gray-400 font-medium">{p.place.category}</span>
-                    </div>
-                  </div>
-                  <h4 className="text-white text-[13px] font-bold truncate mb-1 group-hover:text-primary-400 transition-colors">{p.place.name}</h4>
-                  
-                  {/* Keywords/Tags */}
-                  <div className="flex flex-wrap gap-1 mb-1.5">
-                    {p.tags?.slice(0, 3).map((tag: string, idx: number) => (
-                      <span key={idx} className="text-[9px] text-primary-500/80 font-medium">#{tag}</span>
-                    ))}
-                  </div>
-
-                  {/* 한줄평 */}
-                  {p.review && (
-                    <p className="text-[10px] text-gray-300 font-medium line-clamp-1 mb-2 italic opacity-80">
-                      "{p.review}"
-                    </p>
-                  )}
-
-                  <div className="flex items-center gap-1 text-gray-500">
-                    <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
-                    <span className="text-[10px] truncate leading-none">
-                      {p.place.address.split(' ')[0].replace('서울특별시', '서울').replace('부산광역시', '부산').replace('대구광역시', '대구').replace('인천광역시', '인천').replace('광주광역시', '광주').replace('대전광역시', '대전').replace('울산광역시', '울산').replace('세종특별자치시', '세종')} {p.place.address.split(' ')[1]}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                      <h4 className="text-[13px] font-bold text-white truncate mb-1">{p.place.name}</h4>
+                      <p className="text-[11px] text-gray-500 font-medium truncate">{p.place.category} · {p.place.address.split(' ')[1]}</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </section>
         )}
       </main>
 
-      {/* Bottom Action Bar (Mobile Only) */}
-      <footer className="fixed bottom-0 z-50 w-full max-w-[640px] lg:hidden bg-black/90 backdrop-blur-3xl border-t border-white/10 px-8 py-5 flex items-center justify-between">
-        <div className="flex items-center gap-12">
-          <button 
-            onClick={handleLike}
-            className="flex flex-col items-center gap-1.5 active:scale-90 transition-all"
-          >
-            <Flame className={`w-7 h-7 transition-all ${isLiked ? 'text-primary-500 fill-primary-500 scale-110' : 'text-gray-400'}`} />
-            <span className="text-[11px] font-bold text-gray-500">좋아요</span>
-          </button>
-          <button 
-            onClick={handleBookmark}
-            className="flex flex-col items-center gap-1.5 active:scale-90 transition-all"
-          >
-            <Heart className={`w-7 h-7 transition-all ${isBookmarked ? 'fill-primary-500 text-primary-500 scale-110' : 'text-gray-400'}`} />
-            <span className="text-[11px] font-bold text-gray-500">관심</span>
-          </button>
-        </div>
-        <button className="px-10 h-14 bg-white text-black font-black text-xs uppercase tracking-widest rounded-2xl shadow-2xl active:scale-[0.98] transition-all">
-          공유하기
-        </button>
-      </footer>
-      {/* Map Selection Modal */}
+      {/* Map Modal */}
       {showMapModal && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-5">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowMapModal(false)} />
-          <div className="relative w-full max-w-sm bg-[#111] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-white/5 flex items-center justify-between">
-              <h3 className="text-lg font-black text-white">나의 지도에 담기</h3>
-              <button onClick={() => setShowMapModal(false)} className="p-2 hover:bg-white/5 rounded-full text-gray-400">
-                <X className="w-5 h-5" />
-              </button>
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-end justify-center lg:items-center px-4">
+          <div className="w-full max-w-[500px] bg-[#111] border border-white/10 rounded-t-[32px] lg:rounded-[32px] p-6 lg:p-10 shadow-2xl animate-in slide-in-from-bottom-10">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-xl font-black text-white">나의 지도에 담기</h3>
+              <button onClick={() => setShowMapModal(false)} className="p-2 bg-white/5 rounded-full text-white"><X className="w-5 h-5" /></button>
             </div>
-            
-            <div className="max-h-[300px] overflow-y-auto p-4 space-y-2 no-scrollbar">
-              {userMaps.map((map) => (
-                <button
-                  key={map.id}
+            <div className="space-y-3 mb-8 max-h-[300px] overflow-y-auto no-scrollbar">
+              {userMaps.map((map: any) => (
+                <button 
+                  key={map.id} 
                   onClick={() => handleAddToMap(map.id)}
-                  className="w-full p-4 bg-white/5 hover:bg-white/10 rounded-2xl flex items-center justify-between transition-all group"
+                  className="w-full p-5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl flex items-center justify-between group transition-all"
                 >
-                  <div className="flex flex-col items-start">
-                    <span className="text-sm font-bold text-white group-hover:text-primary-500">{map.name}</span>
-                    <span className="text-[10px] text-gray-500">{map.post_count}개의 장소</span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center border border-white/5"><MapIcon className="w-5 h-5 text-primary-500" /></div>
+                    <span className="font-bold text-white">{map.name}</span>
                   </div>
-                  <Plus className="w-4 h-4 text-gray-600 group-hover:text-primary-500" />
+                  <Plus className="w-5 h-5 text-gray-600 group-hover:text-primary-500 transition-colors" />
                 </button>
               ))}
-              
-              {userMaps.length === 0 && (
-                <p className="text-center py-8 text-gray-500 text-sm">아직 생성된 지도가 없습니다.</p>
-              )}
             </div>
-            
-            <div className="p-6 bg-black/40 border-t border-white/5">
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  value={newMapName}
-                  onChange={(e) => setNewMapName(e.target.value)}
-                  placeholder="새 지도 폴더 이름"
-                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-primary-500 transition-all"
-                />
-                <button 
-                  onClick={handleCreateAndAdd}
-                  disabled={!newMapName.trim() || isCreatingMap}
-                  className="px-4 bg-primary-500 text-white font-black rounded-xl text-sm disabled:opacity-50 active:scale-95 transition-all"
-                >
-                  생성
-                </button>
-              </div>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                value={newMapName}
+                onChange={(e) => setNewMapName(e.target.value)}
+                placeholder="새 테마 이름 입력..."
+                className="flex-1 bg-black border border-white/10 rounded-2xl px-5 text-sm text-white focus:border-primary-500 outline-none"
+              />
+              <button 
+                onClick={handleCreateAndAdd}
+                disabled={isCreatingMap || !newMapName.trim()}
+                className="px-6 py-4 bg-primary-500 text-white rounded-2xl font-black text-sm active:scale-95 transition-all shadow-lg"
+              >
+                생성
+              </button>
             </div>
           </div>
         </div>

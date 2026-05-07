@@ -20,6 +20,7 @@ export function GuideProfile() {
   const [error, setError] = useState<string | null>(null);
   const user = useAuthStore((state) => state.user);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
 
   useEffect(() => {
     const fetchGuideData = async () => {
@@ -58,22 +59,25 @@ export function GuideProfile() {
       return;
     }
 
-    if (user.id === id) {
-      alert('자기 자신은 팔로우할 수 없습니다.');
+    if (user.id === id || isFollowLoading) {
+      if (user.id === id) alert('자기 자신은 팔로우할 수 없습니다.');
       return;
     }
 
+    setIsFollowLoading(true);
     const previousFollowing = isFollowing;
-    setIsFollowing(!previousFollowing);
+    
+    // UI 우선 업데이트 (Optimistic Update)
+    setIsFollowing(prev => !prev);
 
-    // Update follower count in UI immediately
+    // 가이드 객체의 팔로워 수 즉시 반영
     if (guide) {
-      setGuide({
-        ...guide,
+      setGuide((prev: any) => ({
+        ...prev,
         followers: previousFollowing 
-          ? Math.max(0, (guide.followers || 0) - 1) 
-          : (guide.followers || 0) + 1
-      });
+          ? Math.max(0, (prev.followers || 0) - 1) 
+          : (prev.followers || 0) + 1
+      }));
     }
 
     try {
@@ -83,17 +87,19 @@ export function GuideProfile() {
         await postService.addFollow(user.id, id!);
       }
     } catch (err) {
-      // Rollback on error
+      // 에러 발생 시 롤백
       setIsFollowing(previousFollowing);
       if (guide) {
-        setGuide({
-          ...guide,
+        setGuide((prev: any) => ({
+          ...prev,
           followers: previousFollowing 
-            ? (guide.followers || 0) + 1 
-            : Math.max(0, (guide.followers || 0) - 1)
-        });
+            ? (prev.followers || 0) + 1 
+            : Math.max(0, (prev.followers || 0) - 1)
+        }));
       }
       console.error('Failed to update follow:', err);
+    } finally {
+      setIsFollowLoading(false);
     }
   };
 
@@ -233,11 +239,12 @@ export function GuideProfile() {
             {user?.id !== id && (
               <button 
                 onClick={handleFollow}
+                disabled={isFollowLoading}
                 className={`w-full mt-5 font-black py-3 rounded-2xl active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xl ${
                   isFollowing 
                     ? 'bg-primary-500/10 border border-primary-500 text-primary-500' 
                     : 'bg-white text-black'
-                }`}
+                } ${isFollowLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isFollowing ? (
                   <>팔로잉</>
