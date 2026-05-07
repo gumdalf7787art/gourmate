@@ -113,78 +113,80 @@ export default function ThemeDetail() {
         
         <div className="flex items-center gap-4 pb-8 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20 bg-gray-800">
-              {theme.guide_image && <img src={theme.guide_image} alt="" className="w-full h-full object-cover" />}
+            <div className="w-9 h-9 rounded-full overflow-hidden border border-white/20 bg-gray-800 shadow-lg">
+              {theme.guide_image ? (
+                <img src={theme.guide_image} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-primary-500/10">
+                  <span className="text-[10px] font-black text-primary-500 uppercase">GM</span>
+                </div>
+              )}
             </div>
-            <span className="text-sm font-bold text-white">가이드 추천</span>
+            <span className="text-sm font-black text-white">{theme.guide_nickname || '익명 가이드'}</span>
           </div>
           <div className="flex items-center gap-1.5 text-gray-500">
             <Clock className="w-3.5 h-3.5" />
-            <span className="text-xs font-medium">{formattedDate}</span>
+            <span className="text-[11px] font-bold">{formattedDate}</span>
           </div>
         </div>
       </div>
 
       {/* Spots List */}
-      <main className="px-6 relative z-20">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-5 bg-primary-500 rounded-full"></div>
-            <h2 className="text-lg font-black text-white tracking-tight">테마 속 맛집 <span className="text-primary-500">{theme.posts?.length || 0}</span></h2>
+      <main className="px-6 relative z-20 pb-20">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-6 bg-primary-500 rounded-full shadow-[0_0_15px_rgba(255,107,0,0.5)]"></div>
+            <h2 className="text-xl font-black text-white tracking-tighter italic uppercase">Theme Spots <span className="text-primary-500 ml-1">{theme.posts?.length || 0}</span></h2>
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {theme.posts?.map((post: any, idx: number) => (
             <div 
               key={post.id}
               onClick={() => navigate(`/post/${post.id}`)}
-              className="bg-[#111] border border-white/5 rounded-[28px] overflow-hidden group active:scale-[0.98] transition-all cursor-pointer shadow-2xl"
+              className="bg-[#111] border border-white/10 rounded-[24px] overflow-hidden group active:scale-[0.98] transition-all cursor-pointer shadow-2xl flex flex-col hover:border-primary-500/30"
             >
-              <div className="relative h-52">
+              <div className="relative aspect-square">
                 <img 
                   src={post.images?.[0] || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800'} 
                   alt={post.restaurant_name} 
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10">
-                  <span className="text-[10px] font-black text-primary-500 uppercase">Spot {idx + 1}</span>
+                <div className="absolute top-3 left-3 px-2 py-0.5 bg-black/60 backdrop-blur-md rounded-md border border-white/10">
+                  <span className="text-[9px] font-black text-primary-500 uppercase"># {idx + 1}</span>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
                 
-                <div className="absolute bottom-4 right-4 flex items-center gap-1 px-3 py-1.5 bg-primary-500 rounded-full shadow-lg">
-                  <Heart className="w-3.5 h-3.5 fill-white" />
-                  <span className="text-xs font-black text-white">{(post.likes || 0).toLocaleString()}</span>
+                <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 bg-primary-500/90 backdrop-blur-sm rounded-lg shadow-lg">
+                  <Heart className="w-2.5 h-2.5 fill-white" />
+                  <span className="text-[10px] font-black text-white">{(post.likes || 0).toLocaleString()}</span>
                 </div>
               </div>
 
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex-1 min-w-0 pr-4">
-                    <h3 className="text-xl font-bold text-white group-hover:text-primary-500 transition-colors mb-1 truncate">{post.restaurant_name}</h3>
-                    <div className="flex items-center gap-1.5 text-gray-500">
-                      <MapPin className="w-3.5 h-3.5 shrink-0" />
-                      <span className="text-[11px] font-medium truncate">{post.address}</span>
-                    </div>
+              <div className="p-4 flex flex-col flex-1 justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <span className="shrink-0 px-1.5 py-0.5 bg-white/5 text-gray-500 text-[9px] font-black rounded border border-white/10 uppercase tracking-tighter">
+                      {post.category}
+                    </span>
                   </div>
-                  <span className="shrink-0 px-3 py-1 bg-white/5 text-gray-400 text-[10px] font-bold rounded-lg border border-white/10 uppercase tracking-tighter">
-                    {post.category}
-                  </span>
+                  <h3 className="text-[15px] font-black text-white group-hover:text-primary-500 transition-colors mb-1 truncate leading-tight">
+                    {post.restaurant_name}
+                  </h3>
+                  <p className="text-gray-500 text-[12px] font-medium leading-relaxed line-clamp-2 mb-2 italic opacity-80">
+                    "{post.review || post.content}"
+                  </p>
                 </div>
 
-                <p className="text-gray-400 text-sm leading-relaxed line-clamp-2 mb-5">
-                  {post.review || post.content}
-                </p>
-
-                <div className="flex items-center justify-between pt-5 border-t border-white/5">
-                  <div className="flex gap-2 overflow-hidden">
-                    {post.tags?.slice(0, 2).map((tag: string, i: number) => (
-                      <span key={i} className="text-[10px] font-bold text-gray-600 truncate">#{tag}</span>
-                    ))}
+                <div className="flex items-center justify-between pt-3 border-t border-white/5">
+                  <div className="flex items-center gap-1 text-gray-600">
+                    <MapPin className="w-3 h-3 shrink-0" />
+                    <span className="text-[10px] font-bold truncate max-w-[80px]">{post.address?.split(' ')[1] || '서울'}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-primary-500 text-[11px] font-bold group-hover:translate-x-1 transition-transform shrink-0">
-                    자세히 보기
-                    <ChevronRight className="w-4 h-4" />
+                  <div className="flex items-center gap-1 text-primary-500 text-[10px] font-black uppercase tracking-tighter group-hover:translate-x-1 transition-transform">
+                    View Detail
+                    <ChevronRight className="w-3 h-3" />
                   </div>
                 </div>
               </div>
