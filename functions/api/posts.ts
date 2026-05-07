@@ -83,7 +83,8 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       likes: row.likes || 0, // DB에 없으면 0으로 처리
       tags: row.tags ? JSON.parse(row.tags) : [],
       images: JSON.parse(row.images || '[]'),
-      isPaid: row.is_paid === '1' || row.is_paid === 1,
+      isPaid: row.is_paid === '1' || row.is_paid === 1 || row.is_paid === 'true' || row.is_paid === true,
+      is_paid: row.is_paid === '1' || row.is_paid === 1 || row.is_paid === 'true' || row.is_paid === true,
       topRank: row.top_rank ? parseInt(row.top_rank) : null,
       createdAt: row.created_at
     }));
@@ -161,7 +162,7 @@ export const onRequestPost: PagesFunction<{ DB: D1Database }> = async (context) 
       latitude || null,
       longitude || null,
       phone || '',
-      is_paid ? 1 : 0
+      (is_paid === true || is_paid === 1 || is_paid === '1' || is_paid === 'true' || body.isPaid === true || body.isPaid === 1 || body.isPaid === '1' || body.isPaid === 'true') ? 1 : 0
     ).run();
 
     return new Response(JSON.stringify({ success: true, id }), {
