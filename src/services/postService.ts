@@ -16,6 +16,9 @@ export interface PostData {
   menu_items?: any[];
   latitude?: number | string;
   longitude?: number | string;
+  phone?: string;
+  is_paid?: boolean | number;
+  isPaid?: boolean | number;
 }
 
 export const postService = {

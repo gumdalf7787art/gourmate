@@ -71,7 +71,8 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       editor_mode: row.editor_mode || 'simple',
       story_blocks: row.story_blocks ? JSON.parse(row.story_blocks) : [],
       menu_items: row.menu_items ? JSON.parse(row.menu_items) : [],
-      isPaid: row.is_paid === '1' || row.is_paid === 1,
+      isPaid: row.is_paid === '1' || row.is_paid === 1 || row.is_paid === 'true' || row.is_paid === true,
+      is_paid: row.is_paid === '1' || row.is_paid === 1 || row.is_paid === 'true' || row.is_paid === true,
       topRank: row.top_rank ? parseInt(row.top_rank) : null,
       createdAt: row.created_at
     };
@@ -111,7 +112,8 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       latitude = null,
       longitude = null,
       phone = null,
-      is_paid = 0,
+      is_paid,
+      isPaid,
       top_rank = null
     } = body;
 
@@ -143,7 +145,7 @@ export const onRequestPatch: PagesFunction<{ DB: D1Database }> = async (context)
       latitude ? String(latitude) : null,
       longitude ? String(longitude) : null,
       phone ? String(phone) : null,
-      is_paid ? 1 : 0,
+      ((is_paid !== undefined ? is_paid : isPaid) === true || (is_paid !== undefined ? is_paid : isPaid) === 1 || (is_paid !== undefined ? is_paid : isPaid) === '1' || (is_paid !== undefined ? is_paid : isPaid) === 'true') ? 1 : 0,
       top_rank ? parseInt(top_rank) : null,
       id
     ).run();

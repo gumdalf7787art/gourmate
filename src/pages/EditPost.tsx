@@ -61,7 +61,8 @@ export function EditPost() {
           setTags(foundPost.tags || []);
           setMenuItems(foundPost.menu_items || []);
           setEditorMode(foundPost.editor_mode || 'simple');
-          setIsPaid(foundPost.isPaid || foundPost.is_paid === 1 || foundPost.is_paid === '1' || false);
+          const isPaidVal = foundPost.isPaid !== undefined ? foundPost.isPaid : foundPost.is_paid;
+          setIsPaid(isPaidVal === true || isPaidVal === 1 || isPaidVal === '1' || isPaidVal === 'true');
           
           if (foundPost.story_blocks && foundPost.story_blocks.length > 0) {
             setStoryBlocks(foundPost.story_blocks);
@@ -265,7 +266,8 @@ export function EditPost() {
         latitude: post?.place?.latitude || post?.latitude || null,
         longitude: post?.place?.longitude || post?.longitude || null,
         phone: post?.place?.phone || post?.phone || null,
-        is_paid: isPaid
+        is_paid: isPaid,
+        isPaid: isPaid
       };
 
       console.log('Updating post with data:', updateData);
