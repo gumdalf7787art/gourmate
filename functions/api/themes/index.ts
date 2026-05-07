@@ -22,8 +22,9 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
     `).run();
 
     let query = `
-      SELECT t.*, COUNT(tp.post_id) as post_count
+      SELECT t.*, u.nickname as guide_nickname, u.profile_image_url as guide_image, COUNT(tp.post_id) as post_count
       FROM themes t
+      LEFT JOIN users u ON t.guide_id = u.id
       LEFT JOIN theme_posts tp ON t.id = tp.theme_id
     `;
     const params: any[] = [];

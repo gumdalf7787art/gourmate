@@ -7,9 +7,12 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
       return new Response(JSON.stringify({ error: '테마 ID가 필요합니다.' }), { status: 400 });
     }
 
-    // 1. 테마 기본 정보 조회
+    // 1. 테마 기본 정보 조회 (작성자 정보 포함)
     const theme = await DB.prepare(`
-      SELECT * FROM themes WHERE id = ?
+      SELECT t.*, u.nickname as guide_nickname, u.profile_image_url as guide_image
+      FROM themes t
+      LEFT JOIN users u ON t.guide_id = u.id
+      WHERE t.id = ?
     `).bind(id).first() as any;
 
     if (!theme) {
