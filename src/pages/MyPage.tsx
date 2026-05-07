@@ -105,13 +105,9 @@ export function MyPage() {
           <section key={idx} className="bg-[#0f0f0f] lg:rounded-3xl lg:m-2 border-b lg:border border-white/5 py-4">
             <h3 className="px-5 text-[11px] font-bold text-primary-500 mb-2 uppercase tracking-wider">{group.title}</h3>
             <ul className="flex flex-col">
-              {group.items.map((item, itemIdx) => (
-                <li key={itemIdx}>
-                  <Link 
-                    to={item.link} 
-                    onClick={item.onClick}
-                    className="flex items-center justify-between px-5 py-3.5 hover:bg-white/5 transition-colors group"
-                  >
+              {group.items.map((item, itemIdx) => {
+                const content = (
+                  <div className="flex items-center justify-between px-5 py-3.5 hover:bg-white/5 transition-colors group cursor-pointer w-full text-left">
                     <div className="flex items-center gap-4">
                       <div className={`text-gray-400 group-hover:text-primary-500 transition-colors ${item.textClass || ''}`}>
                         {item.icon}
@@ -126,9 +122,29 @@ export function MyPage() {
                       </div>
                     </div>
                     <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-primary-500 transition-colors" />
-                  </Link>
-                </li>
-              ))}
+                  </div>
+                );
+
+                return (
+                  <li key={itemIdx}>
+                    {item.onClick ? (
+                      <button 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          item.onClick?.();
+                        }}
+                        className="w-full"
+                      >
+                        {content}
+                      </button>
+                    ) : (
+                      <Link to={item.link}>
+                        {content}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </section>
         ))}
