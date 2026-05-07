@@ -1,13 +1,20 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, MapPin, BadgeCheck, Flame, UtensilsCrossed, Heart, Layers } from 'lucide-react';
+import { Search, MapPin, BadgeCheck, Flame, UtensilsCrossed, Heart, Layers, ChevronDown, X, Check } from 'lucide-react';
 import { MOCK_POSTS } from '@/data/mock';
 import { postService } from '@/services/postService';
+
+const REGIONS = [
+  '전국', '서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '세종', 
+  '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'
+];
 
 export function Home() {
   const navigate = useNavigate();
   const CATEGORIES = ['전체', '한식', '일식', '중식', '양식', '카페', '파인다이닝', '가성비', '배달맛집', '기타'];
   const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [selectedLocation, setSelectedLocation] = useState('전국');
+  const [showLocationModal, setShowLocationModal] = useState(false);
   const [realPosts, setRealPosts] = useState<any[]>([]);
   const [realThemes, setRealThemes] = useState<any[]>([]);
   const [randomThemes, setRandomThemes] = useState<any[]>([]);
@@ -44,14 +51,33 @@ export function Home() {
     '배달맛집': '🛵', '기타': '🍴'
   };
 
-  // 필터링된 포스트 데이터
-  const filteredPosts = selectedCategory === '전체' 
-    ? allPosts
-    : allPosts.filter(post => {
-        if (selectedCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place.category === '파인다이닝';
-        if (selectedCategory === '가성비') return post.tags?.includes('가성비');
-        return post.place.category === selectedCategory;
-      });
+  // 필터링된 포스트 데이터 (지역 + 카테고리)
+  const filteredPosts = useMemo(() => {
+    return allPosts.filter(post => {
+      // 1. 지역 필터링
+      const address = post.place?.address || '';
+      const matchesLocation = selectedLocation === '전국' || 
+        address.includes(selectedLocation === '서울' ? '서울특별시' : 
+                        selectedLocation === '경기' ? '경기도' : 
+                        selectedLocation === '부산' ? '부산광역시' :
+                        selectedLocation === '인천' ? '인천광역시' :
+                        selectedLocation === '대구' ? '대구광역시' :
+                        selectedLocation === '광주' ? '광주광역시' :
+                        selectedLocation === '대전' ? '대전광역시' :
+                        selectedLocation === '울산' ? '울산광역시' :
+                        selectedLocation === '제주' ? '제주특별자치도' :
+                        selectedLocation === '세종' ? '세종특별자치시' :
+                        selectedLocation);
+      
+      if (!matchesLocation) return false;
+
+      // 2. 카테고리 필터링
+      if (selectedCategory === '전체') return true;
+      if (selectedCategory === '파인다이닝') return post.tags?.includes('파인다이닝') || post.place.category === '파인다이닝';
+      if (selectedCategory === '가성비') return post.tags?.includes('가성비');
+      return post.place.category === selectedCategory;
+    });
+  }, [allPosts, selectedLocation, selectedCategory]);
 
   // 필터링된 테마 데이터
   const filteredCollections = useMemo(() => {
@@ -81,16 +107,28 @@ export function Home() {
     <div className="flex flex-col min-h-screen pb-24 bg-black selection:bg-primary-500/30">
       {/* 1. Header & Search Bar */}
       <header className="sticky top-0 z-40 bg-black/70 backdrop-blur-2xl px-5 pt-6 pb-4 border-b border-white/5">
-        <div className="flex items-center mb-4">
-          <div 
-            onClick={() => navigate('/')} 
-            className="flex items-center gap-2 cursor-pointer active:scale-95 transition-transform"
-          >
-            <img src="/logo.png" alt="Gourmate Logo" className="w-8 h-8 object-contain" />
-            <h1 className="text-2xl font-black tracking-tighter">
-              <span className="text-white">GOUR</span>
-              <span className="text-primary-500">MATE</span>
-            </h1>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <div 
+              onClick={() => navigate('/')} 
+              className="flex items-center gap-2 cursor-pointer active:scale-95 transition-transform"
+            >
+              <img src="/logo.png" alt="Gourmate Logo" className="w-8 h-8 object-contain" />
+              <h1 className="text-2xl font-black tracking-tighter">
+                <span className="text-white">GOUR</span>
+                <span className="text-primary-500">MATE</span>
+              </h1>
+            </div>
+
+            {/* Location Selector */}
+            <button 
+              onClick={() => setShowLocationModal(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-full border border-white/10 hover:bg-white/10 transition-all active:scale-95 group"
+            >
+              <MapPin className="w-3.5 h-3.5 text-primary-500" />
+              <span className="text-[13px] font-bold text-white/90">{selectedLocation}</span>
+              <ChevronDown className="w-3.5 h-3.5 text-gray-500 group-hover:text-white transition-colors" />
+            </button>
           </div>
         </div>
         
@@ -330,46 +368,54 @@ export function Home() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 px-5">
-          {allPosts
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .slice(0, 12)
-            .map((post) => (
-            <Link to={`/post/${post.id}`} key={post.id} className="group cursor-pointer">
-              <div className="aspect-square w-full rounded-xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
-                <img src={post.images[0]} alt={post.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
-                <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-white">
-                    <Flame className="w-2.5 h-2.5 text-primary-500" />
-                    <span className="text-[10px] font-bold">{post.likes}</span>
+          {filteredPosts.length > 0 ? (
+            filteredPosts
+              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+              .slice(0, 12)
+              .map((post) => (
+              <Link to={`/post/${post.id}`} key={post.id} className="group cursor-pointer">
+                <div className="aspect-square w-full rounded-xl overflow-hidden mb-2.5 border border-white/5 relative bg-[#111] shadow-2xl">
+                  <img src={post.images[0]} alt={post.place.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                  <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-white">
+                      <Flame className="w-2.5 h-2.5 text-primary-500" />
+                      <span className="text-[10px] font-bold">{post.likes}</span>
+                    </div>
+                    <span className="text-[9px] text-gray-400 font-medium">{post.place.category}</span>
                   </div>
-                  <span className="text-[9px] text-gray-400 font-medium">{post.place.category}</span>
                 </div>
-              </div>
-              <h4 className="text-white text-[13px] font-bold truncate mb-1 group-hover:text-primary-400 transition-colors">{post.place.name}</h4>
-              
-              {/* Keywords/Tags */}
-              <div className="flex flex-wrap gap-1 mb-1.5">
-                {post.tags?.slice(0, 3).map((tag: string, idx: number) => (
-                  <span key={idx} className="text-[9px] text-primary-500/80 font-medium">#{tag}</span>
-                ))}
-              </div>
+                <h4 className="text-white text-[13px] font-bold truncate mb-1 group-hover:text-primary-400 transition-colors">{post.place.name}</h4>
+                
+                {/* Keywords/Tags */}
+                <div className="flex flex-wrap gap-1 mb-1.5">
+                  {post.tags?.slice(0, 3).map((tag: string, idx: number) => (
+                    <span key={idx} className="text-[9px] text-primary-500/80 font-medium">#{tag}</span>
+                  ))}
+                </div>
 
-              {/* 한줄평 */}
-              {post.review && (
-                <p className="text-[10px] text-gray-300 font-medium line-clamp-1 mb-2 italic opacity-80">
-                  "{post.review}"
-                </p>
-              )}
+                {/* 한줄평 */}
+                {post.review && (
+                  <p className="text-[10px] text-gray-300 font-medium line-clamp-1 mb-2 italic opacity-80">
+                    "{post.review}"
+                  </p>
+                )}
 
-              <div className="flex items-center gap-1 text-gray-500">
-                <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
-                <span className="text-[10px] truncate leading-none">
-                  {post.place.address.split(' ')[0].replace('서울특별시', '서울').replace('부산광역시', '부산').replace('대구광역시', '대구').replace('인천광역시', '인천').replace('광주광역시', '광주').replace('대전광역시', '대전').replace('울산광역시', '울산').replace('세종특별자치시', '세종')} {post.place.address.split(' ')[1]}
-                </span>
-              </div>
-            </Link>
-          ))}
+                <div className="flex items-center gap-1 text-gray-500">
+                  <MapPin className="w-2.5 h-2.5 text-primary-500/50" />
+                  <span className="text-[10px] truncate leading-none">
+                    {post.place.address.split(' ')[0].replace('서울특별시', '서울').replace('부산광역시', '부산').replace('대구광역시', '대구').replace('인천광역시', '인천').replace('광주광역시', '광주').replace('대전광역시', '대전').replace('울산광역시', '울산').replace('세종특별자치시', '세종')} {post.place.address.split(' ')[1]}
+                  </span>
+                </div>
+              </Link>
+            ))
+          ) : (
+            <div className="col-span-full py-20 flex flex-col items-center justify-center text-gray-600 border border-dashed border-white/5 rounded-[40px] bg-white/2">
+              <UtensilsCrossed className="w-12 h-12 mb-4 opacity-10" />
+              <p className="text-sm font-bold">해당 지역 및 카테고리에 등록된 포스트가 없습니다.</p>
+              <p className="text-xs mt-1 opacity-60">전국으로 설정하거나 다른 카테고리를 선택해보세요.</p>
+            </div>
+          )}
         </div>
       </section>
       {/* Footer with Business Info */}
@@ -386,6 +432,61 @@ export function Home() {
           </div>
         </div>
       </footer>
+
+      {/* 6. Location Selection Modal */}
+      {showLocationModal && (
+        <div className="fixed inset-0 z-[100] flex items-end justify-center px-4 pb-0 sm:pb-10">
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => setShowLocationModal(false)}
+          />
+          <div className="relative w-full max-w-lg bg-[#111] border border-white/10 rounded-t-[32px] sm:rounded-[32px] overflow-hidden animate-in slide-in-from-bottom-full duration-500 shadow-2xl">
+            <div className="px-6 pt-8 pb-4 flex items-center justify-between border-b border-white/5">
+              <div>
+                <h3 className="text-xl font-black text-white tracking-tight">지역 선택</h3>
+                <p className="text-[12px] text-gray-500 font-medium mt-1">탐색하고 싶은 지역을 선택해주세요.</p>
+              </div>
+              <button 
+                onClick={() => setShowLocationModal(false)}
+                className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto max-h-[60vh] no-scrollbar">
+              <div className="grid grid-cols-3 gap-2">
+                {REGIONS.map((region) => (
+                  <button
+                    key={region}
+                    onClick={() => {
+                      setSelectedLocation(region);
+                      setShowLocationModal(false);
+                    }}
+                    className={`py-3.5 rounded-2xl text-[14px] font-bold transition-all flex items-center justify-center gap-2 border ${
+                      selectedLocation === region
+                        ? 'bg-primary-500 border-primary-500 text-white shadow-lg shadow-primary-500/20'
+                        : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/20 hover:text-white'
+                    }`}
+                  >
+                    {selectedLocation === region && <Check className="w-3.5 h-3.5" />}
+                    {region}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-6 bg-black/40 border-t border-white/5">
+              <button 
+                onClick={() => setShowLocationModal(false)}
+                className="w-full py-4 bg-white text-black font-black rounded-2xl active:scale-95 transition-all shadow-xl"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
