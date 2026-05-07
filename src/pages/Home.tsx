@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, MapPin, BadgeCheck, Flame, UtensilsCrossed, Heart } from 'lucide-react';
+import { Search, MapPin, BadgeCheck, Flame, UtensilsCrossed, Heart, Layers } from 'lucide-react';
 import { MOCK_POSTS } from '@/data/mock';
 import { postService } from '@/services/postService';
 
