@@ -185,11 +185,9 @@ export function GeneralSearch() {
                         <div>
                           <h4 className="text-[15px] font-black text-white truncate leading-tight mb-1 group-hover:text-primary-500 transition-colors">{place.name}</h4>
                           <p className="text-[11px] text-gray-500 truncate font-medium mb-1">{place.address.split(' ').slice(0, 2).join(' ')}</p>
-                          {firstPost.review && (
-                            <p className="text-[11px] text-gray-400 line-clamp-1 italic font-light opacity-80">
-                              "{firstPost.review}"
-                            </p>
-                          )}
+                          <p className="text-[11px] text-gray-300 line-clamp-1 italic font-medium opacity-90">
+                            "{firstPost.review || firstPost.content.split('.')[0] || '추천 후기가 없습니다.'}"
+                          </p>
                         </div>
                         <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
                           <div className="flex items-center gap-2 overflow-hidden">
