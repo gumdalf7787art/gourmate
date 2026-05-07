@@ -25,7 +25,7 @@ export const onRequestGet: PagesFunction<{ DB: D1Database }> = async (context) =
     // 1. 포스트 검색 (식당명, 카테고리, 내용) - COALESCE로 NULL 처리
     const { results: posts } = await DB.prepare(`
       SELECT 
-        p.id, p.restaurant_name, p.address, p.category, p.content, p.rating, p.images, p.likes,
+        p.id, p.restaurant_name, p.address, p.category, p.content, p.review, p.rating, p.images, p.likes,
         u.nickname as guide_nickname, u.profile_image_url as guide_profile_image
       FROM posts p
       JOIN users u ON p.guide_id = u.id
