@@ -258,8 +258,8 @@ export function Home() {
       <div className="w-full h-[1px] bg-white/5 px-5 mx-auto max-w-[calc(100%-40px)]"></div>
 
       {/* 4. Popular Guides */}
-      <section className="py-12">
-        <div className="px-5 mb-8 flex justify-between items-end">
+      <section className="py-10">
+        <div className="px-5 mb-7 flex justify-between items-end">
           <div>
             <h2 className="text-xl font-black text-white tracking-tighter">인기 가이드 추천</h2>
             <p className="text-[13px] text-gray-500 font-medium mt-1">가장 신뢰받는 미식가들의 지도를 구독해보세요</p>
@@ -269,63 +269,50 @@ export function Home() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-5">
           {popularGuides.slice(0, 4).map((guide) => (
-            <div key={guide.id} className="flex flex-col p-6 bg-[#111] border border-white/10 rounded-[32px] group hover:border-primary-500/30 transition-all shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+            <div key={guide.id} className="p-5 bg-[#111] border border-white/10 rounded-[28px] group hover:border-primary-500/30 transition-all shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
               
-              <div className="flex items-start justify-between mb-5">
-                <Link to={`/guide/${guide.id}`} className="flex items-center gap-4">
+              <div className="flex items-center justify-between mb-4">
+                <Link to={`/guide/${guide.id}`} className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-primary-500 to-orange-400 shadow-xl group-hover:scale-105 transition-transform duration-500">
+                    <div className="w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-primary-500 to-orange-400 shadow-xl group-hover:scale-105 transition-transform duration-500">
                       <img src={guide.profileImageUrl} alt="" className="w-full h-full rounded-full object-cover border-2 border-black" />
                     </div>
                     {guide.trustScore > 90 && (
-                      <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-1 border border-white/20 shadow-lg">
-                        <BadgeCheck className="w-4 h-4 text-primary-500" />
+                      <div className="absolute -bottom-1 -right-1 bg-black rounded-full p-0.5 border border-white/20 shadow-lg">
+                        <BadgeCheck className="w-3.5 h-3.5 text-primary-500" />
                       </div>
                     )}
                   </div>
                   <div>
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <p className="text-lg font-black text-white group-hover:text-primary-400 transition-colors tracking-tight">{guide.nickname}</p>
-                      <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[10px] font-black rounded uppercase">Lv.{Math.floor(guide.trustScore / 10)}</span>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-[15px] font-black text-white group-hover:text-primary-400 transition-colors tracking-tight">{guide.nickname}</p>
+                      <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[9px] font-black rounded uppercase">Lv.{Math.floor(guide.trustScore / 10)}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">신뢰지수</span>
-                        <span className="text-[12px] text-white font-black">{guide.trustScore}</span>
-                      </div>
-                    </div>
+                    {guide.bio && (
+                      <p className="text-[11px] text-gray-500 font-medium line-clamp-1 mt-0.5 opacity-80">
+                        {guide.bio.split('\n')[0]}
+                      </p>
+                    )}
                   </div>
                 </Link>
-                <button className="px-5 py-2 bg-white text-black text-[12px] font-black rounded-xl hover:bg-primary-500 hover:text-white transition-all uppercase tracking-tighter shadow-xl active:scale-90">
+                <button className="px-4 py-1.5 bg-white text-black text-[11px] font-black rounded-xl hover:bg-primary-500 hover:text-white transition-all uppercase tracking-tighter shadow-xl active:scale-90">
                   팔로우
                 </button>
               </div>
 
-              {guide.bio && (
-                <div className="mb-6 relative">
-                  <p className="text-[13px] text-gray-400 font-medium line-clamp-2 italic leading-relaxed pl-4 border-l-2 border-primary-500/30">
-                    "{guide.bio}"
-                  </p>
+              <div className="flex items-center gap-4 pt-3 border-t border-white/5">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">신뢰지수</span>
+                  <span className="text-[12px] text-white font-black">{guide.trustScore}</span>
                 </div>
-              )}
-
-              <div className="grid grid-cols-4 gap-2 pt-5 border-t border-white/5">
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter mb-1">포스트</span>
-                  <span className="text-[14px] text-white font-black">{guide.postCount || 0}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">포스트</span>
+                  <span className="text-[12px] text-white font-black">{guide.postCount || 0}</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter mb-1">팔로워</span>
-                  <span className="text-[14px] text-white font-black">{(guide.followers || 0).toLocaleString()}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter mb-1">좋아요</span>
-                  <span className="text-[14px] text-white font-black">{(guide.likes || 0).toLocaleString()}</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter mb-1">테마</span>
-                  <span className="text-[14px] text-white font-black">{guide.themeCount || 0}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-gray-600 font-bold uppercase tracking-tighter">팔로워</span>
+                  <span className="text-[12px] text-white font-black">{(guide.followers || 0).toLocaleString()}</span>
                 </div>
               </div>
             </div>
