@@ -171,6 +171,38 @@ export const onRequestDelete: PagesFunction<{ DB: D1Database }> = async (context
       return new Response(JSON.stringify({ error: '포스트 ID가 필요합니다.' }), { status: 400 });
     }
 
+    // 연관 데이터 삭제 (외래 키 제약 조건 해결)
+    // 1. 댓글 삭제
+    try {
+      await DB.prepare(`DELETE FROM reviews WHERE post_id = ?`).bind(id).run();
+    } catch (e) {}
+
+    // 2. 좋아요 삭제
+    try {
+      await DB.prepare(`DELETE FROM likes WHERE post_id = ?`).bind(id).run();
+    } catch (e) {}
+
+    // 3. 북마크 삭제
+    try {
+      await DB.prepare(`DELETE FROM bookmarks WHERE post_id = ?`).bind(id).run();
+    } catch (e) {}
+
+    // 4. 테마 포함 정보 삭제
+    try {
+      await DB.prepare(`DELETE FROM theme_posts WHERE post_id = ?`).bind(id).run();
+    } catch (e) {}
+
+    // 5. 나의 지도 아이템 삭제
+    try {
+      await DB.prepare(`DELETE FROM user_map_items WHERE post_id = ?`).bind(id).run();
+    } catch (e) {}
+
+    // 6. 조회수 로그 삭제
+    try {
+      await DB.prepare(`DELETE FROM post_views WHERE post_id = ?`).bind(id).run();
+    } catch (e) {}
+
+    // 7. 본문 포스팅 삭제
     await DB.prepare(`DELETE FROM posts WHERE id = ?`).bind(id).run();
 
     return new Response(JSON.stringify({ success: true }), {
